@@ -36,6 +36,7 @@ This project uses a VS Code dev container for development. To set up the dev env
 - [permission_handler](https://pub.dev/packages/permission_handler) to request permissions and check their status.
 - [connectivity_plus](https://pub.dev/packages/connectivity_plus)to discover network connectivity types that can be used.
 - [network_info_plus](https://pub.dev/packages/network_info_plus) to discover network info and configure themselves accordingly.
+- [network_tools](https://pub.dev/packages/network_tools) to scan all devices in a subnet.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
