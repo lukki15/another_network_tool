@@ -32,6 +32,7 @@ This project uses a VS Code dev container for development. To set up the dev env
 ## Technologies Used
 
 - [Flutter](https://flutter.dev) framework
+- [forui](https://forui.dev/) flutter UI library
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
