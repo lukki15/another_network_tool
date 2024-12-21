@@ -17,14 +17,8 @@ class _MainScaffoldState extends State<MainScaffold> {
     const FHeader(title: Text('Network Scan')),
   ];
   final contents = [
-    const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [NetworkInfo()],
-    ),
-    const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text('Network Scan Placeholder')],
-    ),
+    const NetworkInfo(),
+    const Center(child: Text('Network Scan Placeholder')),
   ];
   final footers = [
     FBottomNavigationBarItem(
