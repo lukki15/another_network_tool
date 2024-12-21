@@ -29,11 +29,10 @@ class _Connectivity extends StatelessWidget {
       )
     ];
 
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid &&
+        conductivities.contains(ConnectivityResult.mobile)) {
       tiles.add(FTile(
-        prefixIcon: FIcon(conductivities.contains(ConnectivityResult.mobile)
-            ? FAssets.icons.signal
-            : FAssets.icons.signalLow),
+        prefixIcon: FIcon(FAssets.icons.signal),
         title: const Text('Cellular'),
       ));
     }
