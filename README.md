@@ -33,6 +33,8 @@ This project uses a VS Code dev container for development. To set up the dev env
 
 - [Flutter](https://flutter.dev) framework
 - [forui](https://forui.dev/) flutter UI library
+- [connectivity_plus](https://pub.dev/packages/connectivity_plus)to discover network connectivity types that can be used.
+- [network_info_plus](https://pub.dev/packages/network_info_plus) to discover network info and configure themselves accordingly.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
