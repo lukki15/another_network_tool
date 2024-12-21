@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
+import 'package:network_info_app/network_info.dart';
+
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
 
@@ -17,7 +19,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   final contents = [
     const Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text('Network Info Placeholder')],
+      children: [NetworkInfo()],
     ),
     const Column(
       mainAxisAlignment: MainAxisAlignment.center,
