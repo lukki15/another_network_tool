@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -102,9 +104,17 @@ class _ActiveHostsGroup extends StatelessWidget {
         for (var item in activeHosts)
           FTile(
             prefixIcon: FIcon(FAssets.icons.monitorSmartphone),
-            title: _FutureText(future: item.deviceName),
-            subtitle: _FutureText(future: item.getMacAddress()),
-            details: Text(item.address),
+            title: _FutureText(
+                future: item.deviceName, convertToString: (String s) => s),
+            subtitle: Text(item.address),
+            details: Platform.isAndroid
+                // Since Android SDK 32, apps are no longer allowed to access the MAC address.
+                ? Text("")
+                : _FutureText(
+                    future: item.vendor,
+                    convertToString: (Vendor? v) =>
+                        v == null ? "" : v.vendorName,
+                  ),
           )
       ],
     );
@@ -114,9 +124,11 @@ class _ActiveHostsGroup extends StatelessWidget {
 class _FutureText<T> extends StatelessWidget {
   const _FutureText({
     required this.future,
+    required this.convertToString,
   });
 
   final Future<T> future;
+  final String Function(T) convertToString;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +137,8 @@ class _FutureText<T> extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
           return Text(
             snapshot.hasData && snapshot.data != null
-                ? snapshot.data!.toString()
+                ? convertToString(snapshot
+                    .data!) // ignore: null_check_on_nullable_type_parameter
                 : "N/A",
           );
         });
