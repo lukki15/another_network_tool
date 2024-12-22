@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
 
 class NetworkScan extends StatefulWidget {
@@ -9,7 +11,6 @@ class NetworkScan extends StatefulWidget {
 }
 
 class _NetworkScanState extends State<NetworkScan> {
-  final String address = '192.168.178.1'; // TODO
   late Stream<ActiveHost> stream;
 
   double progress = 0;
@@ -20,48 +21,113 @@ class _NetworkScanState extends State<NetworkScan> {
   void initState() {
     super.initState();
 
-    final String subnet = address.substring(0, address.lastIndexOf('.'));
-    stream = HostScannerService.instance.getAllPingableDevicesAsync(
-      subnet,
-      progressCallback: (p) {
-        setState(() {
-          progress = p;
-        });
-      },
-    );
+    final wifiIP = NetworkInfo().getWifiIP();
 
-    stream.listen((host) {
-      //Same host can be emitted multiple times
-      setState(() {
-        activeHosts.add(host);
-      });
-    }, onDone: () {
-      setState(() {
-        isDone = true;
-      });
-    }); // Don't forget to cancel the stream when not in use.
+    wifiIP.then((ip) {
+      if (ip == null) {
+        setState(() {
+          isDone = true;
+        });
+        return;
+      }
+
+      final String subnet = ip.substring(0, ip.lastIndexOf('.'));
+      stream = HostScannerService.instance.getAllPingableDevicesAsync(
+        subnet,
+        progressCallback: (p) {
+          setState(() {
+            progress = p;
+          });
+        },
+      );
+
+      stream.listen((host) {
+        //Same host can be emitted multiple times
+        setState(() {
+          activeHosts.add(host);
+        });
+      }, onDone: () {
+        setState(() {
+          isDone = true;
+        });
+      }); // Don't forget to cancel the stream when not in use.
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final progressPercent = progress / 100.0;
+    final int currentIP = HostScannerService.defaultFirstHostId +
+        ((HostScannerService.defaultLastHostId -
+                    HostScannerService.defaultFirstHostId) *
+                progressPercent)
+            .floor();
+
     return Column(
       children: [
-        Text('progress: $progress'),
-        Text('isDone: $isDone'),
-        Column(
-          children: [
-            for (var item in activeHosts)
-              FutureBuilder(
-                  future: item.deviceName,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    return Text(
-                      "${snapshot.hasData ? snapshot.data! : "N/A"} ${item.address}",
-                    );
-                  })
-          ],
+        FTile(
+          title: FProgress(value: isDone ? 1.0 : progressPercent),
+          subtitle: isDone
+              ? Text("scanning done")
+              : Text(
+                  "scanning $currentIP / ${HostScannerService.defaultLastHostId}"),
+        ),
+        SizedBox(height: 20),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _ActiveHostsGroup(activeHosts: activeHosts),
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
         ),
       ],
     );
+  }
+}
+
+class _ActiveHostsGroup extends StatelessWidget {
+  const _ActiveHostsGroup({
+    required this.activeHosts,
+  });
+
+  final Set<ActiveHost> activeHosts;
+
+  @override
+  Widget build(BuildContext context) {
+    return FTileGroup(
+      children: [
+        for (var item in activeHosts)
+          FTile(
+            prefixIcon: FIcon(FAssets.icons.monitorSmartphone),
+            title: _FutureText(future: item.deviceName),
+            subtitle: _FutureText(future: item.getMacAddress()),
+            details: Text(item.address),
+          )
+      ],
+    );
+  }
+}
+
+class _FutureText<T> extends StatelessWidget {
+  const _FutureText({
+    required this.future,
+  });
+
+  final Future<T> future;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: future,
+        builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
+          return Text(
+            snapshot.hasData && snapshot.data != null
+                ? snapshot.data!.toString()
+                : "N/A",
+          );
+        });
   }
 }
