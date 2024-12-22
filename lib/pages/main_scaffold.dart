@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import 'package:network_info_app/pages/network_info/network_info.dart';
+import 'package:network_info_app/pages/network_scan/network_scan.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -12,13 +13,13 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int index = 0;
-  final headers = [
-    const FHeader(title: Text('Network Info')),
-    const FHeader(title: Text('Network Scan')),
+  static const headers = [
+    FHeader(title: Text('Network Info')),
+    FHeader(title: Text('Network Scan')),
   ];
-  final contents = [
-    const NetworkInfo(),
-    const Center(child: Text('Network Scan Placeholder')),
+  static const contents = [
+    NetworkInfo(),
+    NetworkScan(),
   ];
   final footers = [
     FBottomNavigationBarItem(
