@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
-import 'package:network_info_app/main_scaffold.dart';
+import 'package:network_info_app/pages/main_scaffold.dart';
 
 void main() {
   runApp(const _Application());

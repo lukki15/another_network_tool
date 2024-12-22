@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
-import 'package:network_info_app/network_info.dart';
+import 'package:network_info_app/pages/network_info/network_info.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});

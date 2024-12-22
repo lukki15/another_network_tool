@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import 'package:network_info_app/network_stats.dart';
+import 'package:network_info_app/pages/network_info/network_stats.dart';
 
 class NetworkInfo extends StatelessWidget {
   const NetworkInfo({super.key});
