@@ -3,6 +3,8 @@ import 'package:forui/forui.dart';
 import 'package:network_info_app/pages/network_scan/future_text.dart';
 import 'package:network_tools/network_tools.dart';
 
+import 'package:network_info_app/pages/network_scan/port_map.dart';
+
 class DeviceInfo extends StatelessWidget {
   const DeviceInfo({
     super.key,
@@ -148,6 +150,9 @@ class __PortGroupState extends State<_PortGroup> {
           ? FIcon(FAssets.icons.circleDot, color: Colors.green)
           : FIcon(FAssets.icons.circleDashed, color: Colors.red),
       title: nextPort == null ? Text("$port") : Text("$port - $nextPort"),
+      subtitle: isOpen && nextPort == null && portMap.containsKey(port)
+          ? Text(portMap[port]!)
+          : null,
     );
   }
 }
