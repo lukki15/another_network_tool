@@ -5,6 +5,9 @@ import 'package:forui/forui.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
 
+import 'package:network_info_app/pages/network_scan/device_info.dart';
+import 'package:network_info_app/pages/network_scan/future_text.dart';
+
 class NetworkScan extends StatefulWidget {
   const NetworkScan({super.key});
 
@@ -52,7 +55,7 @@ class _NetworkScanState extends State<NetworkScan> {
         setState(() {
           isDone = true;
         });
-      }); // Don't forget to cancel the stream when not in use.
+      }); // TODO: Don't forget to cancel the stream when not in use.
     });
   }
 
@@ -104,43 +107,25 @@ class _ActiveHostsGroup extends StatelessWidget {
         for (var item in activeHosts)
           FTile(
             prefixIcon: FIcon(FAssets.icons.monitorSmartphone),
-            title: _FutureText(
+            title: FutureText(
                 future: item.deviceName, convertToString: (String s) => s),
             subtitle: Text(item.address),
             details: Platform.isAndroid
                 // Since Android SDK 32, apps are no longer allowed to access the MAC address.
                 ? Text("")
-                : _FutureText(
+                : FutureText(
                     future: item.vendor,
                     convertToString: (Vendor? v) =>
                         v == null ? "" : v.vendorName,
                   ),
+            onPress: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DeviceInfo(
+                        activeHost: item,
+                      )));
+            },
           )
       ],
     );
-  }
-}
-
-class _FutureText<T> extends StatelessWidget {
-  const _FutureText({
-    required this.future,
-    required this.convertToString,
-  });
-
-  final Future<T> future;
-  final String Function(T) convertToString;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: future,
-        builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
-          return Text(
-            snapshot.hasData && snapshot.data != null
-                ? convertToString(snapshot
-                    .data!) // ignore: null_check_on_nullable_type_parameter
-                : "N/A",
-          );
-        });
   }
 }
