@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -7,6 +8,7 @@ import 'package:network_tools/network_tools.dart';
 
 import 'package:network_info_app/pages/network_scan/device_info.dart';
 import 'package:network_info_app/pages/network_scan/future_text.dart';
+import 'package:network_info_app/pages/connectivity_manager.dart';
 
 class NetworkScan extends StatefulWidget {
   const NetworkScan({super.key});
@@ -22,9 +24,23 @@ class _NetworkScanState extends State<NetworkScan> {
   Set<ActiveHost> activeHosts = {};
   bool isDone = false;
 
-  @override
-  void initState() {
-    super.initState();
+  List<ConnectivityResult> connectivityResult = [];
+  final ConnectivityManager connectivityManager = ConnectivityManager();
+
+  void _connectivityUpdate(List<ConnectivityResult> connectivity) {
+    if (!connectivity.contains(ConnectivityResult.wifi)) {
+      setState(() {
+        connectivityResult = connectivity;
+      });
+      return;
+    }
+
+    setState(() {
+      connectivityResult = connectivity;
+      progress = 0;
+      activeHosts.clear();
+      isDone = false;
+    });
 
     final wifiIP = NetworkInfo().getWifiIP();
 
@@ -60,6 +76,19 @@ class _NetworkScanState extends State<NetworkScan> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    connectivityManager.listen(_connectivityUpdate);
+  }
+
+  @override
+  void dispose() {
+    connectivityManager.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final progressPercent = progress / 100.0;
     final int currentIP = HostScannerService.defaultFirstHostId +
@@ -70,13 +99,18 @@ class _NetworkScanState extends State<NetworkScan> {
 
     return Column(
       children: [
-        FTile(
-          title: FProgress(value: isDone ? 1.0 : progressPercent),
-          subtitle: isDone
-              ? Text("scanning done")
-              : Text(
-                  "scanning $currentIP / ${HostScannerService.defaultLastHostId}"),
-        ),
+        connectivityResult.contains(ConnectivityResult.wifi)
+            ? FTile(
+                title: FProgress(value: isDone ? 1.0 : progressPercent),
+                subtitle: isDone
+                    ? const Text("scanning done")
+                    : Text(
+                        "scanning $currentIP / ${HostScannerService.defaultLastHostId}"),
+              )
+            : FTile(
+                title: const Text("Wi-Fi Unavailable"),
+                subtitle: const Text(
+                    "Network scanning will commence upon availability")),
         SizedBox(height: 20),
         Expanded(
           child: SingleChildScrollView(
