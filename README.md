@@ -9,9 +9,9 @@ Network Info App is an open source application that provides detailed informatio
 
 ## Key Features
 
-- [ ] List all devices connected to your Wi-Fi network
-- [ ] Display detailed information about your current Wi-Fi connection
-- [ ] Scan open ports for selected devices
+- [x] List all devices connected to your Wi-Fi network
+- [x] Display detailed information about your current Wi-Fi connection
+- [x] Scan open ports for selected devices
 
 ## Getting Started
 
