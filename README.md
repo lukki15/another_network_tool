@@ -29,6 +29,34 @@ This project uses a VS Code dev container for development. To set up the dev env
 1. Rebuild the container using the "Reopen in Container" command
 1. Follow the commands to download and setup the Flutter SDK.
 
+#### Native App Development For Linux
+
+Everything is setup in the docker image,
+just select Linux as device and press `F5` to start ad debug session. 
+
+#### Android App Development
+
+Access to the USB devices is shared with the container,
+just connect a Android device and allow USB-debugging on the phone.
+
+`flutter doctor` might ask you to accept the Android license,
+use `yes | flutter doctor --android-licenses` to accept all of them.
+
+Before starting a debugging session the following command needs to be executed:
+```
+$ sudo chown -R $(id -u):$(id -g) ${ANDROID_HOME}
+```
+This allows the adb server to start and to download newer SDKs run.
+
+##### Troubleshooting
+
+If `flutter doctor` complains that the adb server is not running,
+download current platform sdk and build tools, execute:
+```
+$ sdkmanager --install "platform-tools" "platforms;android-{xx}" "build-tools;{xx.yy.zz}"
+$ sudo ${ANDROID_HOME}/platform-tools/adb start-server
+```
+
 ## Technologies Used
 
 - [Flutter](https://flutter.dev) framework
