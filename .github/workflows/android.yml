@@ -31,8 +31,11 @@ jobs:
         uses: actions/checkout@v4
 
       - run: flutter pub get
+
+      - name: Create Android icons
+        run: dart run icons_launcher:create
+
       - run: flutter build apk
-      - run: flutter build appbundle
 
       - name: Archive result
         uses: actions/upload-artifact@v4
@@ -40,4 +43,3 @@ jobs:
           name: android-target
           path: |
             build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab

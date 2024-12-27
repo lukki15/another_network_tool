@@ -1,5 +1,7 @@
 # Network Info App
 
+![icon](./assets/icon/icon.svg)
+
 [![Android](https://github.com/lukki15/network_info_app/actions/workflows/android.yml/badge.svg)](https://github.com/lukki15/network_info_app/actions/workflows/android.yml)
 [![Linux](https://github.com/lukki15/network_info_app/actions/workflows/linux.yml/badge.svg)](https://github.com/lukki15/network_info_app/actions/workflows/linux.yml)
 

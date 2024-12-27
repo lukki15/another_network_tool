@@ -11,3 +11,8 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Generate icons via icons_launcher
+/app/src/main/res/mipmap-*
+/app/src/main/res/values/colors.xml
+/app/src/main/ic_launcher-playstore.png
