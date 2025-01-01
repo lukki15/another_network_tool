@@ -19,6 +19,7 @@ Network Info App is an open source application that provides detailed informatio
 
 1. Clone this repository
 1. Run `flutter pub get` to install dependencies
+1. Run `bash setup.bash` to download and generate build dependencies
 1. Run `flutter run` to launch the app
 
 ### Development Setup

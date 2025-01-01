@@ -32,8 +32,8 @@ jobs:
 
       - run: flutter pub get
 
-      - name: Create Android icons
-        run: dart run icons_launcher:create
+      - name: Download and generate build dependencies
+        run: bash setup.bash
 
       - run: flutter build apk
 

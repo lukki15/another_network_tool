@@ -23,6 +23,8 @@ dev_dependencies:
   icons_launcher: "^3.0.0"
 
 flutter:
+  assets:
+    - assets/network_tools/mac-vendors-export.csv
   uses-material-design: true
 
 icons_launcher:

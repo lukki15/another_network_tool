@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:network_tools/network_tools.dart';
-import 'package:path_provider/path_provider.dart';
 
+import 'package:network_info_app/setup_network_tools.dart';
 import 'package:network_info_app/pages/main_scaffold.dart';
 
-Future<void> _setupNetworkTools() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // It's necessary to pass correct path to be able to use this library.
-  final tempDirectory = await getTemporaryDirectory();
-  return configureNetworkTools(tempDirectory.path);
-}
-
 Future<void> main() async {
-  await _setupNetworkTools();
+  await setupNetworkTools();
   runApp(const _Application());
 }
 
