@@ -1,46 +1,49 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
+import 'package:network_info_app/provider/connectivity_notifier.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
+import 'package:provider/provider.dart';
 
 import 'package:network_info_app/pages/network_scan/device_info.dart';
 import 'package:network_info_app/pages/network_scan/future_text.dart';
-import 'package:network_info_app/pages/connectivity_manager.dart';
 
-class NetworkScan extends StatefulWidget {
+class NetworkScan extends StatelessWidget {
   const NetworkScan({super.key});
 
   @override
-  State<NetworkScan> createState() => _NetworkScanState();
+  Widget build(BuildContext context) {
+    return Consumer<ConnectivityNotifier>(
+        builder: (context, myNotifier, child) => _Scan(
+              hasWifi:
+                  myNotifier.connectionStatus.contains(ConnectivityResult.wifi),
+            ));
+  }
 }
 
-class _NetworkScanState extends State<NetworkScan> {
-  late Stream<ActiveHost> stream;
+class _Scan extends StatefulWidget {
+  final bool hasWifi;
+  const _Scan({required this.hasWifi});
+
+  @override
+  State<_Scan> createState() => _ScanState();
+}
+
+class _ScanState extends State<_Scan> {
+  late StreamSubscription<ActiveHost> streamSubscription;
 
   double progress = 0;
   Set<ActiveHost> activeHosts = {};
   bool isDone = false;
 
-  List<ConnectivityResult> connectivityResult = [];
-  final ConnectivityManager connectivityManager = ConnectivityManager();
-
-  void _connectivityUpdate(List<ConnectivityResult> connectivity) {
-    if (!connectivity.contains(ConnectivityResult.wifi)) {
-      setState(() {
-        connectivityResult = connectivity;
-      });
+  void _init() {
+    if (!widget.hasWifi) {
       return;
     }
-
-    setState(() {
-      connectivityResult = connectivity;
-      progress = 0;
-      activeHosts.clear();
-      isDone = false;
-    });
 
     final wifiIP = NetworkInfo().getWifiIP();
 
@@ -53,7 +56,8 @@ class _NetworkScanState extends State<NetworkScan> {
       }
 
       final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-      stream = HostScannerService.instance.getAllPingableDevicesAsync(
+      final Stream<ActiveHost> stream =
+          HostScannerService.instance.getAllPingableDevicesAsync(
         subnet,
         progressCallback: (p) {
           setState(() {
@@ -62,7 +66,7 @@ class _NetworkScanState extends State<NetworkScan> {
         },
       );
 
-      stream.listen((host) {
+      streamSubscription = stream.listen((host) {
         //Same host can be emitted multiple times
         setState(() {
           activeHosts.add(host);
@@ -71,20 +75,33 @@ class _NetworkScanState extends State<NetworkScan> {
         setState(() {
           isDone = true;
         });
-      }); // TODO: Don't forget to cancel the stream when not in use.
+      });
     });
   }
 
   @override
   void initState() {
     super.initState();
+    _init();
+  }
 
-    connectivityManager.listen(_connectivityUpdate);
+  @override
+  void didUpdateWidget(_Scan oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    streamSubscription.cancel();
+    if (widget.hasWifi) {
+      setState(() {
+        progress = 0;
+        activeHosts.clear();
+        isDone = false;
+      });
+    }
+    _init();
   }
 
   @override
   void dispose() {
-    connectivityManager.dispose();
+    streamSubscription.cancel();
     super.dispose();
   }
 
@@ -99,7 +116,7 @@ class _NetworkScanState extends State<NetworkScan> {
 
     return Column(
       children: [
-        connectivityResult.contains(ConnectivityResult.wifi)
+        widget.hasWifi
             ? FTile(
                 title: FProgress(value: isDone ? 1.0 : progressPercent),
                 subtitle: isDone

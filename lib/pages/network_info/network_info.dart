@@ -1,58 +1,24 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:network_info_app/pages/connectivity_manager.dart';
+import 'package:provider/provider.dart';
 
 import 'package:network_info_app/pages/network_info/network_stats.dart';
+import 'package:network_info_app/provider/connectivity_notifier.dart';
 
 class NetworkInfo extends StatelessWidget {
   const NetworkInfo({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return _Connectivity();
-  }
-}
-
-class _Connectivity extends StatefulWidget {
-  const _Connectivity();
-
-  @override
-  State<_Connectivity> createState() => _ConnectivityState();
-}
-
-class _ConnectivityState extends State<_Connectivity> {
-  List<ConnectivityResult> _conductivities = [];
-  final ConnectivityManager _connectivityManager = ConnectivityManager();
-
-  @override
-  void initState() {
-    super.initState();
-    _connectivityManager.listen((conductivitiesResult) {
-      setState(() {
-        _conductivities = conductivitiesResult;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _connectivityManager.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  List<Widget> _getTiles(List<ConnectivityResult> conductivities) {
     List<Widget> tiles = [
       FTile(
         prefixIcon: FIcon(
-          _conductivities.contains(ConnectivityResult.wifi)
+          conductivities.contains(ConnectivityResult.wifi)
               ? FAssets.icons.wifi
               : FAssets.icons.wifiOff,
-          color: _conductivities.contains(ConnectivityResult.wifi)
+          color: conductivities.contains(ConnectivityResult.wifi)
               ? Colors.green
               : Colors.red,
         ),
@@ -60,12 +26,12 @@ class _ConnectivityState extends State<_Connectivity> {
       )
     ];
 
-    if (_conductivities.contains(ConnectivityResult.wifi)) {
+    if (conductivities.contains(ConnectivityResult.wifi)) {
       tiles.add(NetworkStats());
     }
 
     if (Platform.isAndroid &&
-        _conductivities.contains(ConnectivityResult.mobile)) {
+        conductivities.contains(ConnectivityResult.mobile)) {
       tiles.add(SizedBox(height: 10));
       tiles.add(FTile(
         prefixIcon: FIcon(
@@ -80,10 +46,10 @@ class _ConnectivityState extends State<_Connectivity> {
       tiles.add(SizedBox(height: 10));
       tiles.add(FTile(
         prefixIcon: FIcon(
-          _conductivities.contains(ConnectivityResult.ethernet)
+          conductivities.contains(ConnectivityResult.ethernet)
               ? FAssets.icons.ethernetPort
               : FAssets.icons.unplug,
-          color: _conductivities.contains(ConnectivityResult.ethernet)
+          color: conductivities.contains(ConnectivityResult.ethernet)
               ? Colors.green
               : Colors.red,
         ),
@@ -91,9 +57,16 @@ class _ConnectivityState extends State<_Connectivity> {
       ));
     }
 
-    return Column(
-      spacing: 10,
-      children: tiles,
+    return tiles;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ConnectivityNotifier>(
+      builder: (context, myNotifier, child) => Column(
+        spacing: 10,
+        children: _getTiles(myNotifier.connectionStatus),
+      ),
     );
   }
 }
