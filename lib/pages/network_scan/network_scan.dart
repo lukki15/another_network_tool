@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
 import 'package:network_info_app/provider/connectivity_notifier.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -175,6 +176,8 @@ class _ActiveHostsGroup extends StatelessWidget {
                         activeHost: item,
                       )));
             },
+            onLongPress: () =>
+                Clipboard.setData(ClipboardData(text: item.address)),
           )
       ],
     );

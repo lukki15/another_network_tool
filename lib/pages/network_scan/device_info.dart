@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
 import 'package:network_info_app/pages/network_scan/future_text.dart';
 import 'package:network_tools/network_tools.dart';
@@ -12,6 +13,22 @@ class DeviceInfo extends StatelessWidget {
   });
 
   final ActiveHost activeHost;
+
+  static void _futureClipboard(Future<String?> future) {
+    future.then((value) {
+      if (value != null) {
+        Clipboard.setData(ClipboardData(text: value));
+      }
+    });
+  }
+
+  static void _futureClipboardVendor(Future<Vendor?> future) {
+    future.then((value) {
+      if (value != null) {
+        Clipboard.setData(ClipboardData(text: value.vendorName));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +50,16 @@ class DeviceInfo extends StatelessWidget {
                 FTile(
                   title: const Text('IP Address'),
                   details: Text(activeHost.address),
+                  onLongPress: () => Clipboard.setData(
+                      ClipboardData(text: activeHost.address)),
                 ),
                 FTile(
                   title: const Text('MAC Address'),
                   details: FutureText(
                       future: activeHost.getMacAddress(),
                       convertToString: (String? s) => s ?? "N/A"),
+                  onLongPress: () =>
+                      _futureClipboard(activeHost.getMacAddress()),
                 ),
                 FTile(
                   title: const Text('Vendor Name'),
@@ -46,6 +67,7 @@ class DeviceInfo extends StatelessWidget {
                       future: activeHost.vendor,
                       convertToString: (Vendor? v) =>
                           v == null ? "N/A" : v.vendorName),
+                  onLongPress: () => _futureClipboardVendor(activeHost.vendor),
                 ),
               ],
             ),

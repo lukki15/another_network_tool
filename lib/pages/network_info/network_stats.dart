@@ -34,6 +34,8 @@ class _NetworkStatsState extends State<NetworkStats> {
           (index) => FTile(
                 title: Text(_connectionStatus[index][0]),
                 details: Text(_connectionStatus[index][1]),
+                onLongPress: () => Clipboard.setData(
+                    ClipboardData(text: _connectionStatus[index][1])),
               )),
     );
   }
