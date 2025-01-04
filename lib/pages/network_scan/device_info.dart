@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
-import 'package:network_info_app/pages/network_scan/future_text.dart';
 import 'package:network_tools/network_tools.dart';
 
 import 'package:network_info_app/pages/network_scan/port_map.dart';
+import 'package:network_info_app/widget/future_text.dart';
 
 class DeviceInfo extends StatelessWidget {
   const DeviceInfo({

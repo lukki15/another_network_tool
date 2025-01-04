@@ -1,17 +1,17 @@
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:provider/provider.dart';
 
-import 'package:network_info_app/pages/network_info/network_stats.dart';
-import 'package:network_info_app/provider/connectivity_notifier.dart';
+import 'package:network_info_app/widget/network_info/connectivity_stats.dart';
 
-class NetworkInfo extends StatelessWidget {
-  const NetworkInfo({super.key});
+class ConnectivityInfoTiles extends StatelessWidget {
+  const ConnectivityInfoTiles({super.key, required this.conductivities});
 
-  List<Widget> _getTiles(List<ConnectivityResult> conductivities) {
+  final List<ConnectivityResult> conductivities;
+
+  List<Widget> _generateTiles() {
     List<Widget> tiles = [
       FTile(
         prefixIcon: FIcon(
@@ -27,7 +27,7 @@ class NetworkInfo extends StatelessWidget {
     ];
 
     if (conductivities.contains(ConnectivityResult.wifi)) {
-      tiles.add(NetworkStats());
+      tiles.add(ConnectivityStats());
     }
 
     if (Platform.isAndroid &&
@@ -62,11 +62,9 @@ class NetworkInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ConnectivityNotifier>(
-      builder: (context, myNotifier, child) => Column(
-        spacing: 10,
-        children: _getTiles(myNotifier.connectionStatus),
-      ),
+    return Column(
+      spacing: 10,
+      children: _generateTiles(),
     );
   }
 }

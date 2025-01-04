@@ -11,7 +11,7 @@ import 'package:network_tools/network_tools.dart';
 import 'package:provider/provider.dart';
 
 import 'package:network_info_app/pages/network_scan/device_info.dart';
-import 'package:network_info_app/pages/network_scan/future_text.dart';
+import 'package:network_info_app/widget/future_text.dart';
 
 class NetworkScan extends StatelessWidget {
   const NetworkScan({super.key});
