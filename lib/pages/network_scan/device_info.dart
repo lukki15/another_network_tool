@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
@@ -93,18 +95,18 @@ class _PortGroup extends StatefulWidget {
 
 class __PortGroupState extends State<_PortGroup> {
   late List<OpenPort> openPorts = [];
-  late Stream<ActiveHost> stream;
+  late StreamSubscription<ActiveHost> streamSubscription;
   bool isDone = false;
 
   @override
   void initState() {
     super.initState();
 
-    stream = PortScannerService.instance.scanPortsForSingleDevice(
+    final Stream<ActiveHost>stream = PortScannerService.instance.scanPortsForSingleDevice(
       widget.address,
     );
 
-    stream.listen((host) {
+    streamSubscription = stream.listen((host) {
       //Same host can be emitted multiple times
       setState(() {
         openPorts = [...openPorts, ...host.openPorts];
@@ -113,7 +115,13 @@ class __PortGroupState extends State<_PortGroup> {
       setState(() {
         isDone = true;
       });
-    }); // TODO: Don't forget to cancel the stream when not in use.
+    });
+  }
+
+  @override
+  void dispose(){
+    streamSubscription.cancel();
+    super.dispose();
   }
 
   @override
