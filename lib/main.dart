@@ -6,11 +6,11 @@ import 'package:network_info_app/pages/main_scaffold.dart';
 
 Future<void> main() async {
   await setupNetworkTools();
-  runApp(const _Application());
+  runApp(const Application());
 }
 
-class _Application extends StatelessWidget {
-  const _Application();
+class Application extends StatelessWidget {
+  const Application({super.key});
 
   @override
   Widget build(BuildContext context) => MaterialApp(
