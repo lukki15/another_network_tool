@@ -4,8 +4,10 @@
 
 [![Android](https://github.com/lukki15/another_network_tool/actions/workflows/android.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/android.yml)
 [![Linux](https://github.com/lukki15/another_network_tool/actions/workflows/linux.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/linux.yml)
+[![Coverage](https://github.com/lukki15/another_network_tool/actions/workflows/coverage.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/coverage.yml)
 
 [![Dependabot Updates](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates)
+[![codecov](https://codecov.io/gh/lukki15/another_network_tool/graph/badge.svg?token=PSAAIBG2Y8)](https://codecov.io/gh/lukki15/another_network_tool)
 
 Another Network Tool (ANT) is an open source application that provides detailed information about devices connected to your local Wi-Fi network.
 
