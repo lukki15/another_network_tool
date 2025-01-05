@@ -1,13 +1,13 @@
-# Network Info App
+# Another Network Tool - ANT
 
 ![icon](./assets/icon/icon.svg)
 
-[![Android](https://github.com/lukki15/network_info_app/actions/workflows/android.yml/badge.svg)](https://github.com/lukki15/network_info_app/actions/workflows/android.yml)
-[![Linux](https://github.com/lukki15/network_info_app/actions/workflows/linux.yml/badge.svg)](https://github.com/lukki15/network_info_app/actions/workflows/linux.yml)
+[![Android](https://github.com/lukki15/another_network_tool/actions/workflows/android.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/android.yml)
+[![Linux](https://github.com/lukki15/another_network_tool/actions/workflows/linux.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/linux.yml)
 
-[![Dependabot Updates](https://github.com/lukki15/network_info_app/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/lukki15/network_info_app/actions/workflows/dependabot/dependabot-updates)
+[![Dependabot Updates](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates)
 
-Network Info App is an open source application that provides detailed information about devices connected to your local Wi-Fi network.
+Another Network Tool (ANT) is an open source application that provides detailed information about devices connected to your local Wi-Fi network.
 
 ## Key Features
 
