@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
 
-import 'package:network_info_app/widget/future_text.dart';
+import 'package:another_network_tool/widget/future_text.dart';
 
 class FutureFTile extends FTile {
   FutureFTile({

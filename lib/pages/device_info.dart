@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
 import 'package:network_tools/network_tools.dart';
 
-import 'package:network_info_app/widget/future_text.dart';
-import 'package:network_info_app/widget/port_lists/port_group.dart';
+import 'package:another_network_tool/widget/future_text.dart';
+import 'package:another_network_tool/widget/port_lists/port_group.dart';
 
 class DeviceInfo extends StatelessWidget {
   const DeviceInfo({

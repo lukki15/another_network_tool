@@ -5,7 +5,7 @@ import 'package:forui/forui.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
 
-import 'package:network_info_app/widget/network_scan/active_hosts_group.dart';
+import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
 
 class DeviceList extends StatefulWidget {
   final bool hasWifi;

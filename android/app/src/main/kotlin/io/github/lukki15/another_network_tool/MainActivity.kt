@@ -1,4 +1,4 @@
-package com.example.network_info_app
+package io.github.lukki15.another_network_tool
 
 import io.flutter.embedding.android.FlutterActivity
 

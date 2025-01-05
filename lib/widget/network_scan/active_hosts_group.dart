@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
 import 'package:network_tools/network_tools.dart';
 
-import 'package:network_info_app/pages/device_info.dart';
-import 'package:network_info_app/widget/future_text.dart';
+import 'package:another_network_tool/pages/device_info.dart';
+import 'package:another_network_tool/widget/future_text.dart';
 
 class ActiveHostsGroup extends StatelessWidget {
   const ActiveHostsGroup({

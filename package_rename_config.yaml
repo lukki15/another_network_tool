@@ -1,0 +1,30 @@
+package_rename_config:
+  android:
+    app_name: Another Network Tool
+    package_name: io.github.lukki15.another_network_tool
+    lang: kotlin
+
+  ios:
+    app_name: Another Network Tool
+    bundle_name: another_network_tool
+    package_name: io.github.lukki15.another_network_tool
+
+  web:
+    app_name: Another Network Tool
+    description: Package to change project configurations.
+
+  linux:
+    app_name: Another Network Tool
+    package_name: io.github.lukki15.another_network_tool
+    exe_name: another_network_tool-linux-x64
+
+  windows:
+    app_name: Another Network Tool
+    organization: lukki15
+    copyright_notice: Copyright ©️ lukki15. All rights reserved.
+    exe_name: another_network_tool-win32
+
+  macos:
+    app_name: Another Network Tool
+    package_name: io.github.lukki15.another_network_tool
+    copyright_notice: Copyright ©️ lukki15. All rights reserved.

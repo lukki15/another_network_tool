@@ -6,7 +6,7 @@ import 'package:forui/forui.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:network_info_app/widget/network_info/future_ftile.dart';
+import 'package:another_network_tool/widget/network_info/future_ftile.dart';
 
 class ConnectivityStats extends StatefulWidget {
   const ConnectivityStats({super.key});

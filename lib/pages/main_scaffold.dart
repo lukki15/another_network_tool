@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:provider/provider.dart';
 
-import 'package:network_info_app/pages/network_info.dart';
-import 'package:network_info_app/pages/network_scan.dart';
-import 'package:network_info_app/provider/connectivity_notifier.dart';
+import 'package:another_network_tool/pages/network_info.dart';
+import 'package:another_network_tool/pages/network_scan.dart';
+import 'package:another_network_tool/provider/connectivity_notifier.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});

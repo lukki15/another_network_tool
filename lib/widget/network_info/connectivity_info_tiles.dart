@@ -4,7 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
-import 'package:network_info_app/widget/network_info/connectivity_stats.dart';
+import 'package:another_network_tool/widget/network_info/connectivity_stats.dart';
 
 class ConnectivityInfoTiles extends StatelessWidget {
   const ConnectivityInfoTiles({super.key, required this.conductivities});

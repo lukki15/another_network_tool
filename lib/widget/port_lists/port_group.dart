@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:network_tools/network_tools.dart';
 
-import 'package:network_info_app/widget/port_lists/port_map.dart';
+import 'package:another_network_tool/widget/port_lists/port_map.dart';
 
 class PortGroup extends StatefulWidget {
   const PortGroup({super.key, required this.address});
