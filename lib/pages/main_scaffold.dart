@@ -3,7 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:provider/provider.dart';
 
 import 'package:network_info_app/pages/network_info.dart';
-import 'package:network_info_app/pages/network_scan/network_scan.dart';
+import 'package:network_info_app/pages/network_scan.dart';
 import 'package:network_info_app/provider/connectivity_notifier.dart';
 
 class MainScaffold extends StatefulWidget {
