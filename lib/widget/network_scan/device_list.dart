@@ -16,7 +16,7 @@ class DeviceList extends StatefulWidget {
 }
 
 class _DeviceListState extends State<DeviceList> {
-  late StreamSubscription<ActiveHost> streamSubscription;
+  StreamSubscription<ActiveHost>? streamSubscription;
 
   double progress = 0;
   Set<ActiveHost> activeHosts = {};
@@ -72,7 +72,7 @@ class _DeviceListState extends State<DeviceList> {
   @override
   void didUpdateWidget(DeviceList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    streamSubscription.cancel();
+    streamSubscription?.cancel();
     if (widget.hasWifi) {
       setState(() {
         progress = 0;
@@ -85,7 +85,7 @@ class _DeviceListState extends State<DeviceList> {
 
   @override
   void dispose() {
-    streamSubscription.cancel();
+    streamSubscription?.cancel();
     super.dispose();
   }
 

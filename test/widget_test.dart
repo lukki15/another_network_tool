@@ -17,5 +17,9 @@ void main() {
     // starts with the network info screen
     expect(find.text('Network Info'), findsOneWidget);
     expect(find.text('Wi-Fi'), findsOneWidget);
+
+    // Action buttons
+    expect(find.text('Info'), findsOneWidget);
+    expect(find.text('List'), findsOneWidget);
   });
 }
