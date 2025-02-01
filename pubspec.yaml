@@ -7,7 +7,7 @@ environment:
   sdk: ^3.6.0
 
 dependencies:
-  connectivity_plus: ^6.1.1
+  connectivity_plus: ^6.1.2
   flutter:
     sdk: flutter
   forui: ^0.8.0
