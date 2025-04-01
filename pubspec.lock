@@ -385,10 +385,10 @@ packages:
     dependency: "direct dev"
     description:
       name: package_rename
-      sha256: b38bec432e29a2dd29a330bb715dcc41b67c7916719ef9f95276704f32460572
+      sha256: c34bdf8cd341209c216c495b97b110b3b8eccd9c7c5f1023c37b2ab310722636
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.0"
+    version: "1.9.0"
   path:
     dependency: transitive
     description:

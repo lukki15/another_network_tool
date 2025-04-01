@@ -22,7 +22,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   icons_launcher: ^3.0.0
-  package_rename: ^1.8.0
+  package_rename: ^1.9.0
 
 flutter:
   assets:
