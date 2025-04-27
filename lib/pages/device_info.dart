@@ -9,10 +9,7 @@ import 'package:another_network_tool/widget/future_text.dart';
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
 
 class DeviceInfo extends StatelessWidget {
-  const DeviceInfo({
-    super.key,
-    required this.activeHost,
-  });
+  const DeviceInfo({super.key, required this.activeHost});
 
   final ActiveHost activeHost;
 
@@ -21,7 +18,9 @@ class DeviceInfo extends StatelessWidget {
     return FScaffold(
       header: FHeader.nested(
         title: FutureText(
-            future: activeHost.deviceName, convertToString: (String s) => s),
+          future: activeHost.deviceName,
+          convertToString: (String s) => s,
+        ),
         prefixActions: [
           FHeaderAction.back(onPress: () => Navigator.pop(context)),
         ],
@@ -30,11 +29,10 @@ class DeviceInfo extends StatelessWidget {
         child: Column(
           spacing: 20,
           children: [
-            _DeviceInfoDetail(
-              activeHost: activeHost,
-            ),
+            _DeviceInfoDetail(activeHost: activeHost),
             PortGroup(
               address: activeHost.address,
+              portScannerService: PortScannerService.instance,
             ),
             SizedBox(height: 10),
           ],
@@ -73,21 +71,23 @@ class _DeviceInfoDetail extends StatelessWidget {
         FTile(
           title: const Text('IP Address'),
           details: Text(activeHost.address),
-          onLongPress: () =>
-              Clipboard.setData(ClipboardData(text: activeHost.address)),
+          onLongPress:
+              () => Clipboard.setData(ClipboardData(text: activeHost.address)),
         ),
         FTile(
           title: const Text('MAC Address'),
           details: FutureText(
-              future: activeHost.getMacAddress(),
-              convertToString: (String? s) => s ?? "N/A"),
+            future: activeHost.getMacAddress(),
+            convertToString: (String? s) => s ?? "N/A",
+          ),
           onLongPress: () => _futureClipboard(activeHost.getMacAddress()),
         ),
         FTile(
           title: const Text('Vendor Name'),
           details: FutureText(
-              future: activeHost.vendor,
-              convertToString: (Vendor? v) => v == null ? "N/A" : v.vendorName),
+            future: activeHost.vendor,
+            convertToString: (Vendor? v) => v == null ? "N/A" : v.vendorName,
+          ),
           onLongPress: () => _futureClipboardVendor(activeHost.vendor),
         ),
       ],

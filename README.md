@@ -62,6 +62,13 @@ $ sdkmanager --install "platform-tools" "platforms;android-{xx}" "build-tools;{x
 $ sudo ${ANDROID_HOME}/platform-tools/adb start-server
 ```
 
+### Run unit-tests
+
+```
+$ flutter pub run build_runner build
+$ flutter test
+```
+
 ## Technologies Used
 
 - [Flutter](https://flutter.dev) framework

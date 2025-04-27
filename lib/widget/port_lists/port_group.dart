@@ -7,9 +7,14 @@ import 'package:network_tools/network_tools.dart';
 import 'package:another_network_tool/widget/port_lists/port_map.dart';
 
 class PortGroup extends StatefulWidget {
-  const PortGroup({super.key, required this.address});
+  const PortGroup({
+    super.key,
+    required this.address,
+    required this.portScannerService,
+  });
 
   final String address;
+  final PortScannerService portScannerService;
 
   @override
   State<PortGroup> createState() => _PortGroupState();
@@ -24,21 +29,22 @@ class _PortGroupState extends State<PortGroup> {
   void initState() {
     super.initState();
 
-    final Stream<ActiveHost> stream =
-        PortScannerService.instance.scanPortsForSingleDevice(
-      widget.address,
-    );
+    final Stream<ActiveHost> stream = widget.portScannerService
+        .scanPortsForSingleDevice(widget.address);
 
-    streamSubscription = stream.listen((host) {
-      //Same host can be emitted multiple times
-      setState(() {
-        openPorts = [...openPorts, ...host.openPorts];
-      });
-    }, onDone: () {
-      setState(() {
-        isDone = true;
-      });
-    });
+    streamSubscription = stream.listen(
+      (host) {
+        //Same host can be emitted multiple times
+        setState(() {
+          openPorts = [...openPorts, ...host.openPorts];
+        });
+      },
+      onDone: () {
+        setState(() {
+          isDone = true;
+        });
+      },
+    );
   }
 
   @override
@@ -50,14 +56,19 @@ class _PortGroupState extends State<PortGroup> {
   @override
   Widget build(BuildContext context) {
     return FTileGroup(
-        label: const Text("Open Ports"), children: getPortTilesList());
+      label: const Text("Open Ports"),
+      children: getPortTilesList(),
+    );
   }
 
   List<FTile> getPortTilesList() {
     if (openPorts.isEmpty && isDone) {
       return [
-        generatePortTile(false, PortScannerService.defaultStartPort,
-            PortScannerService.defaultEndPort)
+        generatePortTile(
+          false,
+          PortScannerService.defaultStartPort,
+          PortScannerService.defaultEndPort,
+        ),
       ];
     }
 
@@ -69,8 +80,13 @@ class _PortGroupState extends State<PortGroup> {
         if (openPorts[i].port + 1 == openPorts[i + 1].port - 1) {
           tiles.add(generatePortTile(false, openPorts[i].port + 1, null));
         } else {
-          tiles.add(generatePortTile(
-              false, openPorts[i].port + 1, openPorts[i + 1].port - 1));
+          tiles.add(
+            generatePortTile(
+              false,
+              openPorts[i].port + 1,
+              openPorts[i + 1].port - 1,
+            ),
+          );
         }
       }
     }
@@ -80,13 +96,21 @@ class _PortGroupState extends State<PortGroup> {
             PortScannerService.defaultEndPort) {
       if (openPorts[openPorts.length - 1].port + 1 ==
           PortScannerService.defaultEndPort) {
-        tiles.add(generatePortTile(
-            false, openPorts[openPorts.length - 1].port + 1, null));
-      } else {
-        tiles.add(generatePortTile(
+        tiles.add(
+          generatePortTile(
             false,
             openPorts[openPorts.length - 1].port + 1,
-            PortScannerService.defaultEndPort));
+            null,
+          ),
+        );
+      } else {
+        tiles.add(
+          generatePortTile(
+            false,
+            openPorts[openPorts.length - 1].port + 1,
+            PortScannerService.defaultEndPort,
+          ),
+        );
       }
     }
 
@@ -99,13 +123,15 @@ class _PortGroupState extends State<PortGroup> {
 
   static FTile generatePortTile(bool isOpen, int port, int? nextPort) {
     return FTile(
-      prefixIcon: isOpen
-          ? FIcon(FAssets.icons.circleDot, color: Colors.green)
-          : FIcon(FAssets.icons.circleDashed, color: Colors.red),
+      prefixIcon:
+          isOpen
+              ? FIcon(FAssets.icons.circleDot, color: Colors.green)
+              : FIcon(FAssets.icons.circleDashed, color: Colors.red),
       title: nextPort == null ? Text("$port") : Text("$port - $nextPort"),
-      subtitle: isOpen && nextPort == null && portMap.containsKey(port)
-          ? Text(portMap[port]!)
-          : null,
+      subtitle:
+          isOpen && nextPort == null && portMap.containsKey(port)
+              ? Text(portMap[port]!)
+              : null,
     );
   }
 }

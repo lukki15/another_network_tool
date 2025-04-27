@@ -37,6 +37,9 @@ jobs:
       - name: Download and generate build dependencies
         run: bash setup.bash
 
+      - name: Run build runner
+        run: flutter pub run build_runner build
+
       - name: Run tests
         run: flutter test --coverage
 
