@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
 
 import 'package:flutter/material.dart';
@@ -21,8 +19,7 @@ void main() {
       portScannerService = MockPortScannerService();
     });
 
-    testWidgets('shows empty state initially', (WidgetTester t) async {
-      // Arrange
+    void setupPortScanExpectation(Stream<ActiveHost> hostStream) {
       when(
         portScannerService.scanPortsForSingleDevice(
           any,
@@ -35,9 +32,10 @@ void main() {
           ),
           async: anyNamed('async'),
         ),
-      ).thenAnswer((_) => Stream<ActiveHost>.empty());
+      ).thenAnswer((_) => hostStream);
+    }
 
-      // Act
+    Future<void> pumpPortGroup(WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
           home: PortGroup(
@@ -46,13 +44,23 @@ void main() {
           ),
         ),
       );
-      await t.pump();
+      await t.pumpAndSettle();
+    }
 
-      // Assert
+    void assertBasicLayout(WidgetTester t) {
       expect(find.byType(FTileGroup), findsOneWidget);
       expect(find.text("Open Ports"), findsOneWidget);
+    }
 
-      // Verify the default range tile
+    testWidgets('shows empty state initially', (WidgetTester t) async {
+      // Arrange
+      setupPortScanExpectation(Stream<ActiveHost>.empty());
+
+      // Act & Assert
+      await pumpPortGroup(t);
+      assertBasicLayout(t);
+
+      // Expected port tiles
       expect(
         find.text(
           '${PortScannerService.defaultStartPort} - ${PortScannerService.defaultEndPort}',
@@ -69,44 +77,16 @@ void main() {
 
     testWidgets('shows discovered ports', (WidgetTester t) async {
       // Arrange
-      var activeHost = MockActiveHost();
+      final activeHost = MockActiveHost();
       when(
         activeHost.openPorts,
       ).thenAnswer((_) => [OpenPort(80, isOpen: true)]);
+      setupPortScanExpectation(Stream.fromIterable([activeHost]));
 
-      when(
-        portScannerService.scanPortsForSingleDevice(
-          any,
-          startPort: anyNamed('startPort'),
-          endPort: anyNamed('endPort'),
-          progressCallback: anyNamed('progressCallback'),
-          timeout: anyNamed('timeout'),
-          resultsInAddressAscendingOrder: anyNamed(
-            'resultsInAddressAscendingOrder',
-          ),
-          async: anyNamed('async'),
-        ),
-      ).thenAnswer((_) => Stream.fromIterable([activeHost]));
+      // Act & Assert
+      await pumpPortGroup(t);
+      assertBasicLayout(t);
 
-      // Act
-      await t.pumpWidget(
-        MaterialApp(
-          home: PortGroup(
-            address: '127.0.0.1',
-            portScannerService: portScannerService,
-          ),
-        ),
-      );
-
-      // Wait for the stream to complete
-      await t.pumpAndSettle();
-
-      // Assert
-      expect(find.byType(FTileGroup), findsOneWidget);
-      expect(find.text("Open Ports"), findsOneWidget);
-
-      // Verify the open port tile
-      // expect(find.byIcon(FAssets.icons.circleDot), findsOneWidget);
       expect(find.text('80'), findsOneWidget);
       expect(find.text('http'), findsOneWidget);
       expect(
@@ -119,43 +99,16 @@ void main() {
 
     testWidgets('shows multiple discovered ports', (WidgetTester t) async {
       // Arrange
-      var activeHost = MockActiveHost();
+      final activeHost = MockActiveHost();
       when(activeHost.openPorts).thenAnswer(
         (_) => [OpenPort(80, isOpen: true), OpenPort(443, isOpen: true)],
       );
+      setupPortScanExpectation(Stream.fromIterable([activeHost]));
 
-      when(
-        portScannerService.scanPortsForSingleDevice(
-          any,
-          startPort: anyNamed('startPort'),
-          endPort: anyNamed('endPort'),
-          progressCallback: anyNamed('progressCallback'),
-          timeout: anyNamed('timeout'),
-          resultsInAddressAscendingOrder: anyNamed(
-            'resultsInAddressAscendingOrder',
-          ),
-          async: anyNamed('async'),
-        ),
-      ).thenAnswer((_) => Stream.fromIterable([activeHost]));
+      // Act & Assert
+      await pumpPortGroup(t);
+      assertBasicLayout(t);
 
-      // Act
-      await t.pumpWidget(
-        MaterialApp(
-          home: PortGroup(
-            address: '127.0.0.1',
-            portScannerService: portScannerService,
-          ),
-        ),
-      );
-
-      // Wait for the stream to complete
-      await t.pumpAndSettle();
-
-      // Assert
-      expect(find.byType(FTileGroup), findsOneWidget);
-      expect(find.text("Open Ports"), findsOneWidget);
-
-      // Verify the open port tiles
       expect(find.text('80'), findsOneWidget);
       expect(find.text('http'), findsOneWidget);
       expect(find.text('443'), findsOneWidget);
@@ -167,7 +120,6 @@ void main() {
         findsNWidgets(2),
       );
 
-      // Verify the closed port ranges
       expect(find.text('81 - 442'), findsOneWidget);
       expect(
         find.text('444 - ${PortScannerService.defaultEndPort}'),
@@ -183,7 +135,7 @@ void main() {
 
     testWidgets('show single gapped discovered ports', (WidgetTester t) async {
       // Arrange
-      var activeHost = MockActiveHost();
+      final activeHost = MockActiveHost();
       when(activeHost.openPorts).thenAnswer(
         (_) => [
           OpenPort(80, isOpen: true),
@@ -191,39 +143,12 @@ void main() {
           OpenPort(PortScannerService.defaultEndPort - 1, isOpen: true),
         ],
       );
+      setupPortScanExpectation(Stream.fromIterable([activeHost]));
 
-      when(
-        portScannerService.scanPortsForSingleDevice(
-          any,
-          startPort: anyNamed('startPort'),
-          endPort: anyNamed('endPort'),
-          progressCallback: anyNamed('progressCallback'),
-          timeout: anyNamed('timeout'),
-          resultsInAddressAscendingOrder: anyNamed(
-            'resultsInAddressAscendingOrder',
-          ),
-          async: anyNamed('async'),
-        ),
-      ).thenAnswer((_) => Stream.fromIterable([activeHost]));
+      // Act & Assert
+      await pumpPortGroup(t);
+      assertBasicLayout(t);
 
-      // Act
-      await t.pumpWidget(
-        MaterialApp(
-          home: PortGroup(
-            address: '127.0.0.1',
-            portScannerService: portScannerService,
-          ),
-        ),
-      );
-
-      // Wait for the stream to complete
-      await t.pumpAndSettle();
-
-      // Assert
-      expect(find.byType(FTileGroup), findsOneWidget);
-      expect(find.text("Open Ports"), findsOneWidget);
-
-      // Verify the open port tiles
       expect(find.text('80'), findsOneWidget);
       expect(find.text('82'), findsOneWidget);
       expect(
@@ -237,7 +162,6 @@ void main() {
         findsNWidgets(3),
       );
 
-      // Verify the closed port ranges
       expect(find.text('81'), findsOneWidget);
       expect(
         find.text('83 - ${PortScannerService.defaultEndPort - 2}'),
