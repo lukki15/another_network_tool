@@ -21,6 +21,7 @@
 		"vscode": {
 			"extensions": [
 				"Dart-Code.flutter",
+				"flutterando.flutter-coverage",
 				"mhutchie.git-graph",
 				"streetsidesoftware.code-spell-checker",
 				"vivaxy.vscode-conventional-commits"

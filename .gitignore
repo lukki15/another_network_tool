@@ -52,3 +52,6 @@ core
 
 # Generated mock files
 /test/**/*.mocks.dart
+
+# Coverage file
+coverage/lcov.info
