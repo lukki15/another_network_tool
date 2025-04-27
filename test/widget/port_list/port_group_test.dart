@@ -180,5 +180,76 @@ void main() {
         findsNWidgets(2),
       );
     });
+
+    testWidgets('show single gapped discovered ports', (WidgetTester t) async {
+      // Arrange
+      var activeHost = MockActiveHost();
+      when(activeHost.openPorts).thenAnswer(
+        (_) => [
+          OpenPort(80, isOpen: true),
+          OpenPort(82, isOpen: true),
+          OpenPort(PortScannerService.defaultEndPort - 1, isOpen: true),
+        ],
+      );
+
+      when(
+        portScannerService.scanPortsForSingleDevice(
+          any,
+          startPort: anyNamed('startPort'),
+          endPort: anyNamed('endPort'),
+          progressCallback: anyNamed('progressCallback'),
+          timeout: anyNamed('timeout'),
+          resultsInAddressAscendingOrder: anyNamed(
+            'resultsInAddressAscendingOrder',
+          ),
+          async: anyNamed('async'),
+        ),
+      ).thenAnswer((_) => Stream.fromIterable([activeHost]));
+
+      // Act
+      await t.pumpWidget(
+        MaterialApp(
+          home: PortGroup(
+            address: '127.0.0.1',
+            portScannerService: portScannerService,
+          ),
+        ),
+      );
+
+      // Wait for the stream to complete
+      await t.pumpAndSettle();
+
+      // Assert
+      expect(find.byType(FTileGroup), findsOneWidget);
+      expect(find.text("Open Ports"), findsOneWidget);
+
+      // Verify the open port tiles
+      expect(find.text('80'), findsOneWidget);
+      expect(find.text('82'), findsOneWidget);
+      expect(
+        find.text("${PortScannerService.defaultEndPort - 1}"),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is FIcon && widget.color == Colors.green,
+        ),
+        findsNWidgets(3),
+      );
+
+      // Verify the closed port ranges
+      expect(find.text('81'), findsOneWidget);
+      expect(
+        find.text('83 - ${PortScannerService.defaultEndPort - 2}'),
+        findsOneWidget,
+      );
+      expect(find.text("${PortScannerService.defaultEndPort}"), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is FIcon && widget.color == Colors.red,
+        ),
+        findsNWidgets(3),
+      );
+    });
   });
 }
