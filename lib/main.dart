@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
+import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/setup_network_tools.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
 
 Future<void> main() async {
   await setupNetworkTools();
-  runApp(const Application());
+  runApp(Application(portScannerService: PortScannerService.instance));
 }
 
 class Application extends StatelessWidget {
-  const Application({super.key});
+  const Application({super.key, required this.portScannerService});
+
+  final PortScannerService portScannerService;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -18,6 +21,6 @@ class Application extends StatelessWidget {
           data: FThemes.zinc.light,
           child: child!,
         ),
-        home: const MainScaffold(),
+        home: MainScaffold(portScannerService: portScannerService),
       );
 }

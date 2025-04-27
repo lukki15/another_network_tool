@@ -6,13 +6,24 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/main.dart';
 
+@GenerateNiceMocks([MockSpec<PortScannerService>()])
+import './widget_test.mocks.dart';
+
 void main() {
+  late MockPortScannerService portScannerService;
+
+  setUp(() {
+    portScannerService = MockPortScannerService();
+  });
+
   testWidgets('Application smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const Application());
+    await tester.pumpWidget(Application(portScannerService:portScannerService));
 
     // starts with the network info screen
     expect(find.text('Network Info'), findsOneWidget);

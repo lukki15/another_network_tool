@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:provider/provider.dart';
+import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/pages/network_info.dart';
 import 'package:another_network_tool/pages/network_scan.dart';
 import 'package:another_network_tool/provider/connectivity_notifier.dart';
 
 class MainScaffold extends StatefulWidget {
-  const MainScaffold({super.key});
+  const MainScaffold({super.key, required this.portScannerService});
+
+  final PortScannerService portScannerService;
 
   @override
   State<MainScaffold> createState() => _MainScaffoldState();
@@ -18,10 +21,6 @@ class _MainScaffoldState extends State<MainScaffold> {
   static const headers = [
     FHeader(title: Text('Network Info')),
     FHeader(title: Text('Network Scan')),
-  ];
-  static const contents = [
-    NetworkInfo(),
-    NetworkScan(),
   ];
   final footers = [
     FBottomNavigationBarItem(
@@ -35,16 +34,23 @@ class _MainScaffoldState extends State<MainScaffold> {
   ];
 
   @override
-  Widget build(BuildContext context) => FScaffold(
-        header: headers[index],
-        content: ChangeNotifierProvider(
-          create: (_) => ConnectivityNotifier(),
-          child: contents[index],
-        ),
-        footer: FBottomNavigationBar(
-          index: index,
-          onChange: (index) => setState(() => this.index = index),
-          children: footers,
-        ),
-      );
+  Widget build(BuildContext context) {
+    final contents = [
+      NetworkInfo(),
+      NetworkScan(portScannerService: widget.portScannerService),
+    ];
+
+    return FScaffold(
+      header: headers[index],
+      content: ChangeNotifierProvider(
+        create: (_) => ConnectivityNotifier(),
+        child: contents[index],
+      ),
+      footer: FBottomNavigationBar(
+        index: index,
+        onChange: (index) => setState(() => this.index = index),
+        children: footers,
+      ),
+    );
+  }
 }

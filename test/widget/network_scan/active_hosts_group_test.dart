@@ -9,9 +9,16 @@ import 'package:forui/forui.dart';
 
 @GenerateNiceMocks([MockSpec<ActiveHost>()])
 @GenerateNiceMocks([MockSpec<NavigatorObserver>()])
+@GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './active_hosts_group_test.mocks.dart';
 
 void main() {
+  late MockPortScannerService portScannerService;
+
+  setUp(() {
+    portScannerService = MockPortScannerService();
+  });
+
   group('ActiveHostsGroup Tests', () {
     Future<MockNavigatorObserver> pumpActiveHostsGroup(
       WidgetTester t,
@@ -21,7 +28,10 @@ void main() {
       await t.pumpWidget(
         MaterialApp(
           navigatorObservers: [mockObserver],
-          home: ActiveHostsGroup(activeHosts: activeHosts),
+          home: ActiveHostsGroup(
+            activeHosts: activeHosts,
+            portScannerService: portScannerService,
+          ),
         ),
       );
 
@@ -79,16 +89,20 @@ void main() {
       var mockObserver = await pumpActiveHostsGroup(t, {makeMockActiveHost()});
 
       var tile = find.byType(FTile);
-      await t.press(tile);
+      expect(tile, findsOneWidget);
+
+      await t.tap(tile);
       await t.pumpAndSettle();
 
-      verify(mockObserver.didPush(any, any)).called(1);
+      verify(mockObserver.didPush(any, any)).called(2);
     });
 
     testWidgets('on long press', (WidgetTester t) async {
       await pumpActiveHostsGroup(t, {makeMockActiveHost()});
 
       var tile = find.byType(FTile);
+      expect(tile, findsOneWidget);
+
       await t.longPress(tile);
       await t.pumpAndSettle();
 

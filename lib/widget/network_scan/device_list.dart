@@ -9,7 +9,8 @@ import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart
 
 class DeviceList extends StatefulWidget {
   final bool hasWifi;
-  const DeviceList({super.key, required this.hasWifi});
+  final PortScannerService portScannerService;
+  const DeviceList({super.key, required this.hasWifi, required this.portScannerService});
 
   @override
   State<DeviceList> createState() => _DeviceListState();
@@ -117,7 +118,7 @@ class _DeviceListState extends State<DeviceList> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ActiveHostsGroup(activeHosts: activeHosts),
+                ActiveHostsGroup(activeHosts: activeHosts, portScannerService: widget.portScannerService),
                 SizedBox(height: 20),
               ],
             ),

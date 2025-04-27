@@ -12,9 +12,11 @@ class ActiveHostsGroup extends StatelessWidget {
   const ActiveHostsGroup({
     super.key,
     required this.activeHosts,
+    required this.portScannerService,
   });
 
   final Set<ActiveHost> activeHosts;
+  final PortScannerService portScannerService;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,7 @@ class ActiveHostsGroup extends StatelessWidget {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => DeviceInfo(
                         activeHost: item,
+                        portScannerService: portScannerService,
                       )));
             },
             onLongPress: () =>

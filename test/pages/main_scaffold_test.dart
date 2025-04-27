@@ -7,15 +7,26 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/pages/main_scaffold.dart';
 import 'package:another_network_tool/setup_network_tools.dart';
 
+@GenerateNiceMocks([MockSpec<PortScannerService>()])
+import './main_scaffold_test.mocks.dart';
+
 void main() {
+  late MockPortScannerService portScannerService;
+
+  setUp(() {
+    portScannerService = MockPortScannerService();
+  });
+  
   testWidgets('Switch pages', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     setupNetworkTools();
-    await tester.pumpWidget(const MaterialApp(home: MainScaffold()));
+    await tester.pumpWidget(MaterialApp(home: MainScaffold(portScannerService: portScannerService,)));
 
     // Check if the Network Info screen is visible
     expect(find.text('Network Info'), findsOneWidget);

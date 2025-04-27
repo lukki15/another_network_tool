@@ -9,9 +9,10 @@ import 'package:another_network_tool/widget/future_text.dart';
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
 
 class DeviceInfo extends StatelessWidget {
-  const DeviceInfo({super.key, required this.activeHost});
+  const DeviceInfo({super.key, required this.activeHost, required this.portScannerService});
 
   final ActiveHost activeHost;
+  final PortScannerService portScannerService;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class DeviceInfo extends StatelessWidget {
             _DeviceInfoDetail(activeHost: activeHost),
             PortGroup(
               address: activeHost.address,
-              portScannerService: PortScannerService.instance,
+              portScannerService: portScannerService,
             ),
             SizedBox(height: 10),
           ],
