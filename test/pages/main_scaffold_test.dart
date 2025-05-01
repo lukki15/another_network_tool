@@ -22,11 +22,13 @@ void main() {
   setUp(() {
     portScannerService = MockPortScannerService();
   });
-  
+
   testWidgets('Switch pages', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     setupNetworkTools();
-    await tester.pumpWidget(MaterialApp(home: MainScaffold(portScannerService: portScannerService,)));
+    await tester.pumpWidget(
+      MaterialApp(home: MainScaffold(portScannerService: portScannerService)),
+    );
 
     // Check if the Network Info screen is visible
     expect(find.text('Network Info'), findsOneWidget);

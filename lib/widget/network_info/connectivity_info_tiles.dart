@@ -18,12 +18,13 @@ class ConnectivityInfoTiles extends StatelessWidget {
           conductivities.contains(ConnectivityResult.wifi)
               ? FAssets.icons.wifi
               : FAssets.icons.wifiOff,
-          color: conductivities.contains(ConnectivityResult.wifi)
-              ? Colors.green
-              : Colors.red,
+          color:
+              conductivities.contains(ConnectivityResult.wifi)
+                  ? Colors.green
+                  : Colors.red,
         ),
         title: const Text('Wi-Fi'),
-      )
+      ),
     ];
 
     if (conductivities.contains(ConnectivityResult.wifi)) {
@@ -33,28 +34,30 @@ class ConnectivityInfoTiles extends StatelessWidget {
     if (Platform.isAndroid &&
         conductivities.contains(ConnectivityResult.mobile)) {
       tiles.add(SizedBox(height: 10));
-      tiles.add(FTile(
-        prefixIcon: FIcon(
-          FAssets.icons.signal,
-          color: Colors.green,
+      tiles.add(
+        FTile(
+          prefixIcon: FIcon(FAssets.icons.signal, color: Colors.green),
+          title: const Text('Cellular'),
         ),
-        title: const Text('Cellular'),
-      ));
+      );
     }
 
     if (Platform.isLinux) {
       tiles.add(SizedBox(height: 10));
-      tiles.add(FTile(
-        prefixIcon: FIcon(
-          conductivities.contains(ConnectivityResult.ethernet)
-              ? FAssets.icons.ethernetPort
-              : FAssets.icons.unplug,
-          color: conductivities.contains(ConnectivityResult.ethernet)
-              ? Colors.green
-              : Colors.red,
+      tiles.add(
+        FTile(
+          prefixIcon: FIcon(
+            conductivities.contains(ConnectivityResult.ethernet)
+                ? FAssets.icons.ethernetPort
+                : FAssets.icons.unplug,
+            color:
+                conductivities.contains(ConnectivityResult.ethernet)
+                    ? Colors.green
+                    : Colors.red,
+          ),
+          title: const Text('Ethernet'),
         ),
-        title: const Text('Ethernet'),
-      ));
+      );
     }
 
     return tiles;
@@ -62,9 +65,6 @@ class ConnectivityInfoTiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 10,
-      children: _generateTiles(),
-    );
+    return Column(spacing: 10, children: _generateTiles());
   }
 }

@@ -23,7 +23,9 @@ void main() {
 
   testWidgets('Application smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(Application(portScannerService:portScannerService));
+    await tester.pumpWidget(
+      Application(portScannerService: portScannerService),
+    );
 
     // starts with the network info screen
     expect(find.text('Network Info'), findsOneWidget);

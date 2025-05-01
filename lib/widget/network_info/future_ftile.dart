@@ -11,14 +11,14 @@ class FutureFTile extends FTile {
     required Future<String?> future,
     required String errorMessage,
   }) : super(
-          title: Text(title),
-          details: FutureText(
-            future: future,
-            convertToString: (String? s) => s ?? "N/A",
-            errorMessage: errorMessage,
-          ),
-          onLongPress: () => _setClipboardData(future),
-        );
+         title: Text(title),
+         details: FutureText(
+           future: future,
+           convertToString: (String? s) => s ?? "N/A",
+           errorMessage: errorMessage,
+         ),
+         onLongPress: () => _setClipboardData(future),
+       );
 
   static void _setClipboardData(Future<String?> future) async {
     try {

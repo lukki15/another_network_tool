@@ -10,8 +10,10 @@ class NetworkInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ConnectivityNotifier>(
-      builder: (context, myNotifier, child) =>
-          ConnectivityInfoTiles(conductivities: myNotifier.connectionStatus),
+      builder:
+          (context, myNotifier, child) => ConnectivityInfoTiles(
+            conductivities: myNotifier.connectionStatus,
+          ),
     );
   }
 }

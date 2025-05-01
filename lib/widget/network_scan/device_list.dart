@@ -10,7 +10,11 @@ import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart
 class DeviceList extends StatefulWidget {
   final bool hasWifi;
   final PortScannerService portScannerService;
-  const DeviceList({super.key, required this.hasWifi, required this.portScannerService});
+  const DeviceList({
+    super.key,
+    required this.hasWifi,
+    required this.portScannerService,
+  });
 
   @override
   State<DeviceList> createState() => _DeviceListState();
@@ -42,26 +46,29 @@ class _DeviceListState extends State<DeviceList> {
     }
 
     final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-    final Stream<ActiveHost> stream =
-        HostScannerService.instance.getAllPingableDevicesAsync(
-      subnet,
-      progressCallback: (p) {
+    final Stream<ActiveHost> stream = HostScannerService.instance
+        .getAllPingableDevicesAsync(
+          subnet,
+          progressCallback: (p) {
+            setState(() {
+              progress = p;
+            });
+          },
+        );
+
+    streamSubscription = stream.listen(
+      (host) {
+        //Same host can be emitted multiple times
         setState(() {
-          progress = p;
+          activeHosts.add(host);
+        });
+      },
+      onDone: () {
+        setState(() {
+          isDone = true;
         });
       },
     );
-
-    streamSubscription = stream.listen((host) {
-      //Same host can be emitted multiple times
-      setState(() {
-        activeHosts.add(host);
-      });
-    }, onDone: () {
-      setState(() {
-        isDone = true;
-      });
-    });
   }
 
   @override
@@ -93,7 +100,8 @@ class _DeviceListState extends State<DeviceList> {
   @override
   Widget build(BuildContext context) {
     final progressPercent = progress / 100.0;
-    final int currentIP = HostScannerService.defaultFirstHostId +
+    final int currentIP =
+        HostScannerService.defaultFirstHostId +
         ((HostScannerService.defaultLastHostId -
                     HostScannerService.defaultFirstHostId) *
                 progressPercent)
@@ -103,22 +111,29 @@ class _DeviceListState extends State<DeviceList> {
       children: [
         widget.hasWifi
             ? FTile(
-                title: FProgress(value: isDone ? 1.0 : progressPercent),
-                subtitle: isDone
-                    ? const Text("scanning done")
-                    : Text(
-                        "scanning $currentIP / ${HostScannerService.defaultLastHostId}"),
-              )
+              title: FProgress(value: isDone ? 1.0 : progressPercent),
+              subtitle:
+                  isDone
+                      ? const Text("scanning done")
+                      : Text(
+                        "scanning $currentIP / ${HostScannerService.defaultLastHostId}",
+                      ),
+            )
             : FTile(
-                title: const Text("Wi-Fi Unavailable"),
-                subtitle: const Text(
-                    "Network scanning will commence upon availability")),
+              title: const Text("Wi-Fi Unavailable"),
+              subtitle: const Text(
+                "Network scanning will commence upon availability",
+              ),
+            ),
         SizedBox(height: 20),
         Expanded(
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ActiveHostsGroup(activeHosts: activeHosts, portScannerService: widget.portScannerService),
+                ActiveHostsGroup(
+                  activeHosts: activeHosts,
+                  portScannerService: widget.portScannerService,
+                ),
                 SizedBox(height: 20),
               ],
             ),

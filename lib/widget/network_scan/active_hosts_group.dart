@@ -26,26 +26,33 @@ class ActiveHostsGroup extends StatelessWidget {
           FTile(
             prefixIcon: FIcon(FAssets.icons.monitorSmartphone),
             title: FutureText(
-                future: item.deviceName, convertToString: (String s) => s),
+              future: item.deviceName,
+              convertToString: (String s) => s,
+            ),
             subtitle: Text(item.address),
-            details: Platform.isAndroid
-                // Since Android SDK 32, apps are no longer allowed to access the MAC address.
-                ? Text("")
-                : FutureText(
-                    future: item.vendor,
-                    convertToString: (Vendor? v) =>
-                        v == null ? "" : v.vendorName,
-                  ),
+            details:
+                Platform.isAndroid
+                    // Since Android SDK 32, apps are no longer allowed to access the MAC address.
+                    ? Text("")
+                    : FutureText(
+                      future: item.vendor,
+                      convertToString:
+                          (Vendor? v) => v == null ? "" : v.vendorName,
+                    ),
             onPress: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DeviceInfo(
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder:
+                      (context) => DeviceInfo(
                         activeHost: item,
                         portScannerService: portScannerService,
-                      )));
+                      ),
+                ),
+              );
             },
-            onLongPress: () =>
-                Clipboard.setData(ClipboardData(text: item.address)),
-          )
+            onLongPress:
+                () => Clipboard.setData(ClipboardData(text: item.address)),
+          ),
       ],
     );
   }

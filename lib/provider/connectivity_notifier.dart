@@ -12,8 +12,9 @@ class ConnectivityNotifier with ChangeNotifier {
 
   ConnectivityNotifier() {
     _initConnectivity();
-    _streamSubscription = _connectivity.onConnectivityChanged
-        .listen((List<ConnectivityResult> result) {
+    _streamSubscription = _connectivity.onConnectivityChanged.listen((
+      List<ConnectivityResult> result,
+    ) {
       _connectionStatus = result;
       notifyListeners();
     });

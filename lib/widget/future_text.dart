@@ -15,25 +15,27 @@ class FutureText<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: future,
-        builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Text('No future set.');
-            case ConnectionState.waiting:
-              return CircularProgressIndicator();
-            case ConnectionState.active:
-              return Text('N/A');
-            case ConnectionState.done:
-              if (snapshot.hasError) {
-                return Text(errorMessage);
-              }
-              if (snapshot.data != null) {
-                return Text(convertToString(snapshot
-                    .data!)); // ignore: null_check_on_nullable_type_parameter
-              }
-              return Text("-");
-          }
-        });
+      future: future,
+      builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Text('No future set.');
+          case ConnectionState.waiting:
+            return CircularProgressIndicator();
+          case ConnectionState.active:
+            return Text('N/A');
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Text(errorMessage);
+            }
+            if (snapshot.data != null) {
+              return Text(
+                convertToString(snapshot.data!),
+              ); // ignore: null_check_on_nullable_type_parameter
+            }
+            return Text("-");
+        }
+      },
+    );
   }
 }

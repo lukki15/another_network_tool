@@ -9,7 +9,11 @@ import 'package:another_network_tool/widget/future_text.dart';
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
 
 class DeviceInfo extends StatelessWidget {
-  const DeviceInfo({super.key, required this.activeHost, required this.portScannerService});
+  const DeviceInfo({
+    super.key,
+    required this.activeHost,
+    required this.portScannerService,
+  });
 
   final ActiveHost activeHost;
   final PortScannerService portScannerService;
