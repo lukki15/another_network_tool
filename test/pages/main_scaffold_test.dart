@@ -13,21 +13,28 @@ import 'package:network_tools/network_tools.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
 import 'package:another_network_tool/setup_network_tools.dart';
 
+@GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './main_scaffold_test.mocks.dart';
 
 void main() {
+  late MockHostScannerService hostScannerService;
   late MockPortScannerService portScannerService;
 
   setUp(() {
+    hostScannerService = MockHostScannerService();
     portScannerService = MockPortScannerService();
   });
 
   testWidgets('Switch pages', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    setupNetworkTools();
     await tester.pumpWidget(
-      MaterialApp(home: MainScaffold(portScannerService: portScannerService)),
+      MaterialApp(
+        home: MainScaffold(
+          hostScannerService: hostScannerService,
+          portScannerService: portScannerService,
+        ),
+      ),
     );
 
     // Check if the Network Info screen is visible

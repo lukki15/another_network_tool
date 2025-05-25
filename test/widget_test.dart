@@ -11,20 +11,26 @@ import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/main.dart';
 
+@GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './widget_test.mocks.dart';
 
 void main() {
+  late MockHostScannerService hostScannerService;
   late MockPortScannerService portScannerService;
 
   setUp(() {
+    hostScannerService = MockHostScannerService();
     portScannerService = MockPortScannerService();
   });
 
   testWidgets('Application smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
-      Application(portScannerService: portScannerService),
+      Application(
+        hostScannerService: hostScannerService,
+        portScannerService: portScannerService,
+      ),
     );
 
     // starts with the network info screen

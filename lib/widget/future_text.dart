@@ -29,9 +29,7 @@ class FutureText<T> extends StatelessWidget {
               return Text(errorMessage);
             }
             if (snapshot.data != null) {
-              return Text(
-                convertToString(snapshot.data!),
-              ); // ignore: null_check_on_nullable_type_parameter
+              return Text(convertToString(snapshot.data as T));
             }
             return Text("-");
         }

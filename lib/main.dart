@@ -7,18 +7,31 @@ import 'package:another_network_tool/pages/main_scaffold.dart';
 
 Future<void> main() async {
   await setupNetworkTools();
-  runApp(Application(portScannerService: PortScannerService.instance));
+  runApp(
+    Application(
+      hostScannerService: HostScannerService.instance,
+      portScannerService: PortScannerService.instance,
+    ),
+  );
 }
 
 class Application extends StatelessWidget {
-  const Application({super.key, required this.portScannerService});
+  const Application({
+    super.key,
+    required this.hostScannerService,
+    required this.portScannerService,
+  });
 
+  final HostScannerService hostScannerService;
   final PortScannerService portScannerService;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
     builder:
         (context, child) => FTheme(data: FThemes.zinc.light, child: child!),
-    home: MainScaffold(portScannerService: portScannerService),
+    home: MainScaffold(
+      hostScannerService: hostScannerService,
+      portScannerService: portScannerService,
+    ),
   );
 }

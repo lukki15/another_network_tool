@@ -9,10 +9,12 @@ import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart
 
 class DeviceList extends StatefulWidget {
   final bool hasWifi;
+  final HostScannerService hostScannerService;
   final PortScannerService portScannerService;
   const DeviceList({
     super.key,
     required this.hasWifi,
+    required this.hostScannerService,
     required this.portScannerService,
   });
 
@@ -46,7 +48,7 @@ class _DeviceListState extends State<DeviceList> {
     }
 
     final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-    final Stream<ActiveHost> stream = HostScannerService.instance
+    final Stream<ActiveHost> stream = widget.hostScannerService
         .getAllPingableDevicesAsync(
           subnet,
           progressCallback: (p) {
