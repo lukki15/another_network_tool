@@ -26,11 +26,9 @@ class DeviceInfo extends StatelessWidget {
           future: activeHost.deviceName,
           convertToString: (String s) => s,
         ),
-        prefixActions: [
-          FHeaderAction.back(onPress: () => Navigator.pop(context)),
-        ],
+        prefixes: [FHeaderAction.back(onPress: () => Navigator.pop(context))],
       ),
-      content: SingleChildScrollView(
+      child: SingleChildScrollView(
         child: Column(
           spacing: 20,
           children: [

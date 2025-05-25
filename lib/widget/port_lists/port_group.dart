@@ -125,8 +125,8 @@ class _PortGroupState extends State<PortGroup> {
     return FTile(
       prefixIcon:
           isOpen
-              ? FIcon(FAssets.icons.circleDot, color: Colors.green)
-              : FIcon(FAssets.icons.circleDashed, color: Colors.red),
+              ? Icon(FIcons.circleDot, color: Colors.green)
+              : Icon(FIcons.circleDashed, color: Colors.red),
       title: nextPort == null ? Text("$port") : Text("$port - $nextPort"),
       subtitle:
           isOpen && nextPort == null && portMap.containsKey(port)

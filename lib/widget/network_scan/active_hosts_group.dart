@@ -24,7 +24,7 @@ class ActiveHostsGroup extends StatelessWidget {
       children: [
         for (var item in activeHosts)
           FTile(
-            prefixIcon: FIcon(FAssets.icons.monitorSmartphone),
+            prefixIcon: Icon(FIcons.monitorSmartphone),
             title: FutureText(
               future: item.deviceName,
               convertToString: (String s) => s,

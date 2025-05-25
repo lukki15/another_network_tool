@@ -29,11 +29,11 @@ class _MainScaffoldState extends State<MainScaffold> {
   ];
   final footers = [
     FBottomNavigationBarItem(
-      icon: FIcon(FAssets.icons.calendarRange),
+      icon: Icon(FIcons.calendarRange),
       label: Text('Info'),
     ),
     FBottomNavigationBarItem(
-      icon: FIcon(FAssets.icons.textSearch),
+      icon: Icon(FIcons.textSearch),
       label: Text('List'),
     ),
   ];
@@ -50,7 +50,7 @@ class _MainScaffoldState extends State<MainScaffold> {
 
     return FScaffold(
       header: headers[index],
-      content: ChangeNotifierProvider(
+      child: ChangeNotifierProvider(
         create: (_) => ConnectivityNotifier(),
         child: contents[index],
       ),

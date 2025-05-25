@@ -69,7 +69,7 @@ void main() {
       );
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is FIcon && widget.color == Colors.red,
+          (widget) => widget is Icon && widget.color == Colors.red,
         ),
         findsOneWidget,
       );
@@ -91,7 +91,7 @@ void main() {
       expect(find.text('http'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is FIcon && widget.color == Colors.green,
+          (widget) => widget is Icon && widget.color == Colors.green,
         ),
         findsOneWidget,
       );
@@ -115,7 +115,7 @@ void main() {
       expect(find.text('https'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is FIcon && widget.color == Colors.green,
+          (widget) => widget is Icon && widget.color == Colors.green,
         ),
         findsNWidgets(2),
       );
@@ -127,7 +127,7 @@ void main() {
       );
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is FIcon && widget.color == Colors.red,
+          (widget) => widget is Icon && widget.color == Colors.red,
         ),
         findsNWidgets(2),
       );
@@ -157,7 +157,7 @@ void main() {
       );
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is FIcon && widget.color == Colors.green,
+          (widget) => widget is Icon && widget.color == Colors.green,
         ),
         findsNWidgets(3),
       );
@@ -170,7 +170,7 @@ void main() {
       expect(find.text("${PortScannerService.defaultEndPort}"), findsOneWidget);
       expect(
         find.byWidgetPredicate(
-          (widget) => widget is FIcon && widget.color == Colors.red,
+          (widget) => widget is Icon && widget.color == Colors.red,
         ),
         findsNWidgets(3),
       );
