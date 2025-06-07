@@ -50,14 +50,14 @@ class _MainScaffoldState extends State<MainScaffold> {
 
     return FScaffold(
       header: headers[index],
-      child: ChangeNotifierProvider(
-        create: (_) => ConnectivityNotifier(),
-        child: contents[index],
-      ),
       footer: FBottomNavigationBar(
         index: index,
         onChange: (index) => setState(() => this.index = index),
         children: footers,
+      ),
+      child: ChangeNotifierProvider(
+        create: (_) => ConnectivityNotifier(),
+        child: contents[index],
       ),
     );
   }

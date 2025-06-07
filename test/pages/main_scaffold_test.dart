@@ -11,7 +11,6 @@ import 'package:mockito/annotations.dart';
 import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/pages/main_scaffold.dart';
-import 'package:another_network_tool/setup_network_tools.dart';
 
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
