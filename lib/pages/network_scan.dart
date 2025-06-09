@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:network_tools/network_tools.dart';
 
@@ -24,6 +25,7 @@ class NetworkScan extends StatelessWidget {
             hasWifi: myNotifier.connectionStatus.contains(
               ConnectivityResult.wifi,
             ),
+            wifiIP: NetworkInfo().getWifiIP(),
             hostScannerService: hostScannerService,
             portScannerService: portScannerService,
           ),

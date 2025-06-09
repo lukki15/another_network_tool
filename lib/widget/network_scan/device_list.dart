@@ -2,18 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
 
 class DeviceList extends StatefulWidget {
   final bool hasWifi;
+  final Future<String?> wifiIP;
   final HostScannerService hostScannerService;
   final PortScannerService portScannerService;
   const DeviceList({
     super.key,
     required this.hasWifi,
+    required this.wifiIP,
     required this.hostScannerService,
     required this.portScannerService,
   });
@@ -34,9 +35,7 @@ class _DeviceListState extends State<DeviceList> {
       return;
     }
 
-    final wifiIP = NetworkInfo().getWifiIP();
-
-    wifiIP.then(_initStream);
+    widget.wifiIP.then(_initStream);
   }
 
   void _initStream(String? ip) {
@@ -113,20 +112,19 @@ class _DeviceListState extends State<DeviceList> {
       children: [
         widget.hasWifi
             ? FTile(
-              title: FProgress(value: isDone ? 1.0 : progressPercent),
-              subtitle:
-                  isDone
-                      ? const Text("scanning done")
-                      : Text(
+                title: FProgress(value: isDone ? 1.0 : progressPercent),
+                subtitle: isDone
+                    ? const Text("scanning done")
+                    : Text(
                         "scanning $currentIP / ${HostScannerService.defaultLastHostId}",
                       ),
-            )
+              )
             : FTile(
-              title: const Text("Wi-Fi Unavailable"),
-              subtitle: const Text(
-                "Network scanning will commence upon availability",
+                title: const Text("Wi-Fi Unavailable"),
+                subtitle: const Text(
+                  "Network scanning will commence upon availability",
+                ),
               ),
-            ),
         SizedBox(height: 20),
         Expanded(
           child: SingleChildScrollView(
