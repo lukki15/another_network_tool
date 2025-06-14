@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
@@ -7,8 +5,15 @@ import 'package:forui/forui.dart';
 import 'package:another_network_tool/widget/network_info/connectivity_stats.dart';
 
 class ConnectivityInfoTiles extends StatelessWidget {
-  const ConnectivityInfoTiles({super.key, required this.conductivities});
+  const ConnectivityInfoTiles({
+    super.key,
+    required this.isAndroid,
+    required this.isLinux,
+    required this.conductivities,
+  });
 
+  final bool Function() isAndroid;
+  final bool Function() isLinux;
   final List<ConnectivityResult> conductivities;
 
   List<Widget> _generateTiles() {
@@ -18,10 +23,9 @@ class ConnectivityInfoTiles extends StatelessWidget {
           conductivities.contains(ConnectivityResult.wifi)
               ? FIcons.wifi
               : FIcons.wifiOff,
-          color:
-              conductivities.contains(ConnectivityResult.wifi)
-                  ? Colors.green
-                  : Colors.red,
+          color: conductivities.contains(ConnectivityResult.wifi)
+              ? Colors.green
+              : Colors.red,
         ),
         title: const Text('Wi-Fi'),
       ),
@@ -31,8 +35,7 @@ class ConnectivityInfoTiles extends StatelessWidget {
       tiles.add(ConnectivityStats());
     }
 
-    if (Platform.isAndroid &&
-        conductivities.contains(ConnectivityResult.mobile)) {
+    if (isAndroid() && conductivities.contains(ConnectivityResult.mobile)) {
       tiles.add(SizedBox(height: 10));
       tiles.add(
         FTile(
@@ -42,7 +45,7 @@ class ConnectivityInfoTiles extends StatelessWidget {
       );
     }
 
-    if (Platform.isLinux) {
+    if (isLinux()) {
       tiles.add(SizedBox(height: 10));
       tiles.add(
         FTile(
@@ -50,10 +53,9 @@ class ConnectivityInfoTiles extends StatelessWidget {
             conductivities.contains(ConnectivityResult.ethernet)
                 ? FIcons.ethernetPort
                 : FIcons.unplug,
-            color:
-                conductivities.contains(ConnectivityResult.ethernet)
-                    ? Colors.green
-                    : Colors.red,
+            color: conductivities.contains(ConnectivityResult.ethernet)
+                ? Colors.green
+                : Colors.red,
           ),
           title: const Text('Ethernet'),
         ),

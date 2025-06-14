@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +14,8 @@ class NetworkInfo extends StatelessWidget {
     return Consumer<ConnectivityNotifier>(
       builder:
           (context, myNotifier, child) => ConnectivityInfoTiles(
+            isAndroid: () => Platform.isAndroid,
+            isLinux: () => Platform.isLinux,
             conductivities: myNotifier.connectionStatus,
           ),
     );
