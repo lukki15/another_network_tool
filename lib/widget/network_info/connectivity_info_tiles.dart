@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import 'package:another_network_tool/widget/network_info/connectivity_stats.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ConnectivityInfoTiles extends StatelessWidget {
   const ConnectivityInfoTiles({
@@ -32,7 +36,16 @@ class ConnectivityInfoTiles extends StatelessWidget {
     ];
 
     if (conductivities.contains(ConnectivityResult.wifi)) {
-      tiles.add(ConnectivityStats());
+      tiles.add(
+        ConnectivityStats(
+          networkInfo: NetworkInfo(),
+          isMobile: Platform.isAndroid || Platform.isIOS,
+          locationWhenInUse: PermissionHelper(
+            isGranted: () => Permission.locationWhenInUse.isGranted,
+            request: Permission.locationWhenInUse.request,
+          ),
+        ),
+      );
     }
 
     if (isAndroid() && conductivities.contains(ConnectivityResult.mobile)) {

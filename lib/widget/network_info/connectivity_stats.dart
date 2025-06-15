@@ -8,16 +8,30 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:another_network_tool/widget/network_info/future_ftile.dart';
 
+class PermissionHelper {
+  final Future<bool> Function() isGranted;
+  final Future<PermissionStatus> Function() request;
+
+  PermissionHelper({required this.isGranted, required this.request});
+}
+
 class ConnectivityStats extends StatefulWidget {
-  const ConnectivityStats({super.key});
+  final NetworkInfo networkInfo;
+  final bool isMobile;
+  final PermissionHelper locationWhenInUse;
+
+  const ConnectivityStats({
+    super.key,
+    required this.networkInfo,
+    required this.isMobile,
+    required this.locationWhenInUse,
+  });
 
   @override
   State<ConnectivityStats> createState() => _ConnectivityStatsState();
 }
 
 class _ConnectivityStatsState extends State<ConnectivityStats> {
-  final NetworkInfo _networkInfo = NetworkInfo();
-
   Future<String?> _wifiName = Future<String?>.value(null);
   Future<String?> _wifiBSSID = Future<String?>.value(null);
   Future<String?> _wifiIPv4 = Future<String?>.value(null);
@@ -27,46 +41,46 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
   Future<String?> _wifiSubMask = Future<String?>.value(null);
 
   Future<String?> _initWifiName() async {
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    if (!kIsWeb && widget.isMobile) {
       // Request permissions as recommended by the plugin documentation:
       // https://github.com/fluttercommunity/plus_plugins/tree/main/packages/network_info_plus/network_info_plus
-      if (await Permission.locationWhenInUse.isGranted) {
-        return _networkInfo.getWifiName();
+      if (await widget.locationWhenInUse.isGranted()) {
+        return widget.networkInfo.getWifiName();
       } else {
         return 'Unauthorized to get Wifi Name';
       }
     } else {
-      return _networkInfo.getWifiName();
+      return widget.networkInfo.getWifiName();
     }
   }
 
   Future<String?> _initWifiBSSID() async {
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    if (!kIsWeb && widget.isMobile) {
       // Request permissions as recommended by the plugin documentation:
       // https://github.com/fluttercommunity/plus_plugins/tree/main/packages/network_info_plus/network_info_plus
-      if (await Permission.locationWhenInUse.isGranted) {
-        return _networkInfo.getWifiBSSID();
+      if (await widget.locationWhenInUse.isGranted()) {
+        return widget.networkInfo.getWifiBSSID();
       } else {
         return 'Unauthorized to get Wifi BSSID';
       }
     } else {
-      return _networkInfo.getWifiBSSID();
+      return widget.networkInfo.getWifiBSSID();
     }
   }
 
   void _init() async {
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-      await Permission.locationWhenInUse.request();
+    if (!kIsWeb && widget.isMobile) {
+      await widget.locationWhenInUse.request();
     }
 
     setState(() {
       _wifiName = _initWifiName();
       _wifiBSSID = _initWifiBSSID();
-      _wifiIPv4 = _networkInfo.getWifiIP();
-      _wifiIPv6 = _networkInfo.getWifiIPv6();
-      _wifiGatewayIP = _networkInfo.getWifiGatewayIP();
-      _wifiBroadcast = _networkInfo.getWifiBroadcast();
-      _wifiSubMask = _networkInfo.getWifiSubmask();
+      _wifiIPv4 = widget.networkInfo.getWifiIP();
+      _wifiIPv6 = widget.networkInfo.getWifiIPv6();
+      _wifiGatewayIP = widget.networkInfo.getWifiGatewayIP();
+      _wifiBroadcast = widget.networkInfo.getWifiBroadcast();
+      _wifiSubMask = widget.networkInfo.getWifiSubmask();
     });
   }
 
