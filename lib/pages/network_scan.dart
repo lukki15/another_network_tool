@@ -20,15 +20,12 @@ class NetworkScan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ConnectivityNotifier>(
-      builder:
-          (context, myNotifier, child) => DeviceList(
-            hasWifi: myNotifier.connectionStatus.contains(
-              ConnectivityResult.wifi,
-            ),
-            wifiIP: NetworkInfo().getWifiIP(),
-            hostScannerService: hostScannerService,
-            portScannerService: portScannerService,
-          ),
+      builder: (context, myNotifier, child) => DeviceList(
+        hasWifi: myNotifier.connectionStatus.contains(ConnectivityResult.wifi),
+        wifiIP: NetworkInfo().getWifiIP(),
+        hostScannerService: hostScannerService,
+        portScannerService: portScannerService,
+      ),
     );
   }
 }

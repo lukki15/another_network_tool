@@ -74,8 +74,8 @@ class _DeviceInfoDetail extends StatelessWidget {
         FTile(
           title: const Text('IP Address'),
           details: Text(activeHost.address),
-          onLongPress:
-              () => Clipboard.setData(ClipboardData(text: activeHost.address)),
+          onLongPress: () =>
+              Clipboard.setData(ClipboardData(text: activeHost.address)),
         ),
         FTile(
           title: const Text('MAC Address'),

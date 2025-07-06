@@ -27,8 +27,8 @@ class Application extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    builder:
-        (context, child) => FTheme(data: FThemes.zinc.light, child: child!),
+    builder: (context, child) =>
+        FTheme(data: FThemes.zinc.light, child: child!),
     home: MainScaffold(
       hostScannerService: hostScannerService,
       portScannerService: portScannerService,

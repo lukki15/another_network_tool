@@ -123,15 +123,13 @@ class _PortGroupState extends State<PortGroup> {
 
   static FTile generatePortTile(bool isOpen, int port, int? nextPort) {
     return FTile(
-      prefixIcon:
-          isOpen
-              ? Icon(FIcons.circleDot, color: Colors.green)
-              : Icon(FIcons.circleDashed, color: Colors.red),
+      prefixIcon: isOpen
+          ? Icon(FIcons.circleDot, color: Colors.green)
+          : Icon(FIcons.circleDashed, color: Colors.red),
       title: nextPort == null ? Text("$port") : Text("$port - $nextPort"),
-      subtitle:
-          isOpen && nextPort == null && portMap.containsKey(port)
-              ? Text(portMap[port]!)
-              : null,
+      subtitle: isOpen && nextPort == null && portMap.containsKey(port)
+          ? Text(portMap[port]!)
+          : null,
     );
   }
 }
