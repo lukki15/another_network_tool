@@ -3,10 +3,8 @@ import 'package:another_network_tool/widget/network_info/connectivity_stats.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:network_tools/network_tools.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 @GenerateNiceMocks([MockSpec<NetworkInfo>()])
