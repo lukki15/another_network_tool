@@ -24,7 +24,10 @@ void main() {
     });
 
     testWidgets('FutureText displays error message', (WidgetTester t) async {
-      final Future<String> mockFuture = Future.error("Test Error");
+      final Future<String> mockFuture = Future.delayed(
+        Duration.zero,
+        () => throw Exception("Test Error"),
+      );
 
       await t.pumpWidget(
         MaterialApp(
@@ -38,7 +41,7 @@ void main() {
 
       await t.pumpAndSettle();
       expect(find.text('Error Message'), findsOneWidget);
-    }, skip: true); // TODO: ends unexpectly with an excpetion
+    });
 
     testWidgets('FutureText displays loading state', (WidgetTester t) async {
       final Future<String?> mockFuture = Future.value(null);
