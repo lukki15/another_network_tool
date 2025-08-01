@@ -213,10 +213,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "27eb0ae77836989a3bc541ce55595e8ceee0992807f14511552a898ddd0d88ac"
+      sha256: "5b236382b47ee411741447c1f1e111459c941ea1b3f2b540dde54c210a3662af"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.1.0"
   dbus:
     dependency: transitive
     description:
@@ -289,18 +289,18 @@ packages:
     dependency: "direct main"
     description:
       name: forui
-      sha256: e77b5774aef52883d148dba1d7b6ce7a723c5e1901b13142aea1bb61b9e68d9e
+      sha256: "6b364e7918492caf79fadf15a46666d29d0054e9e4ba855cabb418916c282914"
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.0"
+    version: "0.14.1"
   forui_assets:
     dependency: transitive
     description:
       name: forui_assets
-      sha256: "795b47478ddf7cafb72e943f97ae004a4aa01f1ae40f0b2d68768c35ee680da4"
+      sha256: "207df3d1baf3a4d5d898fbc3e0272b44758e48bfd13f3b654f24a0bfdbfa6698"
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.0"
+    version: "0.14.0"
   frontend_server_client:
     dependency: transitive
     description:
