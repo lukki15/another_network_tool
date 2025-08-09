@@ -23,7 +23,7 @@ class ConnectivityInfoTiles extends StatelessWidget {
   List<Widget> _generateTiles() {
     List<Widget> tiles = [
       FTile(
-        prefixIcon: Icon(
+        prefix: Icon(
           conductivities.contains(ConnectivityResult.wifi)
               ? FIcons.wifi
               : FIcons.wifiOff,
@@ -52,7 +52,7 @@ class ConnectivityInfoTiles extends StatelessWidget {
       tiles.add(SizedBox(height: 10));
       tiles.add(
         FTile(
-          prefixIcon: Icon(FIcons.signal, color: Colors.green),
+          prefix: Icon(FIcons.signal, color: Colors.green),
           title: const Text('Cellular'),
         ),
       );
@@ -62,7 +62,7 @@ class ConnectivityInfoTiles extends StatelessWidget {
       tiles.add(SizedBox(height: 10));
       tiles.add(
         FTile(
-          prefixIcon: Icon(
+          prefix: Icon(
             conductivities.contains(ConnectivityResult.ethernet)
                 ? FIcons.ethernetPort
                 : FIcons.unplug,

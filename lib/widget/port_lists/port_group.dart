@@ -123,7 +123,7 @@ class _PortGroupState extends State<PortGroup> {
 
   static FTile generatePortTile(bool isOpen, int port, int? nextPort) {
     return FTile(
-      prefixIcon: isOpen
+      prefix: isOpen
           ? Icon(FIcons.circleDot, color: Colors.green)
           : Icon(FIcons.circleDashed, color: Colors.red),
       title: nextPort == null ? Text("$port") : Text("$port - $nextPort"),
