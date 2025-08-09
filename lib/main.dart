@@ -6,7 +6,7 @@ import 'package:another_network_tool/setup_network_tools.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
 
 Future<void> main() async {
-  await setupNetworkTools();
+  await setupNetworkTools(await getDirectory());
   runApp(
     Application(
       hostScannerService: HostScannerService.instance,

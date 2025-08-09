@@ -5,15 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:network_tools/network_tools.dart';
 import 'package:path_provider/path_provider.dart';
 
-Future<Directory> _getDirectory() {
+Future<Directory> getDirectory() {
   return getApplicationSupportDirectory();
 }
 
-Future<void> _copyMacVendorCsvFile() async {
+Future<void> _copyMacVendorCsvFile(final Directory directory) async {
   const String fileName = "mac-vendors-export.csv";
-
-  // Get the application's documents directory
-  final directory = await _getDirectory();
 
   // Construct the path for the destination file
   final filePath = '${directory.path}/$fileName';
@@ -29,11 +26,10 @@ Future<void> _copyMacVendorCsvFile() async {
   }
 }
 
-Future<void> setupNetworkTools() async {
+Future<void> setupNetworkTools(final Directory directory) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await _copyMacVendorCsvFile();
+  await _copyMacVendorCsvFile(directory);
 
-  final directory = await _getDirectory();
   return configureNetworkTools(directory.path);
 }
