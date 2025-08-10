@@ -26,10 +26,10 @@ Future<void> _copyMacVendorCsvFile(final Directory directory) async {
   }
 }
 
-Future<void> setupNetworkTools(final Directory directory) async {
-  WidgetsFlutterBinding.ensureInitialized();
-
+Future<bool> setupNetworkTools(final Directory directory) async {
   await _copyMacVendorCsvFile(directory);
 
-  return configureNetworkTools(directory.path);
+  await configureNetworkTools(directory.path);
+
+  return true;
 }

@@ -8,8 +8,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:network_tools/network_tools.dart';
+import 'package:flutter/material.dart';
 
-import 'package:another_network_tool/main.dart';
+import 'package:another_network_tool/pages/main_scaffold.dart';
 
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
@@ -27,9 +28,11 @@ void main() {
   testWidgets('Application smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
-      Application(
-        hostScannerService: hostScannerService,
-        portScannerService: portScannerService,
+      MaterialApp(
+        home: MainScaffold(
+          hostScannerService: hostScannerService,
+          portScannerService: portScannerService,
+        ),
       ),
     );
 
