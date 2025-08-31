@@ -5,6 +5,9 @@ RUN sudo apt-get update
 # Setup Flutter
 RUN sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
 
+# Setup Flutter test
+RUN sudo apt-get install -y sqlite3 libsqlite3-dev
+
 # Setup Flutter for native desktop apps on Linux
 RUN sudo apt-get install -y \
         clang cmake git \
