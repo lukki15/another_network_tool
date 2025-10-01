@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   forui: ^0.15.1
-  network_info_plus: ^6.1.4
+  network_info_plus: ^7.0.0
   network_tools: ^6.0.5
   path_provider: ^2.1.5
   permission_handler: ^12.0.1
