@@ -112,7 +112,7 @@ class _DeviceListState extends State<DeviceList> {
       children: [
         widget.hasWifi
             ? FTile(
-                title: FProgress(value: isDone ? 1.0 : progressPercent),
+                title: FDeterminateProgress(value: isDone ? 1.0 : progressPercent),
                 subtitle: isDone
                     ? const Text("scanning done")
                     : Text(

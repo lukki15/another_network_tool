@@ -20,7 +20,7 @@ class LoadingFutureBuilder<T> extends StatelessWidget {
     return FutureBuilder<T>(
       future: future,
       builder: (context, snapshot) {
-        Widget child = FProgress.circularIcon();
+        Widget child = FCircularProgress();
 
         if (snapshot.hasData) {
           return onData(snapshot.data!);
