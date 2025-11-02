@@ -75,20 +75,58 @@ void main() {
       );
     });
 
-    testWidgets('shows discovered ports', (WidgetTester t) async {
+    testWidgets('shows discovered ports at start port', (WidgetTester t) async {
       // Arrange
       final activeHost = MockActiveHost();
-      when(
-        activeHost.openPorts,
-      ).thenAnswer((_) => [OpenPort(80, isOpen: true)]);
+      when(activeHost.openPorts).thenAnswer(
+        (_) => [OpenPort(PortScannerService.defaultStartPort, isOpen: true)],
+      );
       setupPortScanExpectation(Stream.fromIterable([activeHost]));
 
       // Act & Assert
       await pumpPortGroup(t);
       assertBasicLayout(t);
 
-      expect(find.text('80'), findsOneWidget);
-      expect(find.text('http'), findsOneWidget);
+      expect(
+        find.text('${PortScannerService.defaultStartPort}'),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Icon && widget.color == Colors.green,
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('shows empty ports before first found port', (
+      WidgetTester t,
+    ) async {
+      // Arrange: first found port is not the start port
+      final firstPort = PortScannerService.defaultStartPort + 10;
+      final activeHost = MockActiveHost();
+      when(
+        activeHost.openPorts,
+      ).thenAnswer((_) => [OpenPort(firstPort, isOpen: true)]);
+      setupPortScanExpectation(Stream.fromIterable([activeHost]));
+
+      // Act & Assert
+      await pumpPortGroup(t);
+      assertBasicLayout(t);
+
+      // Should show empty ports before first found port
+      expect(
+        find.text('${PortScannerService.defaultStartPort} - ${firstPort - 1}'),
+        findsOneWidget,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Icon && widget.color == Colors.red,
+        ),
+        findsNWidgets(2),
+      );
+      // Should show the found port
+      expect(find.text('$firstPort'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) => widget is Icon && widget.color == Colors.green,
@@ -129,7 +167,7 @@ void main() {
         find.byWidgetPredicate(
           (widget) => widget is Icon && widget.color == Colors.red,
         ),
-        findsNWidgets(2),
+        findsNWidgets(3),
       );
     });
 
@@ -172,7 +210,7 @@ void main() {
         find.byWidgetPredicate(
           (widget) => widget is Icon && widget.color == Colors.red,
         ),
-        findsNWidgets(3),
+        findsNWidgets(4),
       );
     });
   });

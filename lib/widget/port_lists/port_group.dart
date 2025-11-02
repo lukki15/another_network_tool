@@ -73,6 +73,17 @@ class _PortGroupState extends State<PortGroup> {
     }
 
     List<FTile> tiles = [];
+    if (openPorts.isNotEmpty &&
+        openPorts[0].port > PortScannerService.defaultStartPort) {
+      tiles.add(
+        generatePortTile(
+          false,
+          PortScannerService.defaultStartPort,
+          openPorts[0].port - 1,
+        ),
+      );
+    }
+
     for (var i = 0; i < openPorts.length; i++) {
       tiles.add(_generatePortTile(i));
       if (i + 1 < openPorts.length &&
