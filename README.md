@@ -2,8 +2,7 @@
 
 ![icon](./assets/icon/icon.svg)
 
-[![Android](https://github.com/lukki15/another_network_tool/actions/workflows/android.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/android.yml)
-[![Linux](https://github.com/lukki15/another_network_tool/actions/workflows/linux.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/linux.yml)
+[![Multi-Platform Build](https://github.com/lukki15/another_network_tool/actions/workflows/multi_platform.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/multi_platform.yml)
 [![Coverage](https://github.com/lukki15/another_network_tool/actions/workflows/coverage.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/coverage.yml)
 
 [![Dependabot Updates](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates)
