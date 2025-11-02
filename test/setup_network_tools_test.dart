@@ -7,7 +7,7 @@ void main() {
     // Pre-check: Ensure files don't exist before test
     final directory = Directory("./test");
     final csvFile = File('${directory.path}/mac-vendors-export.csv');
-    final dbFile = File('${directory.path}/network_tools_v1');
+    final dbFile = File('${directory.path}/network_tools.db');
 
     expect(
       csvFile.existsSync(),
