@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ matrix.platform.os }}
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -74,7 +74,7 @@ jobs:
           esac
       
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.platform.target }}-builds
           path: |
