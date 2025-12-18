@@ -9,6 +9,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -85,3 +88,23 @@ jobs:
             ${{ matrix.platform.target == 'linux' && 'build/linux/x64/release/bundle' }}
             ${{ matrix.platform.target == 'web' && 'build/web' }}
           # ${{ matrix.platform.target == 'android' && 'build/app/outputs/bundle/release/app-release.aab' }}
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/main')
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+
+      - name: Create and upload GitHub prerelease (automatic releases)
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: "dev"
+          prerelease: true
+          title: "Dev build ${{ steps.date.outputs.date }} (#${{ github.run_number }})"
+          files: |
+            artifacts/**/app-release.apk
