@@ -209,6 +209,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
+  drift:
+    dependency: transitive
+    description:
+      name: drift
+      sha256: "83290a32ae006a7535c5ecf300722cb77177250d9df4ee2becc5fa8a36095114"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.29.0"
   fake_async:
     dependency: transitive
     description:
@@ -285,6 +293,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.16.0"
+  get_it:
+    dependency: transitive
+    description:
+      name: get_it
+      sha256: ae78de7c3f2304b8d81f2bb6e320833e5e81de942188542328f074978cc0efa9
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.3.0"
   glob:
     dependency: transitive
     description:
@@ -357,6 +373,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.4"
+  injectable:
+    dependency: transitive
+    description:
+      name: injectable
+      sha256: "32e9bac6fe9c84339c5add60478d27a01e363ce1ad5c22ca7e525c6b28a7559c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.0"
   intl:
     dependency: transitive
     description:
@@ -505,10 +529,10 @@ packages:
     dependency: "direct main"
     description:
       name: network_tools
-      sha256: c48cb49b0e20e968c83147725e1d941544296b8414987a8a4bb7dd9dd664d443
+      sha256: "0c8fc5b8d0e1ec510e17a7ba9f92a8a9596cd006bfb9673304d6e7d01c92b19b"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.6"
+    version: "6.0.5"
   nitrogen_types:
     dependency: transitive
     description:
@@ -717,14 +741,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
-  sembast:
-    dependency: transitive
-    description:
-      name: sembast
-      sha256: "7119cf6f79bd1d48c8ec7943f4facd96c15ab26823021ed0792a487c7cd34441"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.8.5+1"
   shelf:
     dependency: transitive
     description:
@@ -762,6 +778,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.1"
+  sqlite3:
+    dependency: transitive
+    description:
+      name: sqlite3
+      sha256: "3145bd74dcdb4fd6f5c6dda4d4e4490a8087d7f286a14dee5d37087290f0f8a2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.4"
   stack_trace:
     dependency: transitive
     description:
