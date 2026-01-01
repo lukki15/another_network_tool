@@ -10,7 +10,7 @@ dependencies:
   connectivity_plus: ^7.0.0
   flutter:
     sdk: flutter
-  forui: ^0.16.0
+  forui: ^0.17.0
   network_info_plus: ^7.0.0
   network_tools: ^5.0.6
   path_provider: ^2.1.5
