@@ -1,7 +1,6 @@
 import 'package:another_network_tool/widget/loading_future_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:forui/forui.dart';
 
 import 'dart:io';
 
