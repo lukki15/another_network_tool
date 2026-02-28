@@ -20,7 +20,7 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
     builder: (context, child) => FTheme(
       data: FThemes.zinc.light,
-      child: SafeArea(child: child!),
+      child: child!,
     ),
     home: LoadingFutureBuilder<Directory>(
       future: getDirectory(),
