@@ -80,6 +80,20 @@ jobs:
               ;;
           esac
       
+      - name: Compress build artifacts
+        run: |
+          case ${{ matrix.platform.target }} in
+            linux)
+              cd build/linux/x64/release/bundle && zip -r ../../../../../linux-release.zip . && cd -
+              ;;
+            windows)
+              cd build/windows/x64/runner/Release && zip -r ../../../../../windows-release.zip . && cd -
+              ;;
+            web)
+              cd build/web && zip -r ../../web-release.zip . && cd -
+              ;;
+          esac
+      
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -89,9 +103,9 @@ jobs:
             ${{ matrix.platform.target == 'android' && 'build/app/outputs/bundle/release/app-release.aab' }}
             ${{ matrix.platform.target == 'ios' && 'build/ios/iphoneos/Runner.app' }}
             ${{ matrix.platform.target == 'macos' && 'build/macos/Build/Products/Release/wlan_local_raffle.app' }}
-            ${{ matrix.platform.target == 'windows' && 'build/windows/x64/runner/Release' }}
-            ${{ matrix.platform.target == 'linux' && 'build/linux/x64/release/bundle' }}
-            ${{ matrix.platform.target == 'web' && 'build/web' }}
+            ${{ matrix.platform.target == 'windows' && 'windows-release.zip' }}
+            ${{ matrix.platform.target == 'linux' && 'linux-release.zip' }}
+            ${{ matrix.platform.target == 'web' && 'web-release.zip' }}
 
   publish:
     needs: build
@@ -132,12 +146,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Dev Build ${{ github.run_number }}
+          name: "Dev Build #${{ github.run_number }}"
           tag_name: dev
           prerelease: true
-          generate_release_notes: true
+          generate_release_notes: false
           files: |
-            artifacts/**/app-release.*
+            artifacts/**/*
 
   release:
     needs: build
