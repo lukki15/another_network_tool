@@ -1,7 +1,7 @@
 name: another_network_tool
 description: "Scan all devices in your network."
 publish_to: 'none'
-version: 0.2.0
+version: 0.3.0
 
 environment:
   sdk: ^3.8.1
