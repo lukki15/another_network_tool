@@ -4,6 +4,7 @@
 
 [![Multi-Platform Build](https://github.com/lukki15/another_network_tool/actions/workflows/multi_platform.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/multi_platform.yml)
 [![Coverage](https://github.com/lukki15/another_network_tool/actions/workflows/coverage.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/coverage.yml)
+[![dartdoc](https://github.com/lukki15/another_network_tool/actions/workflows/dartdoc.yml/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/dartdoc.yml)
 
 [![Dependabot Updates](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/lukki15/another_network_tool/actions/workflows/dependabot/dependabot-updates)
 [![codecov](https://codecov.io/gh/lukki15/another_network_tool/graph/badge.svg?token=PSAAIBG2Y8)](https://codecov.io/gh/lukki15/another_network_tool)
