@@ -26,8 +26,17 @@ jobs:
       - name: Install dependencies
         run: flutter pub get --no-example
 
+      - name: Download and generate build dependencies
+        run: bash setup.bash
+
+      - name: Run build runner
+        run: dart run build_runner build
+
+      - name: Run analysis
+        run: flutter analyze --fatal-infos --fatal-warnings
+
       - name: Generate Documentation
-        run: dart doc .
+        run: dart doc --verbose --validate-links .
 
       - name: Copy icon
         run: mkdir -p doc/api/assets/icon && cp assets/icon/icon.svg doc/api/assets/icon/

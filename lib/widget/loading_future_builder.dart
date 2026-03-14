@@ -23,7 +23,7 @@ class LoadingFutureBuilder<T> extends StatelessWidget {
         Widget child = FCircularProgress();
 
         if (snapshot.hasData) {
-          return onData(snapshot.data!);
+          return onData(snapshot.data as T);
         } else if (snapshot.hasError) {
           child = errorWidget ?? Text('Error: ${snapshot.error}');
         }

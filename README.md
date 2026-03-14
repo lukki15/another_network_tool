@@ -13,9 +13,9 @@ Another Network Tool (ANT) is an open source application that provides detailed 
 
 ## Key Features
 
-- [x] List all devices connected to your Wi-Fi network
-- [x] Display detailed information about your current Wi-Fi connection
-- [x] Scan open ports for selected devices
+- List all devices connected to your Wi-Fi network
+- Display detailed information about your current Wi-Fi connection
+- Scan open ports for selected devices
 
 ## Getting Started
 
@@ -88,4 +88,4 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 This project uses [conventional commits](https://www.conventionalcommits.org). When submitting a pull request or making changes, please follow the Conventional Commits specification. This ensures consistency in commit messages and makes it easier to generate changelogs.
 
 ## License
-Everything in this repo is license under the [GPLv3](./LICENSE) license.
+Everything in this repo is license under the [GPLv3](https://github.com/lukki15/another_network_tool/blob/main/LICENSE) license.

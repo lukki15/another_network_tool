@@ -3,6 +3,14 @@ description: "Scan all devices in your network."
 publish_to: 'none'
 version: 0.3.0
 
+repository: https://github.com/lukki15/another_network_tool
+issue_tracker: https://github.com/lukki15/another_network_tool/pulls
+documentation: https://lukki15.github.io/another_network_tool/
+
+platforms:
+  android:
+  linux:
+
 environment:
   sdk: ^3.8.1
 
@@ -27,6 +35,8 @@ dev_dependencies:
   package_rename: ^1.10.1
 
 flutter:
+  licenses:
+      - LICENSE
   assets:
     - assets/network_tools/mac-vendors-export.csv
   uses-material-design: true
