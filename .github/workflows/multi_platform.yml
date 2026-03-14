@@ -127,7 +127,7 @@ jobs:
               await github.rest.git.deleteRef({ owner, repo, ref: 'tags/dev' });
               console.log('Deleted existing dev tag');
             } catch (err) {
-              if (err.status === 404) {
+              if (err.status === 422) {
                 console.log('No existing dev tag to delete');
               } else {
                 throw err;
