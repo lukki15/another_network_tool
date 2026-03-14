@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:network_tools/network_tools.dart';
@@ -10,7 +11,7 @@ import 'package:another_network_tool/widget/loading_future_builder.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(Application());
+  runApp(const Application());
 }
 
 class Application extends StatelessWidget {
@@ -18,13 +19,21 @@ class Application extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// Try changing this and hot reloading the application.
+     /// Try changing this and hot reloading the application.
     ///
     /// To create a custom theme:
     /// ```shell
     /// dart forui theme create [theme template].
     /// ```
-    final theme = FThemes.zinc.light;
+    final theme =
+        const <TargetPlatform>{
+          TargetPlatform.android,
+          TargetPlatform.iOS,
+          TargetPlatform.fuchsia,
+        }.contains(defaultTargetPlatform)
+        ? FThemes.zinc.light.touch
+        : FThemes.zinc.light.desktop;
+        
     return MaterialApp(
       // TODO: replace with your application's supported locales.
       supportedLocales: FLocalizations.supportedLocales,
