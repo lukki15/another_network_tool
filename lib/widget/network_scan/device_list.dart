@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:another_network_tool/provider/ping.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:network_tools/network_tools.dart';
+import 'package:dart_ping/dart_ping.dart';
 
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
 
@@ -24,7 +27,8 @@ class DeviceList extends StatefulWidget {
 }
 
 class _DeviceListState extends State<DeviceList> {
-  StreamSubscription<ActiveHost>? streamSubscription;
+  late PingRange pingRange;
+  StreamSubscription<PingData>? streamSubscription;
 
   double progress = 0;
   Set<ActiveHost> activeHosts = {};
@@ -47,19 +51,15 @@ class _DeviceListState extends State<DeviceList> {
     }
 
     final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-    final Stream<ActiveHost> stream = widget.hostScannerService
-        .getAllPingableDevicesAsync(
-          subnet,
-          progressCallback: (p) {
-            setState(() {
-              progress = p;
-            });
-          },
-        );
+    pingRange = PingRange(subnet: subnet);
 
-    streamSubscription = stream.listen(
-      (host) {
+    streamSubscription = pingRange.stream.listen(
+      (pingData) {
         //Same host can be emitted multiple times
+        ActiveHost host  = ActiveHost(
+          internetAddress: InternetAddress(pingData.response!.ip!),
+          pingData: pingData,
+        );
         setState(() {
           activeHosts.add(host);
         });

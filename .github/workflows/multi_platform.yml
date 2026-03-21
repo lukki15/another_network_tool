@@ -3,7 +3,7 @@ name: Multi-Platform Build
 on:
   push:
     branches:
-      - dev
+      - development
       - main
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
