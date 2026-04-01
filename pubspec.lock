@@ -273,18 +273,18 @@ packages:
     dependency: "direct main"
     description:
       name: forui
-      sha256: "196e4735ab8cf2c4cb5e59c25c74464b44121d89fefda505522870e0812b9266"
+      sha256: "0a1611a215b07fff150c94da48cd2b01c8b036636fc58c2177d916cb6ebaaa92"
       url: "https://pub.dev"
     source: hosted
-    version: "0.20.0"
+    version: "0.20.4"
   forui_assets:
     dependency: transitive
     description:
       name: forui_assets
-      sha256: ccadc44338f4cfc24f1bb24312573d4fc5203c017d4936bea74603b492484035
+      sha256: "503378699c4cd77c5a5d66c86af8376b0bced0c1335d805b7af65c11008d5345"
       url: "https://pub.dev"
     source: hosted
-    version: "0.20.0"
+    version: "0.20.1"
   glob:
     dependency: transitive
     description:
@@ -425,10 +425,10 @@ packages:
     dependency: transitive
     description:
       name: matcher
-      sha256: "12956d0ad8390bbcc63ca2e1469c0619946ccb52809807067a7020d57e647aa6"
+      sha256: dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.18"
+    version: "0.12.19"
   material_color_utilities:
     dependency: transitive
     description:
@@ -814,10 +814,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: "93167629bfc610f71560ab9312acdda4959de4df6fac7492c89ff0d3886f6636"
+      sha256: "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.9"
+    version: "0.7.10"
   typed_data:
     dependency: transitive
     description:
