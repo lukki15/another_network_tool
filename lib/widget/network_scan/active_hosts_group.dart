@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
@@ -12,11 +13,11 @@ class ActiveHostsGroup extends StatelessWidget {
   const ActiveHostsGroup({
     super.key,
     required this.activeHosts,
-    required this.portScannerService,
+    required this.config,
   });
 
   final Set<ActiveHost> activeHosts;
-  final PortScannerService portScannerService;
+  final Config config;
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +42,8 @@ class ActiveHostsGroup extends StatelessWidget {
             onPress: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => DeviceInfo(
-                    activeHost: item,
-                    portScannerService: portScannerService,
-                  ),
+                  builder: (context) =>
+                      DeviceInfo(activeHost: item, config: config),
                 ),
               );
             },

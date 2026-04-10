@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/device_list.dart';
 
 import 'package:flutter/material.dart';
@@ -30,8 +31,10 @@ void main() {
           home: DeviceList(
             hasWifi: false,
             wifiIP: Future.value(),
-            hostScannerService: hostScannerService,
-            portScannerService: portScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );
@@ -47,8 +50,10 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: Future.value(),
-            hostScannerService: hostScannerService,
-            portScannerService: portScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );
@@ -63,8 +68,10 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: NetworkInfo().getWifiIP(),
-            hostScannerService: hostScannerService,
-            portScannerService: portScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );
@@ -94,8 +101,10 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: Future.value("192.0.0.1"),
-            hostScannerService: hostScannerService,
-            portScannerService: portScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );

@@ -1,21 +1,16 @@
+import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:provider/provider.dart';
-import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/pages/network_info.dart';
 import 'package:another_network_tool/pages/network_scan.dart';
 import 'package:another_network_tool/provider/connectivity_notifier.dart';
 
 class MainScaffold extends StatefulWidget {
-  const MainScaffold({
-    super.key,
-    required this.hostScannerService,
-    required this.portScannerService,
-  });
+  const MainScaffold({super.key, required this.config});
 
-  final HostScannerService hostScannerService;
-  final PortScannerService portScannerService;
+  final Config config;
 
   @override
   State<MainScaffold> createState() => _MainScaffoldState();
@@ -40,13 +35,7 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    final contents = [
-      NetworkInfo(),
-      NetworkScan(
-        hostScannerService: widget.hostScannerService,
-        portScannerService: widget.portScannerService,
-      ),
-    ];
+    final contents = [NetworkInfo(), NetworkScan(config: widget.config)];
 
     return FScaffold(
       header: headers[index],

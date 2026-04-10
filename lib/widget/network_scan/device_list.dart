@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:network_tools/network_tools.dart';
@@ -9,14 +10,12 @@ import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart
 class DeviceList extends StatefulWidget {
   final bool hasWifi;
   final Future<String?> wifiIP;
-  final HostScannerService hostScannerService;
-  final PortScannerService portScannerService;
+  final Config config;
   const DeviceList({
     super.key,
     required this.hasWifi,
     required this.wifiIP,
-    required this.hostScannerService,
-    required this.portScannerService,
+    required this.config,
   });
 
   @override
@@ -47,7 +46,7 @@ class _DeviceListState extends State<DeviceList> {
     }
 
     final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-    final Stream<ActiveHost> stream = widget.hostScannerService
+    final Stream<ActiveHost> stream = widget.config.hostScannerService
         .getAllPingableDevicesAsync(
           subnet,
           progressCallback: (p) {
@@ -134,7 +133,7 @@ class _DeviceListState extends State<DeviceList> {
               children: [
                 ActiveHostsGroup(
                   activeHosts: activeHosts,
-                  portScannerService: widget.portScannerService,
+                  config: widget.config,
                 ),
                 SizedBox(height: 20),
               ],

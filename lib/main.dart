@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
@@ -19,7 +20,7 @@ class Application extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     /// Try changing this and hot reloading the application.
+    /// Try changing this and hot reloading the application.
     ///
     /// To create a custom theme:
     /// ```shell
@@ -33,7 +34,7 @@ class Application extends StatelessWidget {
         }.contains(defaultTargetPlatform)
         ? FThemes.zinc.light.touch
         : FThemes.zinc.light.desktop;
-        
+
     return MaterialApp(
       // TODO: replace with your application's supported locales.
       supportedLocales: FLocalizations.supportedLocales,
@@ -70,8 +71,10 @@ class SetupNetworkTools extends StatelessWidget {
       future: setupNetworkTools(directory),
       loadingMessage: "setup network tools",
       onData: (_) => MainScaffold(
-        hostScannerService: HostScannerService.instance,
-        portScannerService: PortScannerService.instance,
+        config: Config(
+          hostScannerService: HostScannerService.instance,
+          portScannerService: PortScannerService.instance,
+        ),
       ),
     );
   }

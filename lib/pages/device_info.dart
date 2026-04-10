@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
@@ -9,14 +10,10 @@ import 'package:another_network_tool/widget/future_text.dart';
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
 
 class DeviceInfo extends StatelessWidget {
-  const DeviceInfo({
-    super.key,
-    required this.activeHost,
-    required this.portScannerService,
-  });
+  const DeviceInfo({super.key, required this.activeHost, required this.config});
 
   final ActiveHost activeHost;
-  final PortScannerService portScannerService;
+  final Config config;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,7 @@ class DeviceInfo extends StatelessWidget {
             _DeviceInfoDetail(activeHost: activeHost),
             PortGroup(
               address: activeHost.address,
-              portScannerService: portScannerService,
+              portScannerService: config.portScannerService,
             ),
             SizedBox(height: 10),
           ],

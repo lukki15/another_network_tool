@@ -1,3 +1,4 @@
+import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
 
 import 'package:flutter/material.dart';
@@ -9,13 +10,16 @@ import 'package:forui/forui.dart';
 
 @GenerateNiceMocks([MockSpec<ActiveHost>()])
 @GenerateNiceMocks([MockSpec<NavigatorObserver>()])
+@GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './active_hosts_group_test.mocks.dart';
 
 void main() {
+  late MockHostScannerService hostScannerService;
   late MockPortScannerService portScannerService;
 
   setUp(() {
+    hostScannerService = MockHostScannerService();
     portScannerService = MockPortScannerService();
   });
 
@@ -30,7 +34,10 @@ void main() {
           navigatorObservers: [mockObserver],
           home: ActiveHostsGroup(
             activeHosts: activeHosts,
-            portScannerService: portScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );

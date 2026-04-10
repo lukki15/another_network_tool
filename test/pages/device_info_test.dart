@@ -1,4 +1,5 @@
 import 'package:another_network_tool/pages/device_info.dart';
+import 'package:another_network_tool/provider/config.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,16 +10,19 @@ import 'package:mockito/annotations.dart';
 import 'package:network_tools/network_tools.dart';
 
 @GenerateNiceMocks([MockSpec<ActiveHost>()])
+@GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './device_info_test.mocks.dart';
 
 void main() {
   late MockActiveHost mockActiveHost;
-  late MockPortScannerService mockPortScannerService;
+  late MockHostScannerService hostScannerService;
+  late MockPortScannerService portScannerService;
 
   setUp(() {
     mockActiveHost = MockActiveHost();
-    mockPortScannerService = MockPortScannerService();
+    hostScannerService = MockHostScannerService();
+    portScannerService = MockPortScannerService();
   });
 
   group('DeviceInfo', () {
@@ -44,7 +48,10 @@ void main() {
         MaterialApp(
           home: DeviceInfo(
             activeHost: mockActiveHost,
-            portScannerService: mockPortScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );
@@ -75,7 +82,10 @@ void main() {
         MaterialApp(
           home: DeviceInfo(
             activeHost: mockActiveHost,
-            portScannerService: mockPortScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );
@@ -112,7 +122,10 @@ void main() {
         MaterialApp(
           home: DeviceInfo(
             activeHost: mockActiveHost,
-            portScannerService: mockPortScannerService,
+            config: Config(
+              hostScannerService: hostScannerService,
+              portScannerService: portScannerService,
+            ),
           ),
         ),
       );
