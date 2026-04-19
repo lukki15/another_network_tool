@@ -1,3 +1,4 @@
+import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
 
@@ -8,7 +9,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:forui/forui.dart';
 
-@GenerateNiceMocks([MockSpec<ActiveHost>()])
+@GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<NavigatorObserver>()])
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
@@ -26,7 +27,7 @@ void main() {
   group('ActiveHostsGroup Tests', () {
     Future<MockNavigatorObserver> pumpActiveHostsGroup(
       WidgetTester t,
-      Set<ActiveHost> activeHosts,
+      Set<AddressInfo> activeHosts,
     ) async {
       final mockObserver = MockNavigatorObserver();
       await t.pumpWidget(
@@ -46,23 +47,14 @@ void main() {
       return mockObserver;
     }
 
-    MockActiveHost makeMockActiveHost() {
-      var activeHost = MockActiveHost();
-      when(activeHost.deviceName).thenAnswer((_) => Future.value("deviceName"));
-      when(activeHost.address).thenAnswer((_) => "address");
-      when(activeHost.vendor).thenAnswer(
-        (_) => Future.value(
-          Vendor(
-            macPrefix: "macPrefix",
-            vendorName: "vendorName",
-            private: "private",
-            blockType: "blockType",
-            lastUpdate: "lastUpdate",
-          ),
-        ),
-      );
+    MockAddressInfo makeMockAddressInfo() {
+      var addressInfo = MockAddressInfo();
+      when(
+        addressInfo.getHostName(),
+      ).thenAnswer((_) => Future.value("deviceName"));
+      when(addressInfo.address).thenAnswer((_) => "address");
 
-      return activeHost;
+      return addressInfo;
     }
 
     testWidgets('without active hosts', (WidgetTester t) async {
@@ -72,28 +64,26 @@ void main() {
     });
 
     testWidgets('with one active host', (WidgetTester t) async {
-      await pumpActiveHostsGroup(t, {makeMockActiveHost()});
+      await pumpActiveHostsGroup(t, {makeMockAddressInfo()});
 
       expect(find.byType(FTile), findsOneWidget);
       expect(find.text("deviceName"), findsOneWidget);
       expect(find.text("address"), findsOneWidget);
-      expect(find.text("vendorName"), findsOneWidget);
     });
 
     testWidgets('with two active host', (WidgetTester t) async {
       await pumpActiveHostsGroup(t, {
-        makeMockActiveHost(),
-        makeMockActiveHost(),
+        makeMockAddressInfo(),
+        makeMockAddressInfo(),
       });
 
       expect(find.byType(FTile), findsNWidgets(2));
       expect(find.text("deviceName"), findsNWidgets(2));
       expect(find.text("address"), findsNWidgets(2));
-      expect(find.text("vendorName"), findsNWidgets(2));
     });
 
     testWidgets('on press', (WidgetTester t) async {
-      var mockObserver = await pumpActiveHostsGroup(t, {makeMockActiveHost()});
+      var mockObserver = await pumpActiveHostsGroup(t, {makeMockAddressInfo()});
 
       var tile = find.byType(FTile);
       expect(tile, findsOneWidget);
@@ -105,7 +95,7 @@ void main() {
     });
 
     testWidgets('on long press', (WidgetTester t) async {
-      await pumpActiveHostsGroup(t, {makeMockActiveHost()});
+      await pumpActiveHostsGroup(t, {makeMockAddressInfo()});
 
       var tile = find.byType(FTile);
       expect(tile, findsOneWidget);

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/device_list.dart';
 
@@ -10,16 +11,20 @@ import 'package:network_tools/network_tools.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
+@GenerateNiceMocks([MockSpec<Config>()])
+@GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<ActiveHost>()])
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
 @GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './device_list_test.mocks.dart';
 
 void main() {
+  late MockConfig config;
   late MockHostScannerService hostScannerService;
   late MockPortScannerService portScannerService;
 
   setUp(() {
+    config = MockConfig();
     hostScannerService = MockHostScannerService();
     portScannerService = MockPortScannerService();
   });
@@ -81,18 +86,11 @@ void main() {
     });
 
     testWidgets('with wifi', (WidgetTester t) async {
-      var controller = StreamController<ActiveHost>();
+      var controller = StreamController<AddressInfo>();
       when(
-        hostScannerService.getAllPingableDevicesAsync(
-          any,
-          firstHostId: anyNamed('firstHostId'),
-          lastHostId: anyNamed('lastHostId'),
-          hostIds: anyNamed('hostIds'),
-          timeoutInSeconds: anyNamed('timeoutInSeconds'),
+        config.pingHosts(
+          "192.0.0",
           progressCallback: anyNamed('progressCallback'),
-          resultsInAddressAscendingOrder: anyNamed(
-            'resultsInAddressAscendingOrder',
-          ),
         ),
       ).thenAnswer((_) => controller.stream);
 
@@ -101,15 +99,12 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: Future.value("192.0.0.1"),
-            config: Config(
-              hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
-            ),
+            config: config,
           ),
         ),
       );
 
-      controller.add(MockActiveHost());
+      controller.add(MockAddressInfo());
       await t.pumpAndSettle();
       expect(controller.isClosed, false);
       expect(find.text("scanning 1 / 254"), findsOneWidget);

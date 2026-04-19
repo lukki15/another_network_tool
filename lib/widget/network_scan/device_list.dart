@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:network_tools/network_tools.dart';
 
+import 'package:another_network_tool/provider/address_info.dart';
+import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
 
 class DeviceList extends StatefulWidget {
@@ -23,10 +23,10 @@ class DeviceList extends StatefulWidget {
 }
 
 class _DeviceListState extends State<DeviceList> {
-  StreamSubscription<ActiveHost>? streamSubscription;
+  StreamSubscription<AddressInfo>? streamSubscription;
 
   double progress = 0;
-  Set<ActiveHost> activeHosts = {};
+  Set<AddressInfo> activeHosts = {};
   bool isDone = false;
 
   void _init() {
@@ -46,22 +46,22 @@ class _DeviceListState extends State<DeviceList> {
     }
 
     final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-    final Stream<ActiveHost> stream = widget.config.hostScannerService
-        .getAllPingableDevicesAsync(
-          subnet,
-          progressCallback: (p) {
-            setState(() {
-              progress = p;
-            });
-          },
-        );
+    final Stream<AddressInfo> stream = widget.config.pingHosts(
+      subnet,
+      progressCallback: (p) {
+        setState(() {
+          progress = p;
+        });
+      },
+    );
 
     streamSubscription = stream.listen(
       (host) {
-        //Same host can be emitted multiple times
-        setState(() {
-          activeHosts.add(host);
-        });
+        if (host.isReachable) {
+          setState(() {
+            activeHosts.add(host);
+          });
+        }
       },
       onDone: () {
         setState(() {
@@ -101,9 +101,8 @@ class _DeviceListState extends State<DeviceList> {
   Widget build(BuildContext context) {
     final progressPercent = progress / 100.0;
     final int currentIP =
-        HostScannerService.defaultFirstHostId +
-        ((HostScannerService.defaultLastHostId -
-                    HostScannerService.defaultFirstHostId) *
+        Config.defaultFirstHostId +
+        ((Config.defaultLastHostId - Config.defaultFirstHostId) *
                 progressPercent)
             .floor();
 
@@ -116,9 +115,7 @@ class _DeviceListState extends State<DeviceList> {
                 ),
                 subtitle: isDone
                     ? const Text("scanning done")
-                    : Text(
-                        "scanning $currentIP / ${HostScannerService.defaultLastHostId}",
-                      ),
+                    : Text("scanning $currentIP / ${Config.defaultLastHostId}"),
               )
             : FTile(
                 title: const Text("Wi-Fi Unavailable"),

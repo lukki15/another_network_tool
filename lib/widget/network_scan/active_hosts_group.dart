@@ -1,11 +1,9 @@
-import 'dart:io';
-
-import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:forui/forui.dart';
-import 'package:network_tools/network_tools.dart';
 
+import 'package:another_network_tool/provider/address_info.dart';
+import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/pages/device_info.dart';
 import 'package:another_network_tool/widget/future_text.dart';
 
@@ -16,7 +14,7 @@ class ActiveHostsGroup extends StatelessWidget {
     required this.config,
   });
 
-  final Set<ActiveHost> activeHosts;
+  final Set<AddressInfo> activeHosts;
   final Config config;
 
   @override
@@ -27,18 +25,10 @@ class ActiveHostsGroup extends StatelessWidget {
           FTile(
             prefix: Icon(FIcons.monitorSmartphone),
             title: FutureText(
-              future: item.deviceName,
+              future: item.getHostName(),
               convertToString: (String s) => s,
             ),
             subtitle: Text(item.address),
-            details: Platform.isAndroid
-                // Since Android SDK 32, apps are no longer allowed to access the MAC address.
-                ? Text("")
-                : FutureText(
-                    future: item.vendor,
-                    convertToString: (Vendor? v) =>
-                        v == null ? "" : v.vendorName,
-                  ),
             onPress: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
