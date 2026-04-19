@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:network_tools/network_tools.dart';
@@ -7,36 +8,31 @@ import 'package:network_tools/network_tools.dart';
 import 'package:another_network_tool/widget/port_lists/port_map.dart';
 
 class PortGroup extends StatefulWidget {
-  const PortGroup({
-    super.key,
-    required this.address,
-    required this.portScannerService,
-  });
+  const PortGroup({super.key, required this.address, required this.config});
 
   final String address;
-  final PortScannerService portScannerService;
+  final Config config;
 
   @override
   State<PortGroup> createState() => _PortGroupState();
 }
 
 class _PortGroupState extends State<PortGroup> {
-  late List<OpenPort> openPorts = [];
-  late StreamSubscription<ActiveHost> streamSubscription;
+  List<int> openPorts = [];
+  late StreamSubscription<int> streamSubscription;
   bool isDone = false;
 
   @override
   void initState() {
     super.initState();
 
-    final Stream<ActiveHost> stream = widget.portScannerService
-        .scanPortsForSingleDevice(widget.address);
+    final Stream<int> stream = widget.config.scanPort(widget.address);
 
     streamSubscription = stream.listen(
-      (host) {
+      (port) {
         //Same host can be emitted multiple times
         setState(() {
-          openPorts = [...openPorts, ...host.openPorts];
+          openPorts.add(port);
         });
       },
       onDone: () {
@@ -73,52 +69,42 @@ class _PortGroupState extends State<PortGroup> {
     }
 
     List<FTile> tiles = [];
-    if (openPorts.isNotEmpty &&
-        openPorts[0].port > PortScannerService.defaultStartPort) {
+    openPorts.sort();
+    final sortedPorts = openPorts;
+
+    if (sortedPorts.isNotEmpty &&
+        sortedPorts.first > PortScannerService.defaultStartPort) {
       tiles.add(
         generatePortTile(
           false,
           PortScannerService.defaultStartPort,
-          openPorts[0].port - 1,
+          sortedPorts.first - 1,
         ),
       );
     }
 
-    for (var i = 0; i < openPorts.length; i++) {
-      tiles.add(_generatePortTile(i));
-      if (i + 1 < openPorts.length &&
-          openPorts[i].port + 1 != openPorts[i + 1].port) {
-        if (openPorts[i].port + 1 == openPorts[i + 1].port - 1) {
-          tiles.add(generatePortTile(false, openPorts[i].port + 1, null));
+    for (var i = 0; i < sortedPorts.length; i++) {
+      tiles.add(_generatePortTile(sortedPorts[i]));
+      if (i + 1 < sortedPorts.length &&
+          sortedPorts[i] + 1 != sortedPorts[i + 1]) {
+        if (sortedPorts[i] + 1 == sortedPorts[i + 1] - 1) {
+          tiles.add(generatePortTile(false, sortedPorts[i] + 1, null));
         } else {
           tiles.add(
-            generatePortTile(
-              false,
-              openPorts[i].port + 1,
-              openPorts[i + 1].port - 1,
-            ),
+            generatePortTile(false, sortedPorts[i] + 1, sortedPorts[i + 1] - 1),
           );
         }
       }
     }
 
-    if (isDone &&
-        openPorts[openPorts.length - 1].port !=
-            PortScannerService.defaultEndPort) {
-      if (openPorts[openPorts.length - 1].port + 1 ==
-          PortScannerService.defaultEndPort) {
-        tiles.add(
-          generatePortTile(
-            false,
-            openPorts[openPorts.length - 1].port + 1,
-            null,
-          ),
-        );
+    if (isDone && sortedPorts.last != PortScannerService.defaultEndPort) {
+      if (sortedPorts.last + 1 == PortScannerService.defaultEndPort) {
+        tiles.add(generatePortTile(false, sortedPorts.last + 1, null));
       } else {
         tiles.add(
           generatePortTile(
             false,
-            openPorts[openPorts.length - 1].port + 1,
+            sortedPorts.last + 1,
             PortScannerService.defaultEndPort,
           ),
         );
@@ -128,8 +114,8 @@ class _PortGroupState extends State<PortGroup> {
     return tiles;
   }
 
-  FTile _generatePortTile(int i) {
-    return generatePortTile(openPorts[i].isOpen, openPorts[i].port, null);
+  FTile _generatePortTile(int port) {
+    return generatePortTile(true, port, null);
   }
 
   static FTile generatePortTile(bool isOpen, int port, int? nextPort) {

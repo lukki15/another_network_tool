@@ -28,10 +28,7 @@ class DeviceInfo extends StatelessWidget {
           spacing: 20,
           children: [
             _DeviceInfoDetail(activeHost: activeHost),
-            PortGroup(
-              address: activeHost.address,
-              portScannerService: config.portScannerService,
-            ),
+            PortGroup(address: activeHost.address, config: config),
             SizedBox(height: 10),
           ],
         ),

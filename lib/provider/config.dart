@@ -29,4 +29,12 @@ class Config {
           return AddressInfo(address: activeHost.address, isReachable: true);
         });
   }
+
+  Stream<int> scanPort(String target) {
+    return portScannerService.scanPortsForSingleDevice(target).expand((
+      activeHost,
+    ) {
+      return activeHost.openPorts.map((openPort) => openPort.port);
+    });
+  }
 }

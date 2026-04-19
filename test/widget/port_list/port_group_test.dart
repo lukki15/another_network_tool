@@ -1,3 +1,4 @@
+import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
 
 import 'package:flutter/material.dart';
@@ -7,41 +8,25 @@ import 'package:mockito/annotations.dart';
 import 'package:network_tools/network_tools.dart';
 import 'package:forui/forui.dart';
 
-@GenerateNiceMocks([MockSpec<ActiveHost>()])
-@GenerateNiceMocks([MockSpec<PortScannerService>()])
+@GenerateNiceMocks([MockSpec<Config>()])
 import './port_group_test.mocks.dart';
 
 void main() {
   group('PortGroup', () {
-    late MockPortScannerService portScannerService;
+    late MockConfig mockConfig;
 
     setUp(() {
-      portScannerService = MockPortScannerService();
+      mockConfig = MockConfig();
     });
 
-    void setupPortScanExpectation(Stream<ActiveHost> hostStream) {
-      when(
-        portScannerService.scanPortsForSingleDevice(
-          any,
-          startPort: anyNamed('startPort'),
-          endPort: anyNamed('endPort'),
-          progressCallback: anyNamed('progressCallback'),
-          timeout: anyNamed('timeout'),
-          resultsInAddressAscendingOrder: anyNamed(
-            'resultsInAddressAscendingOrder',
-          ),
-          async: anyNamed('async'),
-        ),
-      ).thenAnswer((_) => hostStream);
+    void setupPortScanExpectation(Stream<int> portStream) {
+      when(mockConfig.scanPort('127.0.0.1')).thenAnswer((_) => portStream);
     }
 
     Future<void> pumpPortGroup(WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: PortGroup(
-            address: '127.0.0.1',
-            portScannerService: portScannerService,
-          ),
+          home: PortGroup(address: '127.0.0.1', config: mockConfig),
         ),
       );
       await t.pumpAndSettle();
@@ -54,7 +39,7 @@ void main() {
 
     testWidgets('shows empty state initially', (WidgetTester t) async {
       // Arrange
-      setupPortScanExpectation(Stream<ActiveHost>.empty());
+      setupPortScanExpectation(Stream<int>.empty());
 
       // Act & Assert
       await pumpPortGroup(t);
@@ -77,11 +62,9 @@ void main() {
 
     testWidgets('shows discovered ports at start port', (WidgetTester t) async {
       // Arrange
-      final activeHost = MockActiveHost();
-      when(activeHost.openPorts).thenAnswer(
-        (_) => [OpenPort(PortScannerService.defaultStartPort, isOpen: true)],
+      setupPortScanExpectation(
+        Stream.fromIterable([PortScannerService.defaultStartPort]),
       );
-      setupPortScanExpectation(Stream.fromIterable([activeHost]));
 
       // Act & Assert
       await pumpPortGroup(t);
@@ -104,11 +87,7 @@ void main() {
     ) async {
       // Arrange: first found port is not the start port
       final firstPort = PortScannerService.defaultStartPort + 10;
-      final activeHost = MockActiveHost();
-      when(
-        activeHost.openPorts,
-      ).thenAnswer((_) => [OpenPort(firstPort, isOpen: true)]);
-      setupPortScanExpectation(Stream.fromIterable([activeHost]));
+      setupPortScanExpectation(Stream.fromIterable([firstPort]));
 
       // Act & Assert
       await pumpPortGroup(t);
@@ -137,11 +116,7 @@ void main() {
 
     testWidgets('shows multiple discovered ports', (WidgetTester t) async {
       // Arrange
-      final activeHost = MockActiveHost();
-      when(activeHost.openPorts).thenAnswer(
-        (_) => [OpenPort(80, isOpen: true), OpenPort(443, isOpen: true)],
-      );
-      setupPortScanExpectation(Stream.fromIterable([activeHost]));
+      setupPortScanExpectation(Stream.fromIterable([80, 443]));
 
       // Act & Assert
       await pumpPortGroup(t);
@@ -173,15 +148,9 @@ void main() {
 
     testWidgets('show single gapped discovered ports', (WidgetTester t) async {
       // Arrange
-      final activeHost = MockActiveHost();
-      when(activeHost.openPorts).thenAnswer(
-        (_) => [
-          OpenPort(80, isOpen: true),
-          OpenPort(82, isOpen: true),
-          OpenPort(PortScannerService.defaultEndPort - 1, isOpen: true),
-        ],
+      setupPortScanExpectation(
+        Stream.fromIterable([80, 82, PortScannerService.defaultEndPort - 1]),
       );
-      setupPortScanExpectation(Stream.fromIterable([activeHost]));
 
       // Act & Assert
       await pumpPortGroup(t);
