@@ -113,7 +113,7 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/main')
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Delete and recreate dev tag
         uses: actions/github-script@v8
@@ -123,6 +123,19 @@ jobs:
             const repo = context.repo.repo;
             const sha = context.sha;
 
+            // Delete existing release if it exists
+            try {
+              const releases = await github.rest.repos.listReleases({ owner, repo });
+              const devRelease = releases.data.find(r => r.tag_name === 'dev');
+              if (devRelease) {
+                await github.rest.repos.deleteRelease({ owner, repo, release_id: devRelease.id });
+                console.log('Deleted existing dev release');
+              }
+            } catch (err) {
+              console.log('Error deleting release: ' + err.message);
+            }
+
+            // Delete existing tag
             try {
               await github.rest.git.deleteRef({ owner, repo, ref: 'tags/dev' });
               console.log('Deleted existing dev tag');
@@ -134,6 +147,7 @@ jobs:
               }
             }
 
+            // Recreate tag
             await github.rest.git.createRef({ owner, repo, ref: 'refs/tags/dev', sha });
             console.log('Created dev tag at ' + sha);
 
@@ -143,7 +157,7 @@ jobs:
           path: artifacts
 
       - name: Create and upload GitHub prerelease (automatic releases)
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "Dev Build #${{ github.run_number }}"
@@ -164,7 +178,7 @@ jobs:
           path: artifacts
 
       - name: Create release with artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ github.ref_name }}
