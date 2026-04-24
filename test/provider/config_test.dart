@@ -12,25 +12,18 @@ import 'config_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<ActiveHost>()])
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
-@GenerateNiceMocks([MockSpec<PortScannerService>()])
 void main() {
   late MockHostScannerService mockHostScannerService;
-  late MockPortScannerService mockPortScannerService;
   late Config config;
 
   setUp(() {
     mockHostScannerService = MockHostScannerService();
-    mockPortScannerService = MockPortScannerService();
-    config = Config(
-      hostScannerService: mockHostScannerService,
-      portScannerService: mockPortScannerService,
-    );
+    config = Config(hostScannerService: mockHostScannerService);
   });
 
   group('Config Constructor', () {
     test('creates Config with required services', () {
       expect(config.hostScannerService, equals(mockHostScannerService));
-      expect(config.portScannerService, equals(mockPortScannerService));
     });
 
     test('defaultFirstHostId is 1', () {
@@ -190,157 +183,6 @@ void main() {
         equals(['192.168.1.1', '192.168.1.10', '192.168.1.100']),
       );
       expect(addresses.every((a) => a.isReachable == true), isTrue);
-    });
-  });
-
-  group('scanPort', () {
-    late StreamController<ActiveHost> controller;
-
-    setUp(() {
-      controller = StreamController<ActiveHost>();
-    });
-
-    tearDown(() {
-      controller.close();
-    });
-
-    test('delegates to portScannerService.scanPortsForSingleDevice', () {
-      // Arrange
-      when(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).thenAnswer((_) => controller.stream);
-
-      // Act
-      final result = config.scanPort('192.168.1.1');
-
-      // Assert
-      verify(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).called(1);
-      expect(result, isA<Stream<int>>());
-    });
-
-    test('extracts and returns port numbers from openPorts', () async {
-      // Arrange
-      final mockHost = MockActiveHost();
-      when(mockHost.address).thenReturn('192.168.1.1');
-      when(mockHost.openPorts).thenReturn([
-        OpenPort(80, isOpen: true),
-        OpenPort(443, isOpen: true),
-        OpenPort(8080, isOpen: true),
-      ]);
-      controller.add(mockHost);
-      controller.close();
-
-      when(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).thenAnswer((_) => controller.stream);
-
-      // Act
-      final result = config.scanPort('192.168.1.1');
-
-      // Assert
-      final ports = await result.toList();
-      expect(ports.length, equals(3));
-      expect(ports, equals([80, 443, 8080]));
-    });
-
-    test('handles multiple hosts with multiple open ports', () async {
-      // Arrange
-      final mockHost1 = MockActiveHost();
-      when(mockHost1.address).thenReturn('192.168.1.1');
-      when(
-        mockHost1.openPorts,
-      ).thenReturn([OpenPort(80, isOpen: true), OpenPort(443, isOpen: true)]);
-
-      final mockHost2 = MockActiveHost();
-      when(mockHost2.address).thenReturn('192.168.1.1');
-      when(mockHost2.openPorts).thenReturn([
-        OpenPort(3306, isOpen: true),
-        OpenPort(5432, isOpen: true),
-      ]);
-
-      controller.add(mockHost1);
-      controller.add(mockHost2);
-      controller.close();
-
-      when(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).thenAnswer((_) => controller.stream);
-
-      // Act
-      final result = config.scanPort('192.168.1.1');
-
-      // Assert
-      final ports = await result.toList();
-      expect(ports.length, equals(4));
-      expect(ports, equals([80, 443, 3306, 5432]));
-    });
-
-    test('handles host with single open port', () async {
-      // Arrange
-      final mockHost = MockActiveHost();
-      when(mockHost.address).thenReturn('192.168.1.1');
-      when(mockHost.openPorts).thenReturn([OpenPort(22, isOpen: true)]);
-      controller.add(mockHost);
-      controller.close();
-
-      when(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).thenAnswer((_) => controller.stream);
-
-      // Act
-      final result = config.scanPort('192.168.1.1');
-
-      // Assert
-      final ports = await result.toList();
-      expect(ports.length, equals(1));
-      expect(ports[0], equals(22));
-    });
-
-    test('handles host with no open ports', () async {
-      // Arrange
-      final mockHost = MockActiveHost();
-      when(mockHost.address).thenReturn('192.168.1.1');
-      when(mockHost.openPorts).thenReturn([]);
-      controller.add(mockHost);
-      controller.close();
-
-      when(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).thenAnswer((_) => controller.stream);
-
-      // Act
-      final result = config.scanPort('192.168.1.1');
-
-      // Assert
-      final ports = await result.toList();
-      expect(ports.isEmpty, isTrue);
-    });
-
-    test('handles empty stream correctly', () async {
-      // Arrange
-      when(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).thenAnswer((_) => Stream.empty());
-
-      // Act
-      final result = config.scanPort('192.168.1.1');
-
-      // Assert
-      final ports = await result.toList();
-      expect(ports.isEmpty, isTrue);
-    });
-
-    test('emits errors from underlying stream', () async {
-      // Arrange
-      when(
-        mockPortScannerService.scanPortsForSingleDevice('192.168.1.1'),
-      ).thenAnswer((_) => Stream.error(Exception('Port scan error')));
-
-      // Act & Assert
-      final result = config.scanPort('192.168.1.1');
-      await expectLater(result, emitsError(isA<Exception>()));
     });
   });
 }

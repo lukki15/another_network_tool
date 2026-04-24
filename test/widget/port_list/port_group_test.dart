@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:network_tools/network_tools.dart';
 import 'package:forui/forui.dart';
 
 @GenerateNiceMocks([MockSpec<Config>()])
@@ -47,9 +46,7 @@ void main() {
 
       // Expected port tiles
       expect(
-        find.text(
-          '${PortScannerService.defaultStartPort} - ${PortScannerService.defaultEndPort}',
-        ),
+        find.text('${Config.defaultStartPort} - ${Config.defaultEndPort}'),
         findsOneWidget,
       );
       expect(
@@ -62,18 +59,13 @@ void main() {
 
     testWidgets('shows discovered ports at start port', (WidgetTester t) async {
       // Arrange
-      setupPortScanExpectation(
-        Stream.fromIterable([PortScannerService.defaultStartPort]),
-      );
+      setupPortScanExpectation(Stream.fromIterable([Config.defaultStartPort]));
 
       // Act & Assert
       await pumpPortGroup(t);
       assertBasicLayout(t);
 
-      expect(
-        find.text('${PortScannerService.defaultStartPort}'),
-        findsOneWidget,
-      );
+      expect(find.text('${Config.defaultStartPort}'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) => widget is Icon && widget.color == Colors.green,
@@ -86,7 +78,7 @@ void main() {
       WidgetTester t,
     ) async {
       // Arrange: first found port is not the start port
-      final firstPort = PortScannerService.defaultStartPort + 10;
+      final firstPort = Config.defaultStartPort + 10;
       setupPortScanExpectation(Stream.fromIterable([firstPort]));
 
       // Act & Assert
@@ -95,7 +87,7 @@ void main() {
 
       // Should show empty ports before first found port
       expect(
-        find.text('${PortScannerService.defaultStartPort} - ${firstPort - 1}'),
+        find.text('${Config.defaultStartPort} - ${firstPort - 1}'),
         findsOneWidget,
       );
       expect(
@@ -134,10 +126,7 @@ void main() {
       );
 
       expect(find.text('81 - 442'), findsOneWidget);
-      expect(
-        find.text('444 - ${PortScannerService.defaultEndPort}'),
-        findsOneWidget,
-      );
+      expect(find.text('444 - ${Config.defaultEndPort}'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) => widget is Icon && widget.color == Colors.red,
@@ -149,7 +138,7 @@ void main() {
     testWidgets('show single gapped discovered ports', (WidgetTester t) async {
       // Arrange
       setupPortScanExpectation(
-        Stream.fromIterable([80, 82, PortScannerService.defaultEndPort - 1]),
+        Stream.fromIterable([80, 82, Config.defaultEndPort - 1]),
       );
 
       // Act & Assert
@@ -158,10 +147,7 @@ void main() {
 
       expect(find.text('80'), findsOneWidget);
       expect(find.text('82'), findsOneWidget);
-      expect(
-        find.text("${PortScannerService.defaultEndPort - 1}"),
-        findsOneWidget,
-      );
+      expect(find.text("${Config.defaultEndPort - 1}"), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) => widget is Icon && widget.color == Colors.green,
@@ -170,11 +156,8 @@ void main() {
       );
 
       expect(find.text('81'), findsOneWidget);
-      expect(
-        find.text('83 - ${PortScannerService.defaultEndPort - 2}'),
-        findsOneWidget,
-      );
-      expect(find.text("${PortScannerService.defaultEndPort}"), findsOneWidget);
+      expect(find.text('83 - ${Config.defaultEndPort - 2}'), findsOneWidget);
+      expect(find.text("${Config.defaultEndPort}"), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) => widget is Icon && widget.color == Colors.red,

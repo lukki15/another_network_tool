@@ -14,16 +14,13 @@ import 'package:flutter/material.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
 
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
-@GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './widget_test.mocks.dart';
 
 void main() {
   late MockHostScannerService hostScannerService;
-  late MockPortScannerService portScannerService;
 
   setUp(() {
     hostScannerService = MockHostScannerService();
-    portScannerService = MockPortScannerService();
   });
 
   testWidgets('Application smoke test', (WidgetTester tester) async {
@@ -31,10 +28,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: MainScaffold(
-          config: Config(
-            hostScannerService: hostScannerService,
-            portScannerService: portScannerService,
-          ),
+          config: Config(hostScannerService: hostScannerService),
         ),
       ),
     );

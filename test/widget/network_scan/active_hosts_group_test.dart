@@ -12,19 +12,24 @@ import 'package:forui/forui.dart';
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<NavigatorObserver>()])
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
-@GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './active_hosts_group_test.mocks.dart';
 
 void main() {
   late MockHostScannerService hostScannerService;
-  late MockPortScannerService portScannerService;
 
   setUp(() {
     hostScannerService = MockHostScannerService();
-    portScannerService = MockPortScannerService();
   });
 
   group('ActiveHostsGroup Tests', () {
+    Stream<int> mockPortScanner(
+      String target, {
+      int startPort = Config.defaultStartPort,
+      int endPort = Config.defaultEndPort,
+    }) {
+      return Stream.empty();
+    }
+
     Future<MockNavigatorObserver> pumpActiveHostsGroup(
       WidgetTester t,
       Set<AddressInfo> activeHosts,
@@ -37,7 +42,7 @@ void main() {
             activeHosts: activeHosts,
             config: Config(
               hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
+              portScanner: mockPortScanner,
             ),
           ),
         ),

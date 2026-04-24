@@ -15,18 +15,15 @@ import 'package:mockito/annotations.dart';
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<ActiveHost>()])
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
-@GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './device_list_test.mocks.dart';
 
 void main() {
   late MockConfig config;
   late MockHostScannerService hostScannerService;
-  late MockPortScannerService portScannerService;
 
   setUp(() {
     config = MockConfig();
     hostScannerService = MockHostScannerService();
-    portScannerService = MockPortScannerService();
   });
 
   group('DeviceList Tests', () {
@@ -36,10 +33,7 @@ void main() {
           home: DeviceList(
             hasWifi: false,
             wifiIP: Future.value(),
-            config: Config(
-              hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
-            ),
+            config: Config(hostScannerService: hostScannerService),
           ),
         ),
       );
@@ -55,10 +49,7 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: Future.value(),
-            config: Config(
-              hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
-            ),
+            config: Config(hostScannerService: hostScannerService),
           ),
         ),
       );
@@ -73,10 +64,7 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: NetworkInfo().getWifiIP(),
-            config: Config(
-              hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
-            ),
+            config: Config(hostScannerService: hostScannerService),
           ),
         ),
       );

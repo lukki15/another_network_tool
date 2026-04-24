@@ -12,18 +12,23 @@ import 'package:network_tools/network_tools.dart';
 
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<HostScannerService>()])
-@GenerateNiceMocks([MockSpec<PortScannerService>()])
 import './device_info_test.mocks.dart';
 
 void main() {
   late MockAddressInfo addressInfo;
   late MockHostScannerService hostScannerService;
-  late MockPortScannerService portScannerService;
+
+  Stream<int> mockPortScanner(
+    String target, {
+    int startPort = Config.defaultStartPort,
+    int endPort = Config.defaultEndPort,
+  }) {
+    return Stream.empty();
+  }
 
   setUp(() {
     addressInfo = MockAddressInfo();
     hostScannerService = MockHostScannerService();
-    portScannerService = MockPortScannerService();
   });
 
   group('DeviceInfo', () {
@@ -40,7 +45,7 @@ void main() {
             activeHost: addressInfo,
             config: Config(
               hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
+              portScanner: mockPortScanner,
             ),
           ),
         ),
@@ -72,7 +77,7 @@ void main() {
             activeHost: addressInfo,
             config: Config(
               hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
+              portScanner: mockPortScanner,
             ),
           ),
         ),
@@ -98,7 +103,7 @@ void main() {
             activeHost: addressInfo,
             config: Config(
               hostScannerService: hostScannerService,
-              portScannerService: portScannerService,
+              portScanner: mockPortScanner,
             ),
           ),
         ),

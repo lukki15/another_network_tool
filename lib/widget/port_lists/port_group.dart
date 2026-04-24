@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/widget/port_lists/port_map.dart';
 
@@ -60,11 +59,7 @@ class _PortGroupState extends State<PortGroup> {
   List<FTile> getPortTilesList() {
     if (openPorts.isEmpty && isDone) {
       return [
-        generatePortTile(
-          false,
-          PortScannerService.defaultStartPort,
-          PortScannerService.defaultEndPort,
-        ),
+        generatePortTile(false, Config.defaultStartPort, Config.defaultEndPort),
       ];
     }
 
@@ -72,14 +67,9 @@ class _PortGroupState extends State<PortGroup> {
     openPorts.sort();
     final sortedPorts = openPorts;
 
-    if (sortedPorts.isNotEmpty &&
-        sortedPorts.first > PortScannerService.defaultStartPort) {
+    if (sortedPorts.isNotEmpty && sortedPorts.first > Config.defaultStartPort) {
       tiles.add(
-        generatePortTile(
-          false,
-          PortScannerService.defaultStartPort,
-          sortedPorts.first - 1,
-        ),
+        generatePortTile(false, Config.defaultStartPort, sortedPorts.first - 1),
       );
     }
 
@@ -97,16 +87,12 @@ class _PortGroupState extends State<PortGroup> {
       }
     }
 
-    if (isDone && sortedPorts.last != PortScannerService.defaultEndPort) {
-      if (sortedPorts.last + 1 == PortScannerService.defaultEndPort) {
+    if (isDone && sortedPorts.last != Config.defaultEndPort) {
+      if (sortedPorts.last + 1 == Config.defaultEndPort) {
         tiles.add(generatePortTile(false, sortedPorts.last + 1, null));
       } else {
         tiles.add(
-          generatePortTile(
-            false,
-            sortedPorts.last + 1,
-            PortScannerService.defaultEndPort,
-          ),
+          generatePortTile(false, sortedPorts.last + 1, Config.defaultEndPort),
         );
       }
     }

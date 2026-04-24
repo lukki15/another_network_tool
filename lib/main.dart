@@ -71,10 +71,7 @@ class SetupNetworkTools extends StatelessWidget {
       future: setupNetworkTools(directory),
       loadingMessage: "setup network tools",
       onData: (_) => MainScaffold(
-        config: Config(
-          hostScannerService: HostScannerService.instance,
-          portScannerService: PortScannerService.instance,
-        ),
+        config: Config(hostScannerService: HostScannerService.instance),
       ),
     );
   }
