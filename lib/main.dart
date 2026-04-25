@@ -5,7 +5,7 @@ import 'package:forui/forui.dart';
 
 import 'package:another_network_tool/pages/main_scaffold.dart';
 
-Future<void> main() async {
+void main() {
   runApp(const Application());
 }
 

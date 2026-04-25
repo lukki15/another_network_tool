@@ -22,7 +22,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     FHeader(title: Text('Network Info')),
     FHeader(title: Text('Network Scan')),
   ];
-  final footers = [
+  static const footers = [
     FBottomNavigationBarItem(
       icon: Icon(FIcons.calendarRange),
       label: Text('Info'),
@@ -32,11 +32,10 @@ class _MainScaffoldState extends State<MainScaffold> {
       label: Text('List'),
     ),
   ];
+  late final contents = [NetworkInfo(), NetworkScan(config: widget.config)];
 
   @override
   Widget build(BuildContext context) {
-    final contents = [NetworkInfo(), NetworkScan(config: widget.config)];
-
     return FScaffold(
       header: headers[index],
       footer: FBottomNavigationBar(
