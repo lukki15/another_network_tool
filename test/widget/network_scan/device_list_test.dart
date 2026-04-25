@@ -7,13 +7,11 @@ import 'package:another_network_tool/widget/network_scan/device_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:network_tools/network_tools.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
 @GenerateNiceMocks([MockSpec<Config>()])
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
-@GenerateNiceMocks([MockSpec<ActiveHost>()])
 import './device_list_test.mocks.dart';
 
 void main() {

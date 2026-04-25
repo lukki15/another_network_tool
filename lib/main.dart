@@ -1,16 +1,11 @@
-import 'dart:io';
-
 import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
-import 'package:another_network_tool/setup_network_tools.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
-import 'package:another_network_tool/widget/loading_future_builder.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const Application());
 }
 
@@ -51,25 +46,7 @@ class Application extends StatelessWidget {
         child: FToaster(child: FTooltipGroup(child: child!)),
       ),
       // You can also replace FScaffold with Material Scaffold.
-      home: LoadingFutureBuilder<Directory>(
-        future: getDirectory(),
-        loadingMessage: "get directory",
-        onData: (directory) => SetupNetworkTools(directory: directory),
-      ),
-    );
-  }
-}
-
-class SetupNetworkTools extends StatelessWidget {
-  const SetupNetworkTools({super.key, required this.directory});
-  final Directory directory;
-
-  @override
-  Widget build(BuildContext context) {
-    return LoadingFutureBuilder<void>(
-      future: setupNetworkTools(directory),
-      loadingMessage: "setup network tools",
-      onData: (_) => MainScaffold(config: Config()),
+      home: MainScaffold(config: Config()),
     );
   }
 }
