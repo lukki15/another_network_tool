@@ -1,6 +1,6 @@
 import 'package:another_network_tool/provider/address_info.dart';
+import 'package:another_network_tool/provider/host_scanner.dart';
 import 'package:another_network_tool/provider/port_scanner.dart';
-import 'package:network_tools/network_tools.dart';
 
 typedef ProgressCallback = void Function(double progress);
 typedef PortScanner =
@@ -13,11 +13,11 @@ class Config {
   static const int defaultStartPort = 1; // Port scan will start
   static const int defaultEndPort = 1024; // Port scan will stop
 
-  final HostScannerService hostScannerService;
+  final PingDataProvider pingDataProvider;
   final PortScanner portScanner;
 
   Config({
-    required this.hostScannerService,
+    this.pingDataProvider = defaultPingDataProvider,
     this.portScanner = scanPortsForSingleDevice,
   });
 
@@ -25,16 +25,12 @@ class Config {
     String subnet, {
     ProgressCallback? progressCallback,
   }) {
-    return hostScannerService
-        .getAllPingableDevicesAsync(
-          subnet,
-          progressCallback: progressCallback,
-          firstHostId: defaultFirstHostId,
-          lastHostId: defaultLastHostId,
-        )
-        .asyncMap((activeHost) {
-          return AddressInfo(address: activeHost.address, isReachable: true);
-        });
+    return pingHostsPatch(
+      subnet,
+      pingDataProvider: pingDataProvider,
+      start: defaultFirstHostId,
+      end: defaultLastHostId,
+    );
   }
 
   Stream<int> scanPort(String target) {

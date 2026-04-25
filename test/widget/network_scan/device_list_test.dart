@@ -14,16 +14,13 @@ import 'package:mockito/annotations.dart';
 @GenerateNiceMocks([MockSpec<Config>()])
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<ActiveHost>()])
-@GenerateNiceMocks([MockSpec<HostScannerService>()])
 import './device_list_test.mocks.dart';
 
 void main() {
   late MockConfig config;
-  late MockHostScannerService hostScannerService;
 
   setUp(() {
     config = MockConfig();
-    hostScannerService = MockHostScannerService();
   });
 
   group('DeviceList Tests', () {
@@ -33,7 +30,7 @@ void main() {
           home: DeviceList(
             hasWifi: false,
             wifiIP: Future.value(),
-            config: Config(hostScannerService: hostScannerService),
+            config: Config(),
           ),
         ),
       );
@@ -49,7 +46,7 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: Future.value(),
-            config: Config(hostScannerService: hostScannerService),
+            config: Config(),
           ),
         ),
       );
@@ -64,7 +61,7 @@ void main() {
           home: DeviceList(
             hasWifi: true,
             wifiIP: NetworkInfo().getWifiIP(),
-            config: Config(hostScannerService: hostScannerService),
+            config: Config(),
           ),
         ),
       );

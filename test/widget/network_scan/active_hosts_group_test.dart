@@ -1,27 +1,24 @@
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
+import 'package:dart_ping/dart_ping.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:network_tools/network_tools.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:forui/forui.dart';
 
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<NavigatorObserver>()])
-@GenerateNiceMocks([MockSpec<HostScannerService>()])
 import './active_hosts_group_test.mocks.dart';
 
 void main() {
-  late MockHostScannerService hostScannerService;
-
-  setUp(() {
-    hostScannerService = MockHostScannerService();
-  });
-
   group('ActiveHostsGroup Tests', () {
+    Future<PingData> mockPingDataProvider(String host) async {
+      return PingData();
+    }
+
     Stream<int> mockPortScanner(
       String target, {
       int startPort = Config.defaultStartPort,
@@ -41,7 +38,7 @@ void main() {
           home: ActiveHostsGroup(
             activeHosts: activeHosts,
             config: Config(
-              hostScannerService: hostScannerService,
+              pingDataProvider: mockPingDataProvider,
               portScanner: mockPortScanner,
             ),
           ),

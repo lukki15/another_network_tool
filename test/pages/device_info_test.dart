@@ -1,6 +1,7 @@
 import 'package:another_network_tool/pages/device_info.dart';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
+import 'package:dart_ping/dart_ping.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,15 +9,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
-import 'package:network_tools/network_tools.dart';
-
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
-@GenerateNiceMocks([MockSpec<HostScannerService>()])
 import './device_info_test.mocks.dart';
 
 void main() {
   late MockAddressInfo addressInfo;
-  late MockHostScannerService hostScannerService;
+  Future<PingData> mockPingDataProvider(String host) async {
+    return PingData();
+  }
 
   Stream<int> mockPortScanner(
     String target, {
@@ -28,7 +28,6 @@ void main() {
 
   setUp(() {
     addressInfo = MockAddressInfo();
-    hostScannerService = MockHostScannerService();
   });
 
   group('DeviceInfo', () {
@@ -44,7 +43,7 @@ void main() {
           home: DeviceInfo(
             activeHost: addressInfo,
             config: Config(
-              hostScannerService: hostScannerService,
+              pingDataProvider: mockPingDataProvider,
               portScanner: mockPortScanner,
             ),
           ),
@@ -76,7 +75,7 @@ void main() {
           home: DeviceInfo(
             activeHost: addressInfo,
             config: Config(
-              hostScannerService: hostScannerService,
+              pingDataProvider: mockPingDataProvider,
               portScanner: mockPortScanner,
             ),
           ),
@@ -102,7 +101,7 @@ void main() {
           home: DeviceInfo(
             activeHost: addressInfo,
             config: Config(
-              hostScannerService: hostScannerService,
+              pingDataProvider: mockPingDataProvider,
               portScanner: mockPortScanner,
             ),
           ),

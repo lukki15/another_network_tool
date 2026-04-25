@@ -4,7 +4,6 @@ import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:network_tools/network_tools.dart';
 
 import 'package:another_network_tool/setup_network_tools.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
@@ -70,9 +69,7 @@ class SetupNetworkTools extends StatelessWidget {
     return LoadingFutureBuilder<void>(
       future: setupNetworkTools(directory),
       loadingMessage: "setup network tools",
-      onData: (_) => MainScaffold(
-        config: Config(hostScannerService: HostScannerService.instance),
-      ),
+      onData: (_) => MainScaffold(config: Config()),
     );
   }
 }
