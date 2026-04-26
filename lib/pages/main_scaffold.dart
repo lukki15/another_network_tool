@@ -1,6 +1,5 @@
 import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:provider/provider.dart';
 
 import 'package:another_network_tool/pages/network_info.dart';
@@ -17,35 +16,42 @@ class MainScaffold extends StatefulWidget {
 }
 
 class _MainScaffoldState extends State<MainScaffold> {
-  int index = 0;
-  static const headers = [
-    FHeader(title: Text('Network Info')),
-    FHeader(title: Text('Network Scan')),
+  int currentPageIndex = 0;
+  static final headers = [
+    AppBar(title: const Text('Network Info')),
+    AppBar(title: const Text('Network Scan')),
   ];
-  static const footers = [
-    FBottomNavigationBarItem(
-      icon: Icon(FIcons.calendarRange),
-      label: Text('Info'),
-    ),
-    FBottomNavigationBarItem(
-      icon: Icon(FIcons.textSearch),
-      label: Text('List'),
-    ),
+  static const destinations = [
+    NavigationDestination(
+            selectedIcon: Icon(Icons.info),
+            icon: Icon(Icons.info_outlined),
+            label: 'Info',
+          ),
+        NavigationDestination(
+            selectedIcon: Icon(Icons.network_ping),
+            icon: Icon(Icons.network_ping_outlined),
+            label: 'List',
+          ),
   ];
   late final contents = [NetworkInfo(), NetworkScan(config: widget.config)];
 
   @override
   Widget build(BuildContext context) {
-    return FScaffold(
-      header: headers[index],
-      footer: FBottomNavigationBar(
-        index: index,
-        onChange: (index) => setState(() => this.index = index),
-        children: footers,
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        indicatorColor: Colors.amber,
+        selectedIndex: currentPageIndex,
+        destinations: destinations,
       ),
-      child: ChangeNotifierProvider(
+      appBar: headers[currentPageIndex],
+      body: ChangeNotifierProvider(
         create: (_) => ConnectivityNotifier(),
-        child: contents[index],
+        child: contents[currentPageIndex],
       ),
     );
   }
