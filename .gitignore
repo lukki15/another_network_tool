@@ -47,9 +47,6 @@ app.*.map.json
 # Temporary debug files
 core
 
-# External resources
-/assets/network_tools/mac-vendors-export.csv
-
 # Generated mock files
 /test/**/*.mocks.dart
 

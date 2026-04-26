@@ -38,6 +38,4 @@ dev_dependencies:
 flutter:
   licenses:
       - LICENSE
-  assets:
-    - assets/network_tools/mac-vendors-export.csv
   uses-material-design: true

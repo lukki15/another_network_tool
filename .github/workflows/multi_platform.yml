@@ -49,8 +49,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get --no-example
 
-      - name: Download and generate build dependencies
-        run: bash setup.bash
+      - name: Generate icons
+        run: dart run icons_launcher:create
 
       - name: Build platform
         env:
