@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 import 'package:another_network_tool/widget/network_info/connectivity_stats.dart';
@@ -22,11 +21,11 @@ class ConnectivityInfoTiles extends StatelessWidget {
 
   List<Widget> _generateTiles() {
     List<Widget> tiles = [
-      FTile(
-        prefix: Icon(
+      ListTile(
+        leading: Icon(
           conductivities.contains(ConnectivityResult.wifi)
-              ? FIcons.wifi
-              : FIcons.wifiOff,
+              ? Icons.wifi
+              : Icons.wifi_off,
           color: conductivities.contains(ConnectivityResult.wifi)
               ? Colors.green
               : Colors.red,
@@ -51,8 +50,8 @@ class ConnectivityInfoTiles extends StatelessWidget {
     if (isAndroid() && conductivities.contains(ConnectivityResult.mobile)) {
       tiles.add(SizedBox(height: 10));
       tiles.add(
-        FTile(
-          prefix: Icon(FIcons.signal, color: Colors.green),
+        ListTile(
+          leading: Icon(Icons.signal_cellular_alt, color: Colors.green),
           title: const Text('Cellular'),
         ),
       );
@@ -61,11 +60,11 @@ class ConnectivityInfoTiles extends StatelessWidget {
     if (isLinux()) {
       tiles.add(SizedBox(height: 10));
       tiles.add(
-        FTile(
-          prefix: Icon(
+        ListTile(
+          leading: Icon(
             conductivities.contains(ConnectivityResult.ethernet)
-                ? FIcons.ethernetPort
-                : FIcons.unplug,
+                ? Icons.cable
+                : Icons.power_off,
             color: conductivities.contains(ConnectivityResult.ethernet)
                 ? Colors.green
                 : Colors.red,
@@ -80,6 +79,8 @@ class ConnectivityInfoTiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(spacing: 10, children: _generateTiles());
+    return SingleChildScrollView(
+      child: Column(spacing: 10, children: _generateTiles()),
+    );
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
@@ -109,15 +108,16 @@ class _DeviceListState extends State<DeviceList> {
     return Column(
       children: [
         widget.hasWifi
-            ? FTile(
-                title: FDeterminateProgress(
+            ? ListTile(
+                title: LinearProgressIndicator(
                   value: isDone ? 1.0 : progressPercent,
+                  minHeight: 8,
                 ),
                 subtitle: isDone
                     ? const Text("scanning done")
                     : Text("scanning $currentIP / ${Config.defaultLastHostId}"),
               )
-            : FTile(
+            : ListTile(
                 title: const Text("Wi-Fi Unavailable"),
                 subtitle: const Text(
                   "Network scanning will commence upon availability",

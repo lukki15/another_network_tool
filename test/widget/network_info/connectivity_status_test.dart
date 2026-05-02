@@ -51,12 +51,14 @@ void main() {
 
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityStats(
-            networkInfo: networkInfo,
-            isMobile: false,
-            locationWhenInUse: PermissionHelper(
-              isGranted: () => Future.value(false),
-              request: () => Future.value(PermissionStatus.denied),
+          home: Scaffold(
+            body: ConnectivityStats(
+              networkInfo: networkInfo,
+              isMobile: false,
+              locationWhenInUse: PermissionHelper(
+                isGranted: () => Future.value(false),
+                request: () => Future.value(PermissionStatus.denied),
+              ),
             ),
           ),
         ),
@@ -78,12 +80,14 @@ void main() {
 
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityStats(
-            networkInfo: networkInfo,
-            isMobile: true,
-            locationWhenInUse: PermissionHelper(
-              isGranted: () => Future.value(true),
-              request: () => Future.value(PermissionStatus.granted),
+          home: Scaffold(
+            body: ConnectivityStats(
+              networkInfo: networkInfo,
+              isMobile: true,
+              locationWhenInUse: PermissionHelper(
+                isGranted: () => Future.value(true),
+                request: () => Future.value(PermissionStatus.granted),
+              ),
             ),
           ),
         ),
@@ -105,12 +109,14 @@ void main() {
 
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityStats(
-            networkInfo: networkInfo,
-            isMobile: true,
-            locationWhenInUse: PermissionHelper(
-              isGranted: () => Future.value(false),
-              request: () => Future.value(PermissionStatus.restricted),
+          home: Scaffold(
+            body: ConnectivityStats(
+              networkInfo: networkInfo,
+              isMobile: true,
+              locationWhenInUse: PermissionHelper(
+                isGranted: () => Future.value(false),
+                request: () => Future.value(PermissionStatus.restricted),
+              ),
             ),
           ),
         ),
@@ -132,12 +138,14 @@ void main() {
 
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityStats(
-            networkInfo: networkInfo,
-            isMobile: false,
-            locationWhenInUse: PermissionHelper(
-              isGranted: () => Future.value(false),
-              request: () => Future.value(PermissionStatus.denied),
+          home: Scaffold(
+            body: ConnectivityStats(
+              networkInfo: networkInfo,
+              isMobile: false,
+              locationWhenInUse: PermissionHelper(
+                isGranted: () => Future.value(false),
+                request: () => Future.value(PermissionStatus.denied),
+              ),
             ),
           ),
         ),

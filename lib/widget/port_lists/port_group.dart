@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 
 import 'package:another_network_tool/widget/port_lists/port_map.dart';
 
@@ -50,20 +49,29 @@ class _PortGroupState extends State<PortGroup> {
 
   @override
   Widget build(BuildContext context) {
-    return FTileGroup(
-      label: const Text("Open Ports"),
-      children: getPortTilesList(),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: const Text(
+            "Open Ports",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListView(shrinkWrap: true, children: getPortTilesList()),
+      ],
     );
   }
 
-  List<FTile> getPortTilesList() {
+  List<ListTile> getPortTilesList() {
     if (openPorts.isEmpty && isDone) {
       return [
         generatePortTile(false, Config.defaultStartPort, Config.defaultEndPort),
       ];
     }
 
-    List<FTile> tiles = [];
+    List<ListTile> tiles = [];
     openPorts.sort();
     final sortedPorts = openPorts;
 
@@ -100,15 +108,15 @@ class _PortGroupState extends State<PortGroup> {
     return tiles;
   }
 
-  FTile _generatePortTile(int port) {
+  ListTile _generatePortTile(int port) {
     return generatePortTile(true, port, null);
   }
 
-  static FTile generatePortTile(bool isOpen, int port, int? nextPort) {
-    return FTile(
-      prefix: isOpen
-          ? Icon(FIcons.circleDot, color: Colors.green)
-          : Icon(FIcons.circleDashed, color: Colors.red),
+  static ListTile generatePortTile(bool isOpen, int port, int? nextPort) {
+    return ListTile(
+      leading: isOpen
+          ? Icon(Icons.fiber_manual_record, color: Colors.green)
+          : Icon(Icons.radio_button_unchecked, color: Colors.red),
       title: nextPort == null ? Text("$port") : Text("$port - $nextPort"),
       subtitle: isOpen && nextPort == null && portMap.containsKey(port)
           ? Text(portMap[port]!)

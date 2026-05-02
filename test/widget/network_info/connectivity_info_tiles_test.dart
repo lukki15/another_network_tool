@@ -6,21 +6,22 @@ import 'package:another_network_tool/widget/network_info/connectivity_stats.dart
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:forui/forui.dart';
 
 void main() {
   group('ConnectivityInfoTiles Tests', () {
     testWidgets('with platform', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityInfoTiles(
-            isAndroid: () => Platform.isAndroid,
-            isLinux: () => Platform.isLinux,
-            conductivities: [
-              ConnectivityResult.wifi,
-              ConnectivityResult.mobile,
-              ConnectivityResult.ethernet,
-            ],
+          home: Scaffold(
+            body: ConnectivityInfoTiles(
+              isAndroid: () => Platform.isAndroid,
+              isLinux: () => Platform.isLinux,
+              conductivities: [
+                ConnectivityResult.wifi,
+                ConnectivityResult.mobile,
+                ConnectivityResult.ethernet,
+              ],
+            ),
           ),
         ),
       );
@@ -33,10 +34,12 @@ void main() {
     testWidgets('unknown platform', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityInfoTiles(
-            isAndroid: () => false,
-            isLinux: () => false,
-            conductivities: [],
+          home: Scaffold(
+            body: ConnectivityInfoTiles(
+              isAndroid: () => false,
+              isLinux: () => false,
+              conductivities: [],
+            ),
           ),
         ),
       );
@@ -45,7 +48,7 @@ void main() {
       expect(find.text("Cellular"), findsNothing);
       expect(find.text("Ethernet"), findsNothing);
 
-      final iconFinder = find.byIcon(FIcons.wifiOff);
+      final iconFinder = find.byIcon(Icons.wifi_off);
       expect(iconFinder, findsOneWidget);
 
       final iconWidget = t.widget<Icon>(iconFinder);
@@ -55,10 +58,12 @@ void main() {
     testWidgets('unknown platform with wifi', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityInfoTiles(
-            isAndroid: () => false,
-            isLinux: () => false,
-            conductivities: [ConnectivityResult.wifi],
+          home: Scaffold(
+            body: ConnectivityInfoTiles(
+              isAndroid: () => false,
+              isLinux: () => false,
+              conductivities: [ConnectivityResult.wifi],
+            ),
           ),
         ),
       );
@@ -67,7 +72,7 @@ void main() {
       expect(find.text("Cellular"), findsNothing);
       expect(find.text("Ethernet"), findsNothing);
 
-      final iconFinder = find.byIcon(FIcons.wifi);
+      final iconFinder = find.byIcon(Icons.wifi);
       expect(iconFinder, findsOneWidget);
 
       final iconWidget = t.widget<Icon>(iconFinder);
@@ -79,10 +84,12 @@ void main() {
     testWidgets('Android without mobile', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityInfoTiles(
-            isAndroid: () => true,
-            isLinux: () => false,
-            conductivities: [],
+          home: Scaffold(
+            body: ConnectivityInfoTiles(
+              isAndroid: () => true,
+              isLinux: () => false,
+              conductivities: [],
+            ),
           ),
         ),
       );
@@ -91,16 +98,18 @@ void main() {
       expect(find.text("Cellular"), findsNothing);
       expect(find.text("Ethernet"), findsNothing);
 
-      expect(find.byIcon(FIcons.signal), findsNothing);
+      expect(find.byIcon(Icons.signal_cellular_alt), findsNothing);
     });
 
     testWidgets('Android with mobile', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityInfoTiles(
-            isAndroid: () => true,
-            isLinux: () => false,
-            conductivities: [ConnectivityResult.mobile],
+          home: Scaffold(
+            body: ConnectivityInfoTiles(
+              isAndroid: () => true,
+              isLinux: () => false,
+              conductivities: [ConnectivityResult.mobile],
+            ),
           ),
         ),
       );
@@ -109,7 +118,7 @@ void main() {
       expect(find.text("Cellular"), findsOneWidget);
       expect(find.text("Ethernet"), findsNothing);
 
-      final iconFinder = find.byIcon(FIcons.signal);
+      final iconFinder = find.byIcon(Icons.signal_cellular_alt);
       expect(iconFinder, findsOneWidget);
 
       final iconWidget = t.widget<Icon>(iconFinder);
@@ -119,10 +128,12 @@ void main() {
     testWidgets('Linux without ethernet', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityInfoTiles(
-            isAndroid: () => false,
-            isLinux: () => true,
-            conductivities: [],
+          home: Scaffold(
+            body: ConnectivityInfoTiles(
+              isAndroid: () => false,
+              isLinux: () => true,
+              conductivities: [],
+            ),
           ),
         ),
       );
@@ -131,7 +142,7 @@ void main() {
       expect(find.text("Cellular"), findsNothing);
       expect(find.text("Ethernet"), findsOneWidget);
 
-      final iconFinder = find.byIcon(FIcons.unplug);
+      final iconFinder = find.byIcon(Icons.power_off);
       expect(iconFinder, findsOneWidget);
 
       final iconWidget = t.widget<Icon>(iconFinder);
@@ -141,10 +152,12 @@ void main() {
     testWidgets('Linux with ethernet', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: ConnectivityInfoTiles(
-            isAndroid: () => false,
-            isLinux: () => true,
-            conductivities: [ConnectivityResult.ethernet],
+          home: Scaffold(
+            body: ConnectivityInfoTiles(
+              isAndroid: () => false,
+              isLinux: () => true,
+              conductivities: [ConnectivityResult.ethernet],
+            ),
           ),
         ),
       );
@@ -153,7 +166,7 @@ void main() {
       expect(find.text("Cellular"), findsNothing);
       expect(find.text("Ethernet"), findsOneWidget);
 
-      final iconFinder = find.byIcon(FIcons.ethernetPort);
+      final iconFinder = find.byIcon(Icons.cable);
       expect(iconFinder, findsOneWidget);
 
       final iconWidget = t.widget<Icon>(iconFinder);

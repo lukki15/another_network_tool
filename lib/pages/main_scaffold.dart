@@ -23,15 +23,15 @@ class _MainScaffoldState extends State<MainScaffold> {
   ];
   static const destinations = [
     NavigationDestination(
-            selectedIcon: Icon(Icons.info),
-            icon: Icon(Icons.info_outlined),
-            label: 'Info',
-          ),
-        NavigationDestination(
-            selectedIcon: Icon(Icons.network_ping),
-            icon: Icon(Icons.network_ping_outlined),
-            label: 'List',
-          ),
+      selectedIcon: Icon(Icons.info),
+      icon: Icon(Icons.info_outlined),
+      label: 'Info',
+    ),
+    NavigationDestination(
+      selectedIcon: Icon(Icons.network_ping),
+      icon: Icon(Icons.network_ping_outlined),
+      label: 'List',
+    ),
   ];
   late final contents = [NetworkInfo(), NetworkScan(config: widget.config)];
 

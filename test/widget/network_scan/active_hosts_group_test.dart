@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:forui/forui.dart';
 
 @GenerateNiceMocks([MockSpec<AddressInfo>()])
 @GenerateNiceMocks([MockSpec<NavigatorObserver>()])
@@ -35,11 +34,13 @@ void main() {
       await t.pumpWidget(
         MaterialApp(
           navigatorObservers: [mockObserver],
-          home: ActiveHostsGroup(
-            activeHosts: activeHosts,
-            config: Config(
-              pingDataProvider: mockPingDataProvider,
-              portScanner: mockPortScanner,
+          home: Scaffold(
+            body: ActiveHostsGroup(
+              activeHosts: activeHosts,
+              config: Config(
+                pingDataProvider: mockPingDataProvider,
+                portScanner: mockPortScanner,
+              ),
             ),
           ),
         ),
@@ -62,13 +63,13 @@ void main() {
     testWidgets('without active hosts', (WidgetTester t) async {
       await pumpActiveHostsGroup(t, {});
 
-      expect(find.byType(FTile), findsNothing);
+      expect(find.byType(ListTile), findsNothing);
     });
 
     testWidgets('with one active host', (WidgetTester t) async {
       await pumpActiveHostsGroup(t, {makeMockAddressInfo()});
 
-      expect(find.byType(FTile), findsOneWidget);
+      expect(find.byType(ListTile), findsOneWidget);
       expect(find.text("deviceName"), findsOneWidget);
       expect(find.text("address"), findsOneWidget);
     });
@@ -79,7 +80,7 @@ void main() {
         makeMockAddressInfo(),
       });
 
-      expect(find.byType(FTile), findsNWidgets(2));
+      expect(find.byType(ListTile), findsNWidgets(2));
       expect(find.text("deviceName"), findsNWidgets(2));
       expect(find.text("address"), findsNWidgets(2));
     });
@@ -87,7 +88,7 @@ void main() {
     testWidgets('on press', (WidgetTester t) async {
       var mockObserver = await pumpActiveHostsGroup(t, {makeMockAddressInfo()});
 
-      var tile = find.byType(FTile);
+      var tile = find.byType(ListTile);
       expect(tile, findsOneWidget);
 
       await t.tap(tile);
@@ -99,7 +100,7 @@ void main() {
     testWidgets('on long press', (WidgetTester t) async {
       await pumpActiveHostsGroup(t, {makeMockAddressInfo()});
 
-      var tile = find.byType(FTile);
+      var tile = find.byType(ListTile);
       expect(tile, findsOneWidget);
 
       await t.longPress(tile);

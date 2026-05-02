@@ -1,22 +1,23 @@
-import 'package:another_network_tool/widget/network_info/future_ftile.dart';
+import 'package:another_network_tool/widget/network_info/future_list_tile.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:forui/forui.dart';
 
 void main() {
-  group('FutureFTile Tests', () {
+  group('FutureListTile Tests', () {
     testWidgets('future text', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: FTileGroup(
-            children: [
-              FutureFTile(
-                title: "test title",
-                future: Future<String?>.value("future"),
-                errorMessage: "error",
-              ),
-            ],
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FutureListTile(
+                  title: "test title",
+                  future: Future<String?>.value("future"),
+                  errorMessage: "error",
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -29,14 +30,16 @@ void main() {
     testWidgets('future text null', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: FTileGroup(
-            children: [
-              FutureFTile(
-                title: "test title",
-                future: Future<String?>.value(null),
-                errorMessage: "error",
-              ),
-            ],
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FutureListTile(
+                  title: "test title",
+                  future: Future<String?>.value(null),
+                  errorMessage: "error",
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -54,14 +57,16 @@ void main() {
 
       await t.pumpWidget(
         MaterialApp(
-          home: FTileGroup(
-            children: [
-              FutureFTile(
-                title: "test title",
-                future: mockFuture,
-                errorMessage: "error",
-              ),
-            ],
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FutureListTile(
+                  title: "test title",
+                  future: mockFuture,
+                  errorMessage: "error",
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -74,20 +79,22 @@ void main() {
     testWidgets('long press', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: FTileGroup(
-            children: [
-              FutureFTile(
-                title: "test title",
-                future: Future<String?>.value("future"),
-                errorMessage: "error",
-              ),
-            ],
+          home: Scaffold(
+            body: ListView(
+              children: [
+                FutureListTile(
+                  title: "test title",
+                  future: Future<String?>.value("future"),
+                  errorMessage: "error",
+                ),
+              ],
+            ),
           ),
         ),
       );
       await t.pumpAndSettle();
 
-      var tile = find.byType(FutureFTile);
+      var tile = find.byType(FutureListTile);
       expect(tile, findsOneWidget);
 
       await t.longPress(tile);

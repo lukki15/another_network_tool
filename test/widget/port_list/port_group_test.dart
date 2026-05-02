@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:forui/forui.dart';
 
 @GenerateNiceMocks([MockSpec<Config>()])
 import './port_group_test.mocks.dart';
@@ -25,14 +24,16 @@ void main() {
     Future<void> pumpPortGroup(WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: PortGroup(address: '127.0.0.1', config: mockConfig),
+          home: Scaffold(
+            body: PortGroup(address: '127.0.0.1', config: mockConfig),
+          ),
         ),
       );
       await t.pumpAndSettle();
     }
 
     void assertBasicLayout(WidgetTester t) {
-      expect(find.byType(FTileGroup), findsOneWidget);
+      expect(find.byType(ListView), findsOneWidget);
       expect(find.text("Open Ports"), findsOneWidget);
     }
 

@@ -25,10 +25,12 @@ void main() {
     testWidgets('without wifi', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: DeviceList(
-            hasWifi: false,
-            wifiIP: Future.value(),
-            config: Config(),
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: false,
+              wifiIP: Future.value(),
+              config: Config(),
+            ),
           ),
         ),
       );
@@ -41,10 +43,12 @@ void main() {
     testWidgets('without wifiIP', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: DeviceList(
-            hasWifi: true,
-            wifiIP: Future.value(),
-            config: Config(),
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiIP: Future.value(),
+              config: Config(),
+            ),
           ),
         ),
       );
@@ -56,10 +60,12 @@ void main() {
     testWidgets('wait for wifiIP', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: DeviceList(
-            hasWifi: true,
-            wifiIP: NetworkInfo().getWifiIP(),
-            config: Config(),
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiIP: NetworkInfo().getWifiIP(),
+              config: Config(),
+            ),
           ),
         ),
       );
@@ -79,10 +85,12 @@ void main() {
 
       await t.pumpWidget(
         MaterialApp(
-          home: DeviceList(
-            hasWifi: true,
-            wifiIP: Future.value("192.0.0.1"),
-            config: config,
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiIP: Future.value("192.0.0.1"),
+              config: config,
+            ),
           ),
         ),
       );

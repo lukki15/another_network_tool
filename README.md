@@ -72,12 +72,10 @@ $ flutter test
 ## Technologies Used
 
 - [Flutter](https://flutter.dev) framework
-- [forui](https://forui.dev/) flutter UI library
+- [dart_ping](https://pub.dev/packages/dart_ping) to ping and discover aviablable hosts
 - [permission_handler](https://pub.dev/packages/permission_handler) to request permissions and check their status.
 - [connectivity_plus](https://pub.dev/packages/connectivity_plus)to discover network connectivity types that can be used.
 - [network_info_plus](https://pub.dev/packages/network_info_plus) to discover network info and configure themselves accordingly.
-- [network_tools](https://pub.dev/packages/network_tools) to scan all devices in a subnet.
-  - Requires `arp` command on Linux (`sudo apt-get install net-tools`)
 - [path_provider](https://pub.dev/packages/path_provider) for finding commonly used locations on the filesystem.
 
 ## Contributing

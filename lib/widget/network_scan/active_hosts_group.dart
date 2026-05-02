@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:forui/forui.dart';
 
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
@@ -19,17 +18,17 @@ class ActiveHostsGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FTileGroup(
+    return Column(
       children: [
         for (var item in activeHosts)
-          FTile(
-            prefix: Icon(FIcons.monitorSmartphone),
+          ListTile(
+            leading: Icon(Icons.devices),
             title: FutureText(
               future: item.getHostName(),
               convertToString: (String s) => s,
             ),
             subtitle: Text(item.address),
-            onPress: () {
+            onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) =>

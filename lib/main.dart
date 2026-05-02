@@ -8,7 +8,7 @@ class Application extends StatelessWidget {
   const Application({super.key});
 
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return MaterialApp(home: MainScaffold(config: Config()));
   }
 }

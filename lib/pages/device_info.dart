@@ -2,7 +2,6 @@ import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:forui/forui.dart';
 
 import 'package:another_network_tool/widget/future_text.dart';
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
@@ -15,16 +14,16 @@ class DeviceInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FScaffold(
-      header: FHeader.nested(
+    return Scaffold(
+      appBar: AppBar(
         title: FutureText(
           future: activeHost.getHostName(),
           convertToString: (String s) => s,
         ),
-        prefixes: [FHeaderAction.back(onPress: () => Navigator.pop(context))],
       ),
-      child: SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           spacing: 20,
           children: [
             _DeviceInfoDetail(activeHost: activeHost),
@@ -44,12 +43,19 @@ class _DeviceInfoDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FTileGroup(
-      label: const Text('Device Info'),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        FTile(
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: const Text(
+            'Device Info',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListTile(
           title: const Text('IP Address'),
-          details: Text(activeHost.address),
+          subtitle: Text(activeHost.address),
           onLongPress: () =>
               Clipboard.setData(ClipboardData(text: activeHost.address)),
         ),

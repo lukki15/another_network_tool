@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:another_network_tool/widget/network_info/future_ftile.dart';
+import 'package:another_network_tool/widget/network_info/future_list_tile.dart';
 
 class PermissionHelper {
   final Future<bool> Function() isGranted;
@@ -91,39 +90,39 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
 
   @override
   Widget build(BuildContext context) {
-    return FTileGroup(
+    return Column(
       children: [
-        FutureFTile(
+        FutureListTile(
           title: 'Wifi Name',
           future: _wifiName,
           errorMessage: 'Failed to get Wifi Name',
         ),
-        FutureFTile(
+        FutureListTile(
           title: 'Wifi BSSID',
           future: _wifiBSSID,
           errorMessage: 'Failed to get Wifi BSSID',
         ),
-        FutureFTile(
+        FutureListTile(
           title: 'Wifi IPv4',
           future: _wifiIPv4,
           errorMessage: 'Failed to get Wifi IPv4',
         ),
-        FutureFTile(
+        FutureListTile(
           title: 'Wifi IPv6',
           future: _wifiIPv6,
           errorMessage: 'Failed to get Wifi IPv6',
         ),
-        FutureFTile(
+        FutureListTile(
           title: 'Wifi Gateway',
           future: _wifiGatewayIP,
           errorMessage: 'Failed to get Wifi gateway address',
         ),
-        FutureFTile(
+        FutureListTile(
           title: 'Wifi Broadcast',
           future: _wifiBroadcast,
           errorMessage: 'Failed to get Wifi broadcast',
         ),
-        FutureFTile(
+        FutureListTile(
           title: 'Wifi Submask',
           future: _wifiSubMask,
           errorMessage: 'Failed to get Wifi submask address',

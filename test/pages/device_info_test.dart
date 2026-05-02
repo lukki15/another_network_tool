@@ -40,11 +40,13 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: DeviceInfo(
-            activeHost: addressInfo,
-            config: Config(
-              pingDataProvider: mockPingDataProvider,
-              portScanner: mockPortScanner,
+          home: Scaffold(
+            body: DeviceInfo(
+              activeHost: addressInfo,
+              config: Config(
+                pingDataProvider: mockPingDataProvider,
+                portScanner: mockPortScanner,
+              ),
             ),
           ),
         ),
@@ -98,11 +100,13 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: DeviceInfo(
-            activeHost: addressInfo,
-            config: Config(
-              pingDataProvider: mockPingDataProvider,
-              portScanner: mockPortScanner,
+          home: Scaffold(
+            body: DeviceInfo(
+              activeHost: addressInfo,
+              config: Config(
+                pingDataProvider: mockPingDataProvider,
+                portScanner: mockPortScanner,
+              ),
             ),
           ),
         ),
