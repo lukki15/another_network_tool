@@ -59,7 +59,11 @@ class _PortGroupState extends State<PortGroup> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-        ListView(shrinkWrap: true, children: getPortTilesList()),
+        ListView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: getPortTilesList(),
+        ),
       ],
     );
   }
