@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:bullseye
+FROM mcr.microsoft.com/devcontainers/base:trixie
 
 RUN sudo apt-get update
 
@@ -12,14 +12,15 @@ RUN sudo apt-get install -y sqlite3 libsqlite3-dev
 RUN sudo apt-get install -y \
         clang cmake git \
         ninja-build pkg-config \
-        libgtk-3-dev liblzma-dev
+        libgtk-3-dev liblzma-dev \
+        mesa-utils
 
 # Setup Flutter for Android apps
 RUN sudo apt-get install -y libc6:amd64 libstdc++6:amd64 lib32z1 libbz2-1.0:amd64
 
-## Download and install JDK 21
-RUN curl https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.deb -O && \
-    sudo apt-get install ./jdk-21_linux-x64_bin.deb
+## Download and install JDK 25
+RUN curl https://download.oracle.com/java/25/latest/jdk-25_linux-x64_bin.deb -O && \
+    sudo apt-get install ./jdk-25_linux-x64_bin.deb
 
 ## Set up environment variables
 ENV ANDROID_HOME=/opt/android
