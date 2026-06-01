@@ -21,7 +21,7 @@ dependencies:
     sdk: flutter
   network_info_plus: ^8.1.0
   path_provider: ^2.1.5
-  permission_handler: ^12.0.1
+  permission_handler: ^12.0.2
   provider: ^6.1.5
   synchronized: ^3.4.0+1
 
