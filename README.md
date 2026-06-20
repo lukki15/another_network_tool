@@ -72,11 +72,12 @@ $ flutter test
 ## Technologies Used
 
 - [Flutter](https://flutter.dev) framework
-- [dart_ping](https://pub.dev/packages/dart_ping) to ping and discover aviablable hosts
+- [dart_ping](https://pub.dev/packages/dart_ping) to ping and discover available hosts
 - [permission_handler](https://pub.dev/packages/permission_handler) to request permissions and check their status.
 - [connectivity_plus](https://pub.dev/packages/connectivity_plus)to discover network connectivity types that can be used.
 - [network_info_plus](https://pub.dev/packages/network_info_plus) to discover network info and configure themselves accordingly.
-- [path_provider](https://pub.dev/packages/path_provider) for finding commonly used locations on the filesystem.
+- [provider](https://pub.dev/packages/provider) used as dependency injection wrapper.
+- [synchronized](https://pub.dev/packages/synchronized) o prevent concurrent access to asynchronous code.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
