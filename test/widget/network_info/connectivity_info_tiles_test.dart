@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:another_network_tool/widget/network_info/connectivity_info_tiles.dart';
 import 'package:another_network_tool/widget/network_info/connectivity_stats.dart';
+import 'package:another_network_tool/widget/network_info/conductivity_card.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ void main() {
       );
 
       expect(find.text("Wi-Fi"), findsOneWidget);
-      expect(find.text("Cellular"), findsNothing);
+      expect(find.text("Cellular"), findsOneWidget);
       expect(find.text("Ethernet"), findsOneWidget);
     });
 
@@ -45,14 +46,19 @@ void main() {
       );
 
       expect(find.text("Wi-Fi"), findsOneWidget);
-      expect(find.text("Cellular"), findsNothing);
-      expect(find.text("Ethernet"), findsNothing);
+      expect(find.text("Cellular"), findsOneWidget);
+      expect(find.text("Ethernet"), findsOneWidget);
 
       final iconFinder = find.byIcon(Icons.wifi_off);
       expect(iconFinder, findsOneWidget);
 
-      final iconWidget = t.widget<Icon>(iconFinder);
-      expect(iconWidget.color, isSameColorAs(Colors.red));
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ConductivityCard, 'Wi-Fi'),
+          matching: find.text('Connected'),
+        ),
+        findsNothing,
+      );
     });
 
     testWidgets('unknown platform with wifi', (WidgetTester t) async {
@@ -69,14 +75,19 @@ void main() {
       );
 
       expect(find.text("Wi-Fi"), findsOneWidget);
-      expect(find.text("Cellular"), findsNothing);
-      expect(find.text("Ethernet"), findsNothing);
+      expect(find.text("Cellular"), findsOneWidget);
+      expect(find.text("Ethernet"), findsOneWidget);
 
       final iconFinder = find.byIcon(Icons.wifi);
       expect(iconFinder, findsOneWidget);
 
-      final iconWidget = t.widget<Icon>(iconFinder);
-      expect(iconWidget.color, isSameColorAs(Colors.green));
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ConductivityCard, 'Wi-Fi'),
+          matching: find.text('Connected'),
+        ),
+        findsOneWidget,
+      );
 
       expect(find.byType(ConnectivityStats), findsOneWidget);
     });
@@ -95,8 +106,8 @@ void main() {
       );
 
       expect(find.text("Wi-Fi"), findsOneWidget);
-      expect(find.text("Cellular"), findsNothing);
-      expect(find.text("Ethernet"), findsNothing);
+      expect(find.text("Cellular"), findsOneWidget);
+      expect(find.text("Ethernet"), findsOneWidget);
 
       expect(find.byIcon(Icons.signal_cellular_alt), findsNothing);
     });
@@ -116,13 +127,18 @@ void main() {
 
       expect(find.text("Wi-Fi"), findsOneWidget);
       expect(find.text("Cellular"), findsOneWidget);
-      expect(find.text("Ethernet"), findsNothing);
+      expect(find.text("Ethernet"), findsOneWidget);
 
       final iconFinder = find.byIcon(Icons.signal_cellular_alt);
       expect(iconFinder, findsOneWidget);
 
-      final iconWidget = t.widget<Icon>(iconFinder);
-      expect(iconWidget.color, isSameColorAs(Colors.green));
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ConductivityCard, 'Cellular'),
+          matching: find.text('Connected'),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Linux without ethernet', (WidgetTester t) async {
@@ -139,14 +155,19 @@ void main() {
       );
 
       expect(find.text("Wi-Fi"), findsOneWidget);
-      expect(find.text("Cellular"), findsNothing);
+      expect(find.text("Cellular"), findsOneWidget);
       expect(find.text("Ethernet"), findsOneWidget);
 
       final iconFinder = find.byIcon(Icons.power_off);
       expect(iconFinder, findsOneWidget);
 
-      final iconWidget = t.widget<Icon>(iconFinder);
-      expect(iconWidget.color, isSameColorAs(Colors.red));
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ConductivityCard, 'Ethernet'),
+          matching: find.text('Connected'),
+        ),
+        findsNothing,
+      );
     });
 
     testWidgets('Linux with ethernet', (WidgetTester t) async {
@@ -163,14 +184,19 @@ void main() {
       );
 
       expect(find.text("Wi-Fi"), findsOneWidget);
-      expect(find.text("Cellular"), findsNothing);
+      expect(find.text("Cellular"), findsOneWidget);
       expect(find.text("Ethernet"), findsOneWidget);
 
       final iconFinder = find.byIcon(Icons.cable);
       expect(iconFinder, findsOneWidget);
 
-      final iconWidget = t.widget<Icon>(iconFinder);
-      expect(iconWidget.color, isSameColorAs(Colors.green));
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ConductivityCard, 'Ethernet'),
+          matching: find.text('Connected'),
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

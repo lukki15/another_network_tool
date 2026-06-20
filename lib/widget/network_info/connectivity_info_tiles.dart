@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:another_network_tool/widget/network_info/conductivity_card.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -19,18 +20,13 @@ class ConnectivityInfoTiles extends StatelessWidget {
   final bool Function() isLinux;
   final List<ConnectivityResult> conductivities;
 
-  List<Widget> _generateTiles() {
+  List<Widget> _generateTiles(BuildContext context) {
     List<Widget> tiles = [
-      ListTile(
-        leading: Icon(
-          conductivities.contains(ConnectivityResult.wifi)
-              ? Icons.wifi
-              : Icons.wifi_off,
-          color: conductivities.contains(ConnectivityResult.wifi)
-              ? Colors.green
-              : Colors.red,
-        ),
-        title: const Text('Wi-Fi'),
+      ConductivityCard(
+        isConnected: conductivities.contains(ConnectivityResult.wifi),
+        isConnectedIcon: Icons.wifi,
+        isDisconnectedIcon: Icons.wifi_off,
+        networkName: 'Wi-Fi',
       ),
     ];
 
@@ -47,32 +43,21 @@ class ConnectivityInfoTiles extends StatelessWidget {
       );
     }
 
-    if (isAndroid() && conductivities.contains(ConnectivityResult.mobile)) {
-      tiles.add(SizedBox(height: 10));
-      tiles.add(
-        ListTile(
-          leading: Icon(Icons.signal_cellular_alt, color: Colors.green),
-          title: const Text('Cellular'),
-        ),
-      );
-    }
-
-    if (isLinux()) {
-      tiles.add(SizedBox(height: 10));
-      tiles.add(
-        ListTile(
-          leading: Icon(
-            conductivities.contains(ConnectivityResult.ethernet)
-                ? Icons.cable
-                : Icons.power_off,
-            color: conductivities.contains(ConnectivityResult.ethernet)
-                ? Colors.green
-                : Colors.red,
-          ),
-          title: const Text('Ethernet'),
-        ),
-      );
-    }
+    tiles.addAll([
+      ConductivityCard(
+        isConnected: conductivities.contains(ConnectivityResult.mobile),
+        isConnectedIcon: Icons.signal_cellular_alt,
+        isDisconnectedIcon: Icons.signal_cellular_0_bar,
+        networkName: 'Cellular',
+      ),
+      ConductivityCard(
+        isConnected: conductivities.contains(ConnectivityResult.ethernet),
+        isConnectedIcon: Icons.cable,
+        isDisconnectedIcon: Icons.power_off,
+        networkName: 'Ethernet',
+      ),
+      SizedBox(height: 8),
+    ]);
 
     return tiles;
   }
@@ -80,7 +65,7 @@ class ConnectivityInfoTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(spacing: 10, children: _generateTiles()),
+      child: Column(spacing: 10, children: _generateTiles(context)),
     );
   }
 }

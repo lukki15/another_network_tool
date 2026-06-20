@@ -52,12 +52,14 @@ void main() {
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ConnectivityStats(
-              networkInfo: networkInfo,
-              isMobile: false,
-              locationWhenInUse: PermissionHelper(
-                isGranted: () => Future.value(false),
-                request: () => Future.value(PermissionStatus.denied),
+            body: SingleChildScrollView(
+              child: ConnectivityStats(
+                networkInfo: networkInfo,
+                isMobile: false,
+                locationWhenInUse: PermissionHelper(
+                  isGranted: () => Future.value(false),
+                  request: () => Future.value(PermissionStatus.denied),
+                ),
               ),
             ),
           ),
@@ -81,12 +83,14 @@ void main() {
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ConnectivityStats(
-              networkInfo: networkInfo,
-              isMobile: true,
-              locationWhenInUse: PermissionHelper(
-                isGranted: () => Future.value(true),
-                request: () => Future.value(PermissionStatus.granted),
+            body: SingleChildScrollView(
+              child: ConnectivityStats(
+                networkInfo: networkInfo,
+                isMobile: true,
+                locationWhenInUse: PermissionHelper(
+                  isGranted: () => Future.value(true),
+                  request: () => Future.value(PermissionStatus.granted),
+                ),
               ),
             ),
           ),
@@ -110,12 +114,14 @@ void main() {
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ConnectivityStats(
-              networkInfo: networkInfo,
-              isMobile: true,
-              locationWhenInUse: PermissionHelper(
-                isGranted: () => Future.value(false),
-                request: () => Future.value(PermissionStatus.restricted),
+            body: SingleChildScrollView(
+              child: ConnectivityStats(
+                networkInfo: networkInfo,
+                isMobile: true,
+                locationWhenInUse: PermissionHelper(
+                  isGranted: () => Future.value(false),
+                  request: () => Future.value(PermissionStatus.restricted),
+                ),
               ),
             ),
           ),
@@ -139,12 +145,14 @@ void main() {
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ConnectivityStats(
-              networkInfo: networkInfo,
-              isMobile: false,
-              locationWhenInUse: PermissionHelper(
-                isGranted: () => Future.value(false),
-                request: () => Future.value(PermissionStatus.denied),
+            body: SingleChildScrollView(
+              child: ConnectivityStats(
+                networkInfo: networkInfo,
+                isMobile: false,
+                locationWhenInUse: PermissionHelper(
+                  isGranted: () => Future.value(false),
+                  request: () => Future.value(PermissionStatus.denied),
+                ),
               ),
             ),
           ),
@@ -152,14 +160,8 @@ void main() {
       );
 
       await t.pumpAndSettle();
-
-      expect(find.text("Failed to get Wifi Name"), findsOneWidget);
-      expect(find.text("Failed to get Wifi BSSID"), findsOneWidget);
-      expect(find.text("Failed to get Wifi IPv4"), findsOneWidget);
-      expect(find.text("Failed to get Wifi IPv6"), findsOneWidget);
-      expect(find.text("Failed to get Wifi gateway address"), findsOneWidget);
-      expect(find.text("Failed to get Wifi broadcast"), findsOneWidget);
-      expect(find.text("Failed to get Wifi submask address"), findsOneWidget);
+      // Each failed future shows the generic error message from `FutureText`.
+      expect(find.text("Error"), findsNWidgets(7));
     });
   });
 }

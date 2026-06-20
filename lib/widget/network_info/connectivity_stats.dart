@@ -1,9 +1,8 @@
+import 'package:another_network_tool/widget/network_info/connectivity_stats_state_list_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'package:another_network_tool/widget/network_info/future_list_tile.dart';
 
 class PermissionHelper {
   final Future<bool> Function() isGranted;
@@ -92,42 +91,45 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FutureListTile(
-          title: 'Wifi Name',
-          future: _wifiName,
-          errorMessage: 'Failed to get Wifi Name',
+        Text("Network Details", style: Theme.of(context).textTheme.titleMedium),
+        _generateWifiDetails(context),
+
+        Text(
+          "IP Configuration",
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-        FutureListTile(
-          title: 'Wifi BSSID',
-          future: _wifiBSSID,
-          errorMessage: 'Failed to get Wifi BSSID',
-        ),
-        FutureListTile(
-          title: 'Wifi IPv4',
-          future: _wifiIPv4,
-          errorMessage: 'Failed to get Wifi IPv4',
-        ),
-        FutureListTile(
-          title: 'Wifi IPv6',
-          future: _wifiIPv6,
-          errorMessage: 'Failed to get Wifi IPv6',
-        ),
-        FutureListTile(
-          title: 'Wifi Gateway',
-          future: _wifiGatewayIP,
-          errorMessage: 'Failed to get Wifi gateway address',
-        ),
-        FutureListTile(
-          title: 'Wifi Broadcast',
-          future: _wifiBroadcast,
-          errorMessage: 'Failed to get Wifi broadcast',
-        ),
-        FutureListTile(
-          title: 'Wifi Submask',
-          future: _wifiSubMask,
-          errorMessage: 'Failed to get Wifi submask address',
-        ),
+        _generateIpConfiguration(context),
       ],
     );
+  }
+
+  Widget _generateWifiDetails(BuildContext context) {
+    final wifiDetails = [
+      {'SSID': _wifiName},
+      {'Security': Future<String?>.value('N/A')},
+      {'Frequency': Future<String?>.value('N/A')},
+      {'Channel': Future<String?>.value('N/A')},
+      {'Link Speed': Future<String?>.value('N/A')},
+      {'Signal Strength': Future<String?>.value('N/A')},
+      {'BSSID': _wifiBSSID},
+    ];
+
+    return ConnectivityStatsStateListView(
+      context: context,
+      details: wifiDetails,
+    );
+  }
+
+  Widget _generateIpConfiguration(BuildContext context) {
+    final ipDetails = [
+      {'IP4 Address': _wifiIPv4},
+      {'IP6 Address': _wifiIPv6},
+      {'Broadcast': _wifiBroadcast},
+      {'Subnet Mask': _wifiSubMask},
+      {'Default Gateway': _wifiGatewayIP},
+      {'DNS Server': Future<String?>.value('N/A')},
+    ];
+
+    return ConnectivityStatsStateListView(context: context, details: ipDetails);
   }
 }
