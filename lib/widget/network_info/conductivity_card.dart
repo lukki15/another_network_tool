@@ -19,6 +19,7 @@ class ConductivityCard extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: Card.outlined(
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

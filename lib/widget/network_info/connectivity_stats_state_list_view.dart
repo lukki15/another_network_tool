@@ -15,6 +15,7 @@ class ConnectivityStatsStateListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card.outlined(
+      color: Theme.of(context).colorScheme.surfaceContainerLowest,
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -27,19 +28,21 @@ class ConnectivityStatsStateListView extends StatelessWidget {
 
           return InkWell(
             onLongPress: () => _setClipboardData(future),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(label),
-                  FutureText<String?>(
-                    future: future,
-                    convertToString: (s) => s ?? '—',
-                    errorMessage: 'Error',
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              title: Text(
+                label,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              subtitle: FutureText<String?>(
+                future: future,
+                convertToString: (s) => s ?? '—',
+                errorMessage: 'Error',
               ),
             ),
           );
