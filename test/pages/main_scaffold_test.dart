@@ -13,8 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
 
 void main() {
-  Future<PingData> mockPingDataProvider(String host) async {
-    return PingData();
+  Future<PingEvent> mockPingDataProvider(String host) async {
+    return PingResponse(ip: '127.0.0.1');
   }
 
   testWidgets('Switch pages', (WidgetTester tester) async {

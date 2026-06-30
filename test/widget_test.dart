@@ -13,8 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:another_network_tool/pages/main_scaffold.dart';
 
 void main() {
-  Future<PingData> mockPingDataProvider(String host) async {
-    return PingData();
+  Future<PingEvent> mockPingDataProvider(String host) async {
+    return PingResponse(ip: '127.0.0.1');
   }
 
   testWidgets('Application smoke test', (WidgetTester tester) async {

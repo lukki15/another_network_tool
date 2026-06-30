@@ -14,8 +14,8 @@ import './device_info_test.mocks.dart';
 
 void main() {
   late MockAddressInfo addressInfo;
-  Future<PingData> mockPingDataProvider(String host) async {
-    return PingData();
+  Future<PingEvent> mockPingDataProvider(String host) async {
+    return PingResponse(ip: '127.0.0.1');
   }
 
   Stream<int> mockPortScanner(

@@ -4,13 +4,13 @@ import 'package:another_network_tool/provider/address_info.dart';
 import 'package:dart_ping/dart_ping.dart';
 import 'package:synchronized/synchronized.dart';
 
-typedef PingDataProvider = Future<PingData> Function(String host);
+typedef PingDataProvider = Future<PingEvent> Function(String host);
 
-Future<PingData> defaultPingDataProvider(String host) =>
-    Ping(host, count: 1, timeout: 1).stream.first;
+Future<PingEvent> defaultPingDataProvider(String host) =>
+    Ping(host, count: 1, timeout: 1, ipVersion: IpVersion.ipv4).stream.first;
 
 class PingTask {
-  final Future<PingData> future;
+  final Future<PingEvent> future;
   final String ip;
 
   PingTask(this.future, this.ip);
@@ -31,17 +31,23 @@ Stream<AddressInfo> pingHostsPatch(
 
   void processPingTask(PingTask task) {
     task.future
-        .then((PingData pingData) {
-          if (pingData.error == null &&
-              pingData.response != null &&
-              pingData.response!.ip != null) {
-            resultController.add(
-              AddressInfo(address: pingData.response!.ip!, isReachable: true),
-            );
-          } else {
-            resultController.add(
-              AddressInfo(address: task.ip, isReachable: false),
-            );
+        .then((PingEvent pingEvent) {
+          switch (pingEvent) {
+            case PingResponse response:
+              resultController.add(
+                AddressInfo(
+                  address: response.ip ?? task.ip,
+                  isReachable: response.ip != null,
+                ),
+              );
+            case PingError():
+              resultController.add(
+                AddressInfo(address: task.ip, isReachable: false),
+              );
+            case PingSummary():
+              resultController.add(
+                AddressInfo(address: task.ip, isReachable: false),
+              );
           }
         })
         .catchError((error) {
@@ -55,7 +61,7 @@ Stream<AddressInfo> pingHostsPatch(
             if (nextIp <= end) {
               String newIp = '$subnet.$nextIp';
               nextIp++;
-              Future<PingData> newFuture = pingDataProvider(newIp);
+              Future<PingEvent> newFuture = pingDataProvider(newIp);
               PingTask newTask = PingTask(newFuture, newIp);
               activeTaskCount++;
               processPingTask(newTask);
@@ -72,7 +78,7 @@ Stream<AddressInfo> pingHostsPatch(
     for (int i = 0; i < patchSize && nextIp <= end; i++) {
       String ip = '$subnet.$nextIp';
       nextIp++;
-      Future<PingData> future = pingDataProvider(ip);
+      Future<PingEvent> future = pingDataProvider(ip);
       PingTask task = PingTask(future, ip);
       activeTaskCount++;
       processPingTask(task);

@@ -14,8 +14,8 @@ import './active_hosts_group_test.mocks.dart';
 
 void main() {
   group('ActiveHostsGroup Tests', () {
-    Future<PingData> mockPingDataProvider(String host) async {
-      return PingData();
+    Future<PingEvent> mockPingDataProvider(String host) async {
+      return PingResponse(ip: '127.0.0.1');
     }
 
     Stream<int> mockPortScanner(

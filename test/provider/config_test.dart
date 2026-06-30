@@ -44,7 +44,7 @@ void main() {
       final callsTracker = <String>[];
       mockPingDataProvider = (String host) async {
         callsTracker.add(host);
-        return PingData(response: PingResponse(ip: host), error: null);
+        return PingResponse(ip: host);
       };
       config = Config(pingDataProvider: mockPingDataProvider);
 
@@ -61,7 +61,7 @@ void main() {
       () async {
         // Arrange
         mockPingDataProvider = (String host) async {
-          return PingData(response: PingResponse(ip: host), error: null);
+          return PingResponse(ip: host);
         };
         config = Config(pingDataProvider: mockPingDataProvider);
 
@@ -77,12 +77,9 @@ void main() {
     test('emits AddressInfo with isReachable=false for failed pings', () async {
       // Arrange
       mockPingDataProvider = (String host) async {
-        return PingData(
-          response: null,
-          error: PingError(
-            ErrorType.requestTimedOut,
-            message: 'Host unreachable',
-          ),
+        return PingError(
+          ErrorType.requestTimedOut,
+          message: 'Host unreachable',
         );
       };
       config = Config(pingDataProvider: mockPingDataProvider);
@@ -100,7 +97,7 @@ void main() {
       final callsTracker = <String>[];
       mockPingDataProvider = (String host) async {
         callsTracker.add(host);
-        return PingData(response: PingResponse(ip: host), error: null);
+        return PingResponse(ip: host);
       };
       config = Config(pingDataProvider: mockPingDataProvider);
 
@@ -118,14 +115,11 @@ void main() {
       const testHost = '192.168.1.100';
       mockPingDataProvider = (String host) async {
         if (host == testHost) {
-          return PingData(response: PingResponse(ip: testHost), error: null);
+          return PingResponse(ip: testHost);
         }
-        return PingData(
-          response: null,
-          error: PingError(
-            ErrorType.requestTimedOut,
-            message: 'Host unreachable',
-          ),
+        return PingError(
+          ErrorType.requestTimedOut,
+          message: 'Host unreachable',
         );
       };
       config = Config(pingDataProvider: mockPingDataProvider);
@@ -162,6 +156,6 @@ void main() {
 /// Helper function to create a default mock PingDataProvider
 PingDataProvider _createMockPingDataProvider() {
   return (String host) async {
-    return PingData(response: PingResponse(ip: host), error: null);
+    return PingResponse(ip: host);
   };
 }
