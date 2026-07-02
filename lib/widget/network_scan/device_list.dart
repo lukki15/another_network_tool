@@ -92,33 +92,98 @@ class _DeviceListState extends State<DeviceList> {
 
   @override
   Widget build(BuildContext context) {
-    const maxCount = 1.0  + Config.defaultLastHostId - Config.defaultFirstHostId;
+    const maxCount = 1.0 + Config.defaultLastHostId - Config.defaultFirstHostId;
     final progressPercent = progressCount / maxCount;
     final int currentIP =
         Config.defaultFirstHostId +
         ((Config.defaultLastHostId - Config.defaultFirstHostId) *
                 progressPercent)
             .floor();
+    final percentText = ((progressPercent * 100).clamp(0, 100).round())
+        .toString();
 
     return Column(
       children: [
-        widget.hasWifi
-            ? ListTile(
-                title: LinearProgressIndicator(
-                  value: isDone ? 1.0 : progressPercent,
-                  minHeight: 8,
-                ),
-                subtitle: isDone
-                    ? const Text("scanning done")
-                    : Text("scanning $currentIP / ${Config.defaultLastHostId}"),
-              )
-            : ListTile(
-                title: const Text("Wi-Fi Unavailable"),
-                subtitle: const Text(
-                  "Network scanning will commence upon availability",
+        if (widget.hasWifi)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: Card.outlined(
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 96,
+                      height: 96,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            width: 96,
+                            height: 96,
+                            child: CircularProgressIndicator(
+                              value: isDone ? 1.0 : progressPercent,
+                              strokeWidth: 8,
+                            ),
+                          ),
+                          Text(
+                            '$percentText%',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Scanning devices',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            isDone
+                                ? 'Scan complete'
+                                : 'Checking nearby devices on your network',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 10),
+                          LinearProgressIndicator(
+                            value: isDone ? 1.0 : progressPercent,
+                            minHeight: 8,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            isDone
+                                ? 'scanning done'
+                                : 'scanning $currentIP / ${Config.defaultLastHostId}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-        SizedBox(height: 20),
+            ),
+          )
+        else
+          ListTile(
+            title: const Text("Wi-Fi Unavailable"),
+            subtitle: const Text(
+              "Network scanning will commence upon availability",
+            ),
+          ),
+        const SizedBox(height: 20),
         Expanded(
           child: SingleChildScrollView(
             child: Column(
@@ -127,7 +192,7 @@ class _DeviceListState extends State<DeviceList> {
                   activeHosts: activeHosts,
                   config: widget.config,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           ),

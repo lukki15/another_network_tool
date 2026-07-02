@@ -74,6 +74,27 @@ void main() {
       expect(find.text("scanning 1 / 254"), findsOneWidget);
     });
 
+    testWidgets('shows the circular scan progress card', (
+      WidgetTester t,
+    ) async {
+      await t.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiIP: Future.value("192.0.0.1"),
+              config: Config(),
+            ),
+          ),
+        ),
+      );
+
+      await t.pumpAndSettle();
+
+      expect(find.text("Scanning devices"), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
     testWidgets('with wifi', (WidgetTester t) async {
       var controller = StreamController<AddressInfo>();
       when(config.pingHosts("192.0.0")).thenAnswer((_) => controller.stream);
