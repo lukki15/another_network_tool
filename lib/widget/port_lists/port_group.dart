@@ -49,6 +49,9 @@ class _PortGroupState extends State<PortGroup> {
 
   @override
   Widget build(BuildContext context) {
+    final sortedPorts = openPorts.toSet().toList()..sort();
+    final discoveredCount = sortedPorts.length;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -59,72 +62,123 @@ class _PortGroupState extends State<PortGroup> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-        ListView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: getPortTilesList(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Card.outlined(
+            color: Theme.of(context).colorScheme.surfaceContainerLowest,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Port Range',
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          '${Config.defaultStartPort} - ${Config.defaultEndPort}',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Default scan range',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'DISCOVERED PORTS ($discoveredCount)',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Card.outlined(
+            color: Theme.of(context).colorScheme.surfaceContainerLowest,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: discoveredCount == 0 && isDone ? 1 : discoveredCount,
+              separatorBuilder: (context, index) => const Divider(height: 0),
+              itemBuilder: (context, index) {
+                if (discoveredCount == 0 && isDone) {
+                  return _buildEmptyPortRow(context);
+                }
+                return _buildPortRow(context, sortedPorts[index]);
+              },
+            ),
+          ),
         ),
       ],
     );
   }
 
-  List<ListTile> getPortTilesList() {
-    if (openPorts.isEmpty && isDone) {
-      return [
-        generatePortTile(false, Config.defaultStartPort, Config.defaultEndPort),
-      ];
-    }
-
-    List<ListTile> tiles = [];
-    openPorts.sort();
-    final sortedPorts = openPorts;
-
-    if (sortedPorts.isNotEmpty && sortedPorts.first > Config.defaultStartPort) {
-      tiles.add(
-        generatePortTile(false, Config.defaultStartPort, sortedPorts.first - 1),
-      );
-    }
-
-    for (var i = 0; i < sortedPorts.length; i++) {
-      tiles.add(_generatePortTile(sortedPorts[i]));
-      if (i + 1 < sortedPorts.length &&
-          sortedPorts[i] + 1 != sortedPorts[i + 1]) {
-        if (sortedPorts[i] + 1 == sortedPorts[i + 1] - 1) {
-          tiles.add(generatePortTile(false, sortedPorts[i] + 1, null));
-        } else {
-          tiles.add(
-            generatePortTile(false, sortedPorts[i] + 1, sortedPorts[i + 1] - 1),
-          );
-        }
-      }
-    }
-
-    if (isDone && sortedPorts.last != Config.defaultEndPort) {
-      if (sortedPorts.last + 1 == Config.defaultEndPort) {
-        tiles.add(generatePortTile(false, sortedPorts.last + 1, null));
-      } else {
-        tiles.add(
-          generatePortTile(false, sortedPorts.last + 1, Config.defaultEndPort),
-        );
-      }
-    }
-
-    return tiles;
-  }
-
-  ListTile _generatePortTile(int port) {
-    return generatePortTile(true, port, null);
-  }
-
-  static ListTile generatePortTile(bool isOpen, int port, int? nextPort) {
+  Widget _buildEmptyPortRow(BuildContext context) {
     return ListTile(
-      leading: isOpen
-          ? Icon(Icons.fiber_manual_record, color: Colors.green)
-          : Icon(Icons.radio_button_unchecked, color: Colors.red),
-      title: nextPort == null ? Text("$port") : Text("$port - $nextPort"),
-      subtitle: isOpen && nextPort == null && portMap.containsKey(port)
-          ? Text(portMap[port]!)
-          : null,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      title: Text(
+        'No open ports found',
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+
+  Widget _buildPortRow(BuildContext context, int port) {
+    final title = portMap[port] ?? 'Port $port';
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          '$port',
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+      ),
+      title: Text(
+        title,
+        style: Theme.of(
+          context,
+        ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+      ),
+      subtitle: Text('Port $port • Open'),
     );
   }
 }

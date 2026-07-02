@@ -1,5 +1,6 @@
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/port_lists/port_group.dart';
+import 'package:another_network_tool/widget/port_lists/port_map.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,138 +34,91 @@ void main() {
     }
 
     void assertBasicLayout(WidgetTester t) {
-      expect(find.byType(ListView), findsOneWidget);
-      expect(find.text("Open Ports"), findsOneWidget);
+      expect(find.text('Open Ports'), findsOneWidget);
+      expect(find.text('Port Range'), findsOneWidget);
+      expect(find.text('Default scan range'), findsOneWidget);
     }
 
     testWidgets('shows empty state initially', (WidgetTester t) async {
-      // Arrange
       setupPortScanExpectation(Stream<int>.empty());
 
-      // Act & Assert
       await pumpPortGroup(t);
       assertBasicLayout(t);
 
-      // Expected port tiles
-      expect(
-        find.text('${Config.defaultStartPort} - ${Config.defaultEndPort}'),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.red,
-        ),
-        findsOneWidget,
-      );
+      expect(find.text('DISCOVERED PORTS (0)'), findsOneWidget);
+      expect(find.text('No open ports found'), findsOneWidget);
+      expect(find.byType(ListTile), findsOneWidget);
     });
 
     testWidgets('shows discovered ports at start port', (WidgetTester t) async {
-      // Arrange
       setupPortScanExpectation(Stream.fromIterable([Config.defaultStartPort]));
 
-      // Act & Assert
       await pumpPortGroup(t);
       assertBasicLayout(t);
 
-      expect(find.text('${Config.defaultStartPort}'), findsOneWidget);
+      expect(find.text('DISCOVERED PORTS (1)'), findsOneWidget);
       expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.green,
+        find.text(
+          portMap[Config.defaultStartPort] ?? 'Port ${Config.defaultStartPort}',
         ),
         findsOneWidget,
       );
+      expect(
+        find.text('Port ${Config.defaultStartPort} • Open'),
+        findsOneWidget,
+      );
+      expect(find.text('No open ports found'), findsNothing);
     });
 
-    testWidgets('shows empty ports before first found port', (
-      WidgetTester t,
-    ) async {
-      // Arrange: first found port is not the start port
-      final firstPort = Config.defaultStartPort + 10;
-      setupPortScanExpectation(Stream.fromIterable([firstPort]));
+    testWidgets(
+      'shows discovered ports even when they start later in the range',
+      (WidgetTester t) async {
+        final firstPort = Config.defaultStartPort + 10;
+        setupPortScanExpectation(Stream.fromIterable([firstPort]));
 
-      // Act & Assert
-      await pumpPortGroup(t);
-      assertBasicLayout(t);
+        await pumpPortGroup(t);
+        assertBasicLayout(t);
 
-      // Should show empty ports before first found port
-      expect(
-        find.text('${Config.defaultStartPort} - ${firstPort - 1}'),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.red,
-        ),
-        findsNWidgets(2),
-      );
-      // Should show the found port
-      expect(find.text('$firstPort'), findsOneWidget);
-      expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.green,
-        ),
-        findsOneWidget,
-      );
-    });
+        expect(find.text('DISCOVERED PORTS (1)'), findsOneWidget);
+        expect(
+          find.text(portMap[firstPort] ?? 'Port $firstPort'),
+          findsOneWidget,
+        );
+        expect(find.text('Port $firstPort • Open'), findsOneWidget);
+        expect(find.byType(ListTile), findsOneWidget);
+      },
+    );
 
     testWidgets('shows multiple discovered ports', (WidgetTester t) async {
-      // Arrange
       setupPortScanExpectation(Stream.fromIterable([80, 443]));
 
-      // Act & Assert
       await pumpPortGroup(t);
       assertBasicLayout(t);
 
-      expect(find.text('80'), findsOneWidget);
+      expect(find.text('DISCOVERED PORTS (2)'), findsOneWidget);
       expect(find.text('http'), findsOneWidget);
-      expect(find.text('443'), findsOneWidget);
       expect(find.text('https'), findsOneWidget);
-      expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.green,
-        ),
-        findsNWidgets(2),
-      );
-
-      expect(find.text('81 - 442'), findsOneWidget);
-      expect(find.text('444 - ${Config.defaultEndPort}'), findsOneWidget);
-      expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.red,
-        ),
-        findsNWidgets(3),
-      );
+      expect(find.text('Port 80 • Open'), findsOneWidget);
+      expect(find.text('Port 443 • Open'), findsOneWidget);
+      expect(find.byType(ListTile), findsNWidgets(2));
     });
 
-    testWidgets('show single gapped discovered ports', (WidgetTester t) async {
-      // Arrange
+    testWidgets('shows single gapped discovered ports', (WidgetTester t) async {
       setupPortScanExpectation(
         Stream.fromIterable([80, 82, Config.defaultEndPort - 1]),
       );
 
-      // Act & Assert
       await pumpPortGroup(t);
       assertBasicLayout(t);
 
-      expect(find.text('80'), findsOneWidget);
-      expect(find.text('82'), findsOneWidget);
-      expect(find.text("${Config.defaultEndPort - 1}"), findsOneWidget);
+      expect(find.text('DISCOVERED PORTS (3)'), findsOneWidget);
+      expect(find.text('Port 80 • Open'), findsOneWidget);
+      expect(find.text('Port 82 • Open'), findsOneWidget);
       expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.green,
-        ),
-        findsNWidgets(3),
+        find.text('Port ${Config.defaultEndPort - 1} • Open'),
+        findsOneWidget,
       );
-
-      expect(find.text('81'), findsOneWidget);
-      expect(find.text('83 - ${Config.defaultEndPort - 2}'), findsOneWidget);
-      expect(find.text("${Config.defaultEndPort}"), findsOneWidget);
-      expect(
-        find.byWidgetPredicate(
-          (widget) => widget is Icon && widget.color == Colors.red,
-        ),
-        findsNWidgets(4),
-      );
+      expect(find.byType(ListTile), findsNWidgets(3));
     });
   });
 }
