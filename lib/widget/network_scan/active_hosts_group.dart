@@ -18,16 +18,30 @@ class ActiveHostsGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        for (var item in activeHosts)
-          ListTile(
-            leading: Icon(Icons.devices),
-            title: FutureText(
-              future: item.getHostName(),
-              convertToString: (String s) => s,
-            ),
-            subtitle: Text(item.address),
+    if (activeHosts.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: SizedBox(
+          width: double.infinity,
+          child: Text(
+            'No devices discovered yet',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: activeHosts.length,
+      separatorBuilder: (_, _) => const Divider(height: 0),
+      itemBuilder: (context, index) {
+        final item = activeHosts.elementAt(index);
+
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -38,8 +52,31 @@ class ActiveHostsGroup extends StatelessWidget {
             },
             onLongPress: () =>
                 Clipboard.setData(ClipboardData(text: item.address)),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              leading: CircleAvatar(
+                radius: 20,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                child: Icon(
+                  Icons.devices,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+              ),
+              title: FutureText(
+                future: item.getHostName(),
+                convertToString: (String s) => s,
+                textStyle: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(item.address),
+            ),
           ),
-      ],
+        );
+      },
     );
   }
 }

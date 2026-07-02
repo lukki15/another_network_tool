@@ -183,17 +183,41 @@ class _DeviceListState extends State<DeviceList> {
               "Network scanning will commence upon availability",
             ),
           ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'DISCOVERED DEVICES',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
         Expanded(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                ActiveHostsGroup(
-                  activeHosts: activeHosts,
-                  config: widget.config,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                 ),
-                const SizedBox(height: 20),
-              ],
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: ActiveHostsGroup(
+                    activeHosts: activeHosts,
+                    config: widget.config,
+                  ),
+                ),
+              ),
             ),
           ),
         ),

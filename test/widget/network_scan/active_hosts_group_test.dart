@@ -64,6 +64,7 @@ void main() {
       await pumpActiveHostsGroup(t, {});
 
       expect(find.byType(ListTile), findsNothing);
+      expect(find.text('No devices discovered yet'), findsOneWidget);
     });
 
     testWidgets('with one active host', (WidgetTester t) async {
