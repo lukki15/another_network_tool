@@ -21,10 +21,7 @@ class Config {
     this.portScanner = scanPortsForSingleDevice,
   });
 
-  Stream<AddressInfo> pingHosts(
-    String subnet, {
-    ProgressCallback? progressCallback,
-  }) {
+  Stream<AddressInfo> pingHosts(String subnet) {
     return pingHostsPatch(
       subnet,
       pingDataProvider: pingDataProvider,

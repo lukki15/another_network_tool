@@ -24,7 +24,7 @@ class DeviceList extends StatefulWidget {
 class _DeviceListState extends State<DeviceList> {
   StreamSubscription<AddressInfo>? streamSubscription;
 
-  double progress = 0;
+  int progressCount = 0;
   Set<AddressInfo> activeHosts = {};
   bool isDone = false;
 
@@ -45,22 +45,16 @@ class _DeviceListState extends State<DeviceList> {
     }
 
     final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-    final Stream<AddressInfo> stream = widget.config.pingHosts(
-      subnet,
-      progressCallback: (p) {
-        setState(() {
-          progress = p;
-        });
-      },
-    );
+    final Stream<AddressInfo> stream = widget.config.pingHosts(subnet);
 
     streamSubscription = stream.listen(
       (host) {
-        if (host.isReachable) {
-          setState(() {
+        setState(() {
+          progressCount++;
+          if (host.isReachable) {
             activeHosts.add(host);
-          });
-        }
+          }
+        });
       },
       onDone: () {
         setState(() {
@@ -82,7 +76,7 @@ class _DeviceListState extends State<DeviceList> {
     streamSubscription?.cancel();
     if (widget.hasWifi) {
       setState(() {
-        progress = 0;
+        progressCount = 0;
         activeHosts.clear();
         isDone = false;
       });
@@ -98,7 +92,8 @@ class _DeviceListState extends State<DeviceList> {
 
   @override
   Widget build(BuildContext context) {
-    final progressPercent = progress / 100.0;
+    const maxCount = 1.0  + Config.defaultLastHostId - Config.defaultFirstHostId;
+    final progressPercent = progressCount / maxCount;
     final int currentIP =
         Config.defaultFirstHostId +
         ((Config.defaultLastHostId - Config.defaultFirstHostId) *

@@ -76,12 +76,7 @@ void main() {
 
     testWidgets('with wifi', (WidgetTester t) async {
       var controller = StreamController<AddressInfo>();
-      when(
-        config.pingHosts(
-          "192.0.0",
-          progressCallback: anyNamed('progressCallback'),
-        ),
-      ).thenAnswer((_) => controller.stream);
+      when(config.pingHosts("192.0.0")).thenAnswer((_) => controller.stream);
 
       await t.pumpWidget(
         MaterialApp(
