@@ -27,7 +27,7 @@ jobs:
           distribution: adopt
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -44,6 +44,6 @@ jobs:
         run: flutter test --coverage
 
       - name: Upload results to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
