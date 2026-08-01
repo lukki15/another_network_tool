@@ -16,7 +16,7 @@ environment:
 
 dependencies:
   connectivity_plus: ^7.2.0
-  dart_ping: ^10.0.0
+  dart_ping: ^10.0.1
   flutter:
     sdk: flutter
   network_info_plus: ^8.2.0
