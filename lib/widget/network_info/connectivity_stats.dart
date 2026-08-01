@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wifi_connection/WifiConnection.dart';
+import 'package:wifi_connection/WifiInfo.dart';
 
 class PermissionHelper {
   final Future<bool> Function() isGranted;
@@ -104,14 +106,19 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
   }
 
   Widget _generateWifiDetails(BuildContext context) {
+    Future<WifiInfo> wifiInfo = WifiConnection.wifiInfo;
+
     final wifiDetails = [
       {'SSID': _wifiName},
-      {'Security': Future<String?>.value('N/A')},
-      {'Frequency': Future<String?>.value('N/A')},
-      {'Channel': Future<String?>.value('N/A')},
-      {'Link Speed': Future<String?>.value('N/A')},
-      {'Signal Strength': Future<String?>.value('N/A')},
       {'BSSID': _wifiBSSID},
+      {'Router IP': wifiInfo.then((w) => w.routerIp)},
+      {'MAC Address': wifiInfo.then((w) => w.macAddress)},
+      {'Network ID': wifiInfo.then((w) => w.networkId)},
+      {'Frequency': wifiInfo.then((w) => w.frequency)},
+      {'Channel': wifiInfo.then((w) => w.channel)},
+      {'Link Speed': wifiInfo.then((w) => w.linkSpeed)},
+      {'Signal Strength': wifiInfo.then((w) => w.signalStrength)},
+      {'Is SSID hidden': wifiInfo.then((w) => w.isHiddenSSID)},
     ];
 
     return ConnectivityStatsStateListView(

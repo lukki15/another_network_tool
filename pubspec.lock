@@ -765,6 +765,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  wifi_connection:
+    dependency: "direct main"
+    description:
+      name: wifi_connection
+      sha256: "1e15785734c2cec25d728af23fe2db706831dc71434755a86b91b0cf8737dd20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   win32:
     dependency: transitive
     description:
