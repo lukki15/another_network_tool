@@ -108,10 +108,8 @@ class _PortGroupState extends State<PortGroup> {
             alignment: Alignment.centerLeft,
             child: Text(
               'DISCOVERED PORTS ($discoveredCount)',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-              ),
+              style: Theme.of(context).textTheme.labelLarge
+                  ?.copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.8),
             ),
           ),
         ),
@@ -146,9 +144,8 @@ class _PortGroupState extends State<PortGroup> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       title: Text(
         'No open ports found',
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+        style: Theme.of(context).textTheme.bodyMedium
+            ?.copyWith(fontWeight: FontWeight.w700),
       ),
     );
   }
@@ -167,16 +164,14 @@ class _PortGroupState extends State<PortGroup> {
         alignment: Alignment.center,
         child: Text(
           '$port',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(fontWeight: FontWeight.w700),
         ),
       ),
       title: Text(
         title,
-        style: Theme.of(
-          context,
-        ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+        style: Theme.of(context).textTheme.bodyLarge
+            ?.copyWith(fontWeight: FontWeight.w700),
       ),
       subtitle: Text('Port $port • Open'),
     );

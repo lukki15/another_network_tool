@@ -34,9 +34,8 @@ void main() {
     testWidgets('renders correctly', (WidgetTester tester) async {
       // Setup mock behavior
       when(addressInfo.address).thenReturn('192.168.1.100');
-      when(
-        addressInfo.getHostName(),
-      ).thenAnswer((_) => Future.value('Test Device'));
+      when(addressInfo.getHostName())
+          .thenAnswer((_) => Future.value('Test Device'));
 
       await tester.pumpWidget(
         MaterialApp(

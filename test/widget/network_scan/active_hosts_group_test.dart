@@ -52,9 +52,8 @@ void main() {
 
     MockAddressInfo makeMockAddressInfo() {
       var addressInfo = MockAddressInfo();
-      when(
-        addressInfo.getHostName(),
-      ).thenAnswer((_) => Future.value("deviceName"));
+      when(addressInfo.getHostName())
+          .thenAnswer((_) => Future.value("deviceName"));
       when(addressInfo.address).thenAnswer((_) => "address");
 
       return addressInfo;

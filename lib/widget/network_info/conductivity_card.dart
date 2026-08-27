@@ -33,9 +33,8 @@ class ConductivityCard extends StatelessWidget {
             Text(
               networkName,
               textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             if (isConnected) ...[
               const SizedBox(height: 8),

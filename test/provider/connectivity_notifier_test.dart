@@ -28,9 +28,8 @@ void main() {
     test('_initConnectivity handles successful connectivity check', () async {
       // Arrange
       final mockResult = [ConnectivityResult.wifi];
-      when(
-        mockConnectivity.checkConnectivity(),
-      ).thenAnswer((_) async => mockResult);
+      when(mockConnectivity.checkConnectivity())
+          .thenAnswer((_) async => mockResult);
 
       // Act
       final connectivityNotifier = ConnectivityNotifier.withConnectivity(
@@ -48,9 +47,8 @@ void main() {
 
     test('_initConnectivity handles connectivity check error', () async {
       // Arrange
-      when(
-        mockConnectivity.checkConnectivity(),
-      ).thenThrow(Exception('Mock error'));
+      when(mockConnectivity.checkConnectivity())
+          .thenThrow(Exception('Mock error'));
 
       // Act
       final connectivityNotifier = ConnectivityNotifier.withConnectivity(
@@ -70,9 +68,8 @@ void main() {
       // Arrange
       final mockResult = [ConnectivityResult.mobile];
       final streamController = StreamController<List<ConnectivityResult>>();
-      when(
-        mockConnectivity.onConnectivityChanged,
-      ).thenAnswer((_) => streamController.stream);
+      when(mockConnectivity.onConnectivityChanged)
+          .thenAnswer((_) => streamController.stream);
       final connectivityNotifier = ConnectivityNotifier.withConnectivity(
         mockConnectivity,
       );

@@ -19,20 +19,16 @@ void main() {
 
   void setupNetworkInfo() {
     when(networkInfo.getWifiName()).thenAnswer((_) => Future.value("WifiName"));
-    when(
-      networkInfo.getWifiBSSID(),
-    ).thenAnswer((_) => Future.value("WifiBSSID"));
+    when(networkInfo.getWifiBSSID())
+        .thenAnswer((_) => Future.value("WifiBSSID"));
     when(networkInfo.getWifiIP()).thenAnswer((_) => Future.value("WifiIP"));
     when(networkInfo.getWifiIPv6()).thenAnswer((_) => Future.value("WifiIPv6"));
-    when(
-      networkInfo.getWifiGatewayIP(),
-    ).thenAnswer((_) => Future.value("WifiGatewayIP"));
-    when(
-      networkInfo.getWifiBroadcast(),
-    ).thenAnswer((_) => Future.value("WifiBroadcast"));
-    when(
-      networkInfo.getWifiSubmask(),
-    ).thenAnswer((_) => Future.value("WifiSubmask"));
+    when(networkInfo.getWifiGatewayIP())
+        .thenAnswer((_) => Future.value("WifiGatewayIP"));
+    when(networkInfo.getWifiBroadcast())
+        .thenAnswer((_) => Future.value("WifiBroadcast"));
+    when(networkInfo.getWifiSubmask())
+        .thenAnswer((_) => Future.value("WifiSubmask"));
   }
 
   void setupNetworkInfoErrors() {

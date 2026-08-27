@@ -36,9 +36,8 @@ class DeviceInfoSummaryCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Device Details',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
               Wrap(
@@ -47,9 +46,8 @@ class DeviceInfoSummaryCard extends StatelessWidget {
                 children: [
                   Text(
                     'IP Address',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(width: 8),
                   Text(

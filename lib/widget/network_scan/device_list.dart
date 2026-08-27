@@ -190,10 +190,8 @@ class _DeviceListState extends State<DeviceList> {
             alignment: Alignment.centerLeft,
             child: Text(
               'DISCOVERED DEVICES',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-              ),
+              style: Theme.of(context).textTheme.labelLarge
+                  ?.copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.8),
             ),
           ),
         ),

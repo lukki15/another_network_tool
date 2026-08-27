@@ -3,8 +3,11 @@ import 'package:another_network_tool/provider/host_scanner.dart';
 import 'package:another_network_tool/provider/port_scanner.dart';
 
 typedef ProgressCallback = void Function(double progress);
-typedef PortScanner =
-    Stream<int> Function(String target, {int startPort, int endPort});
+typedef PortScanner = Stream<int> Function(
+  String target, {
+  int startPort,
+  int endPort,
+});
 
 class Config {
   static const int defaultFirstHostId = 1; // Devices scan will start

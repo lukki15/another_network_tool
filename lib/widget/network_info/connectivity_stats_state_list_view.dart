@@ -35,9 +35,8 @@ class ConnectivityStatsStateListView extends StatelessWidget {
               ),
               title: Text(
                 label,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               subtitle: FutureText<String?>(
                 future: future,
