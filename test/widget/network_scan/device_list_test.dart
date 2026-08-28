@@ -54,7 +54,7 @@ void main() {
       );
 
       await t.pumpAndSettle();
-      expect(find.text("scanning done"), findsOneWidget);
+      expect(find.text("Scan complete"), findsOneWidget);
     });
 
     testWidgets('wait for wifiIP', (WidgetTester t) async {
@@ -77,22 +77,27 @@ void main() {
     testWidgets('shows the circular scan progress card', (
       WidgetTester t,
     ) async {
+      final controller = StreamController<AddressInfo>();
+      when(config.pingHosts("192.0.0")).thenAnswer((_) => controller.stream);
+
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: DeviceList(
               hasWifi: true,
               wifiIP: Future.value("192.0.0.1"),
-              config: Config(),
+              config: config,
             ),
           ),
         ),
       );
 
-      await t.pumpAndSettle();
+      await t.pump();
 
       expect(find.text("Scanning devices"), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await controller.close();
     });
 
     testWidgets('with wifi', (WidgetTester t) async {
@@ -119,7 +124,8 @@ void main() {
       await controller.close();
       await t.pumpAndSettle();
       expect(controller.isClosed, true);
-      expect(find.text("scanning done"), findsOneWidget);
+      expect(find.text("Scan complete"), findsOneWidget);
+      expect(find.text("Scanning devices"), findsNothing);
     });
   });
 }
