@@ -159,5 +159,5 @@ void main() {
       // Each failed future shows the generic error message from `FutureText`.
       expect(find.text("Error"), findsNWidgets(7));
     });
-  }, skip: true);
+  });
 }
