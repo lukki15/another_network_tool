@@ -23,6 +23,7 @@ dependencies:
   permission_handler: ^13.0.1
   provider: ^6.1.5
   synchronized: ^3.4.1+2
+  # wifi_connection removed - using in-app native implementation
 
 dev_dependencies:
   flutter_test:
