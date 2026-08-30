@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:another_network_tool/widget/network_scan/device_list_header.dart';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
@@ -105,12 +106,18 @@ class _DeviceListState extends State<DeviceList> {
     return Column(
       children: [
         if (widget.hasWifi)
-          _DeviceListHeader(
-            isDone: isDone,
-            progressPercent: progressPercent,
-            percentText: percentText,
-            currentIP: currentIP,
-            discoveredCount: activeHosts.length,
+          Card.outlined(
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: DeviceListHeader(
+              isDone: isDone,
+              progressPercent: progressPercent,
+              percentText: percentText,
+              currentIP: currentIP,
+              discoveredCount: activeHosts.length,
+            ),
           )
         else
           ListTile(
@@ -156,127 +163,6 @@ class _DeviceListState extends State<DeviceList> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _DeviceListHeader extends StatelessWidget {
-  const _DeviceListHeader({
-    required this.isDone,
-    required this.progressPercent,
-    required this.percentText,
-    required this.currentIP,
-    required this.discoveredCount,
-  });
-
-  final bool isDone;
-  final double progressPercent;
-  final String percentText;
-  final int currentIP;
-  final int discoveredCount;
-
-  @override
-  Widget build(BuildContext context) {
-    if (isDone) {
-      final deviceText = discoveredCount == 1 ? 'device' : 'devices';
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: Card.outlined(
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Scan complete',
-                      style: Theme.of(context).textTheme.titleSmall
-                          ?.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '$discoveredCount $deviceText found',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: Card.outlined(
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 96,
-                height: 96,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 96,
-                      height: 96,
-                      child: CircularProgressIndicator(
-                        value: progressPercent,
-                        strokeWidth: 8,
-                      ),
-                    ),
-                    Text(
-                      '$percentText%',
-                      style: Theme.of(context).textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Scanning devices',
-                      style: Theme.of(context).textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Checking nearby devices on your network',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 10),
-                    LinearProgressIndicator(
-                      value: progressPercent,
-                      minHeight: 8,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'scanning $currentIP / ${Config.defaultLastHostId}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
