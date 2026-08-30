@@ -106,11 +106,11 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
   Widget _generateWifiDetails(BuildContext context) {
     final wifiDetails = [
       {'SSID': _wifiName},
-      {'Security': Future<String?>.value('N/A')},
-      {'Frequency': Future<String?>.value('N/A')},
-      {'Channel': Future<String?>.value('N/A')},
-      {'Link Speed': Future<String?>.value('N/A')},
-      {'Signal Strength': Future<String?>.value('N/A')},
+      // {'Security': Future<String?>.value('N/A')},
+      // {'Frequency': Future<String?>.value('N/A')},
+      // {'Channel': Future<String?>.value('N/A')},
+      // {'Link Speed': Future<String?>.value('N/A')},
+      // {'Signal Strength': Future<String?>.value('N/A')},
       {'BSSID': _wifiBSSID},
     ];
 
@@ -127,7 +127,7 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
       {'Broadcast': _wifiBroadcast},
       {'Subnet Mask': _wifiSubMask},
       {'Default Gateway': _wifiGatewayIP},
-      {'DNS Server': Future<String?>.value('N/A')},
+      // {'DNS Server': Future<String?>.value('N/A')},
     ];
 
     return ConnectivityStatsStateListView(context: context, details: ipDetails);
