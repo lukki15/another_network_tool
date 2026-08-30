@@ -122,6 +122,7 @@ class _PortGroupState extends State<PortGroup> {
               borderRadius: BorderRadius.circular(24),
             ),
             child: ListView.separated(
+              padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: discoveredCount == 0 && isDone ? 1 : discoveredCount,
@@ -141,7 +142,7 @@ class _PortGroupState extends State<PortGroup> {
 
   Widget _buildEmptyPortRow(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       title: Text(
         'No open ports found',
         style: Theme.of(context).textTheme.bodyMedium
@@ -153,7 +154,7 @@ class _PortGroupState extends State<PortGroup> {
   Widget _buildPortRow(BuildContext context, int port) {
     final title = portMap[port] ?? 'Port $port';
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: Container(
         width: 44,
         height: 44,
