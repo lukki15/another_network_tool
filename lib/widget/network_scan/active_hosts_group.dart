@@ -105,9 +105,8 @@ class _ActiveHostsGroupState extends State<ActiveHostsGroup> {
           title: FutureText(
             future: _nameFutures[item.address] ??= item.getHostName(),
             convertToString: (String s) => s,
-            textStyle: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            textStyle: Theme.of(context).textTheme.bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
           subtitle: Text(item.address),
         ),

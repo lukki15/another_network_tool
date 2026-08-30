@@ -6,15 +6,16 @@ import 'package:another_network_tool/widget/network_scan/device_list_header.dart
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
+import 'package:another_network_tool/utils/subnet.dart';
 
 class DeviceList extends StatefulWidget {
   final bool hasWifi;
-  final Future<String?> wifiIP;
+  final Future<Subnet?> wifiSubnet;
   final Config config;
   const DeviceList({
     super.key,
     required this.hasWifi,
-    required this.wifiIP,
+    required this.wifiSubnet,
     required this.config,
   });
 
@@ -24,6 +25,9 @@ class DeviceList extends StatefulWidget {
 
 class _DeviceListState extends State<DeviceList> {
   StreamSubscription<AddressInfo>? streamSubscription;
+  Subnet? _subnet;
+  int _totalHosts = (Config.defaultLastHostId - Config.defaultFirstHostId) + 1;
+  String? _subnetError;
 
   int progressCount = 0;
   Set<AddressInfo> activeHosts = {};
@@ -34,19 +38,38 @@ class _DeviceListState extends State<DeviceList> {
       return;
     }
 
-    widget.wifiIP.then(_initStream);
+    () async {
+      try {
+        final s = await widget.wifiSubnet;
+        _initStream(s);
+      } catch (e) {
+        setState(() {
+          _subnetError = e?.toString() ?? 'Unknown subnet error';
+          isDone = true;
+        });
+      }
+    }();
   }
 
-  void _initStream(String? ip) {
-    if (ip == null) {
+  void _initStream(Subnet? subnet) {
+    if (subnet == null) {
       setState(() {
         isDone = true;
       });
       return;
     }
 
-    final String subnet = ip.substring(0, ip.lastIndexOf('.'));
-    final Stream<AddressInfo> stream = widget.config.pingHosts(subnet);
+    _subnet = subnet;
+    try {
+      final first = subnet.firstHostInt();
+      final last = subnet.lastHostInt();
+      final total = (last - first) + 1;
+      if (total > 0) {
+        _totalHosts = total;
+      }
+    } catch (_) {}
+
+    final Stream<AddressInfo> stream = widget.config.pingSubnet(subnet);
 
     streamSubscription = stream.listen(
       (host) {
@@ -93,19 +116,20 @@ class _DeviceListState extends State<DeviceList> {
 
   @override
   Widget build(BuildContext context) {
-    const maxCount = 1.0 + Config.defaultLastHostId - Config.defaultFirstHostId;
+    final double maxCount = _totalHosts.toDouble();
     final progressPercent = progressCount / maxCount;
-    final int currentIP =
-        Config.defaultFirstHostId +
-        ((Config.defaultLastHostId - Config.defaultFirstHostId) *
-                progressPercent)
-            .floor();
+    final int currentIndex = 1 + ((_totalHosts - 1) * progressPercent).floor();
     final percentText = ((progressPercent * 100).clamp(0, 100).round())
         .toString();
 
     return Column(
       children: [
-        if (widget.hasWifi)
+        if (_subnetError != null)
+          ListTile(
+            title: const Text('Network error'),
+            subtitle: Text(_subnetError!),
+          )
+        else if (widget.hasWifi)
           Card.outlined(
             clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
@@ -115,8 +139,9 @@ class _DeviceListState extends State<DeviceList> {
               isDone: isDone,
               progressPercent: progressPercent,
               percentText: percentText,
-              currentIP: currentIP,
+              currentIP: currentIndex,
               discoveredCount: activeHosts.length,
+              totalHosts: _totalHosts,
             ),
           )
         else

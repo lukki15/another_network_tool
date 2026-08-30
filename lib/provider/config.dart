@@ -1,6 +1,7 @@
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/host_scanner.dart';
 import 'package:another_network_tool/provider/port_scanner.dart';
+import 'package:another_network_tool/utils/subnet.dart';
 
 typedef ProgressCallback = void Function(double progress);
 typedef PortScanner = Stream<int> Function(
@@ -31,6 +32,10 @@ class Config {
       start: defaultFirstHostId,
       end: defaultLastHostId,
     );
+  }
+
+  Stream<AddressInfo> pingSubnet(Subnet subnet) {
+    return pingSubnetPatch(subnet, pingDataProvider: pingDataProvider);
   }
 
   Stream<int> scanPort(String target) {

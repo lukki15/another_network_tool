@@ -9,6 +9,7 @@ class DeviceListHeader extends StatelessWidget {
     required this.percentText,
     required this.currentIP,
     required this.discoveredCount,
+    this.totalHosts = Config.defaultLastHostId,
   });
 
   final bool isDone;
@@ -16,6 +17,7 @@ class DeviceListHeader extends StatelessWidget {
   final String percentText;
   final int currentIP;
   final int discoveredCount;
+  final int totalHosts;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class DeviceListHeader extends StatelessWidget {
       progressPercent: progressPercent,
       percentText: percentText,
       currentIP: currentIP,
+      totalHosts: totalHosts,
     );
   }
 }
@@ -60,11 +63,13 @@ class _HeaderInProgress extends StatelessWidget {
     required this.progressPercent,
     required this.percentText,
     required this.currentIP,
+    this.totalHosts = Config.defaultLastHostId,
   });
 
   final double progressPercent;
   final String percentText;
   final int currentIP;
+  final int totalHosts;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +123,7 @@ class _HeaderInProgress extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'scanning $currentIP / ${Config.defaultLastHostId}',
+                  'scanning $currentIP / $totalHosts',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

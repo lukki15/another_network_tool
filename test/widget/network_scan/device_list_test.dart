@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/device_list.dart';
+import 'package:another_network_tool/utils/subnet.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
@@ -28,7 +28,7 @@ void main() {
           home: Scaffold(
             body: DeviceList(
               hasWifi: false,
-              wifiIP: Future.value(),
+              wifiSubnet: Future.value(),
               config: Config(),
             ),
           ),
@@ -46,7 +46,7 @@ void main() {
           home: Scaffold(
             body: DeviceList(
               hasWifi: true,
-              wifiIP: Future.value(),
+              wifiSubnet: Future.value(),
               config: Config(),
             ),
           ),
@@ -58,13 +58,18 @@ void main() {
     });
 
     testWidgets('wait for wifiIP', (WidgetTester t) async {
+      final controller = StreamController<AddressInfo>();
+      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
+
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: DeviceList(
               hasWifi: true,
-              wifiIP: NetworkInfo().getWifiIP(),
-              config: Config(),
+              wifiSubnet: Future.value(
+                Subnet.fromIpAndMask('192.0.0.1', '255.255.255.0'),
+              ),
+              config: config,
             ),
           ),
         ),
@@ -72,20 +77,23 @@ void main() {
 
       await t.pumpAndSettle();
       expect(find.text("scanning 1 / 254"), findsOneWidget);
+      await controller.close();
     });
 
     testWidgets('shows the circular scan progress card', (
       WidgetTester t,
     ) async {
       final controller = StreamController<AddressInfo>();
-      when(config.pingHosts("192.0.0")).thenAnswer((_) => controller.stream);
+      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
 
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: DeviceList(
               hasWifi: true,
-              wifiIP: Future.value("192.0.0.1"),
+              wifiSubnet: Future.value(
+                Subnet.fromIpAndMask('192.0.0.1', '255.255.255.0'),
+              ),
               config: config,
             ),
           ),
@@ -102,14 +110,16 @@ void main() {
 
     testWidgets('with wifi', (WidgetTester t) async {
       var controller = StreamController<AddressInfo>();
-      when(config.pingHosts("192.0.0")).thenAnswer((_) => controller.stream);
+      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
 
       await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: DeviceList(
               hasWifi: true,
-              wifiIP: Future.value("192.0.0.1"),
+              wifiSubnet: Future.value(
+                Subnet.fromIpAndMask('192.0.0.1', '255.255.255.0'),
+              ),
               config: config,
             ),
           ),
@@ -126,6 +136,27 @@ void main() {
       expect(controller.isClosed, true);
       expect(find.text("Scan complete"), findsOneWidget);
       expect(find.text("Scanning devices"), findsNothing);
+    });
+
+    testWidgets('shows subnet parse error', (WidgetTester t) async {
+      await t.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiSubnet: Future<Subnet?>.delayed(
+                Duration.zero,
+                () => throw FormatException('Non-contiguous subnet mask'),
+              ),
+              config: Config(),
+            ),
+          ),
+        ),
+      );
+
+      await t.pumpAndSettle();
+      expect(find.text('Network error'), findsOneWidget);
+      expect(find.textContaining('Non-contiguous subnet mask'), findsOneWidget);
     });
   });
 }

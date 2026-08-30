@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:dart_ping/dart_ping.dart';
 import 'package:synchronized/synchronized.dart';
+import 'package:another_network_tool/utils/subnet.dart';
 
 typedef PingDataProvider = Future<PingEvent> Function(String host);
 
@@ -14,6 +15,88 @@ class PingTask {
   final String ip;
 
   PingTask(this.future, this.ip);
+}
+
+Stream<AddressInfo> pingSubnetPatch(
+  Subnet subnet, {
+  PingDataProvider pingDataProvider = defaultPingDataProvider,
+  int patchSize = 10,
+}) async* {
+  final startInt = subnet.firstHostInt();
+  final endInt = subnet.lastHostInt();
+
+  StreamController<AddressInfo> resultController =
+      StreamController<AddressInfo>();
+  Lock lock = Lock();
+  int activeTaskCount = 0;
+  int nextIpInt = startInt;
+
+  String intToIp(int value) {
+    return '${(value >> 24) & 0xFF}.${(value >> 16) & 0xFF}.${(value >> 8) & 0xFF}.${value & 0xFF}';
+  }
+
+  void processPingTask(PingTask task) {
+    task.future
+        .then((PingEvent pingEvent) {
+          switch (pingEvent) {
+            case PingResponse response:
+              resultController.add(
+                AddressInfo(
+                  address: response.ip ?? task.ip,
+                  isReachable: response.ip != null,
+                ),
+              );
+            case PingError():
+              resultController.add(
+                AddressInfo(address: task.ip, isReachable: false),
+              );
+            case PingSummary():
+              resultController.add(
+                AddressInfo(address: task.ip, isReachable: false),
+              );
+          }
+        })
+        .catchError((error) {
+          resultController.add(
+            AddressInfo(address: task.ip, isReachable: false),
+          );
+        })
+        .whenComplete(() {
+          lock.synchronized(() {
+            activeTaskCount--;
+            if (nextIpInt <= endInt) {
+              String newIp = intToIp(nextIpInt);
+              nextIpInt++;
+              Future<PingEvent> newFuture = pingDataProvider(newIp);
+              PingTask newTask = PingTask(newFuture, newIp);
+              activeTaskCount++;
+              processPingTask(newTask);
+            }
+            if (activeTaskCount == 0 && nextIpInt > endInt) {
+              resultController.close();
+            }
+          });
+        });
+  }
+
+  // Fill initial tasks
+  lock.synchronized(() {
+    for (int i = 0; i < patchSize && nextIpInt <= endInt; i++) {
+      String ip = intToIp(nextIpInt);
+      nextIpInt++;
+      Future<PingEvent> future = pingDataProvider(ip);
+      PingTask task = PingTask(future, ip);
+      activeTaskCount++;
+      processPingTask(task);
+    }
+  });
+
+  // Close immediately if no tasks were created
+  if (activeTaskCount == 0) {
+    resultController.close();
+  }
+
+  yield* resultController.stream;
 }
 
 Stream<AddressInfo> pingHostsPatch(

@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:another_network_tool/utils/subnet.dart';
 
 import 'package:another_network_tool/provider/connectivity_notifier.dart';
 import 'package:another_network_tool/widget/network_scan/device_list.dart';
@@ -17,7 +18,12 @@ class NetworkScan extends StatelessWidget {
     return Consumer<ConnectivityNotifier>(
       builder: (context, myNotifier, child) => DeviceList(
         hasWifi: myNotifier.connectionStatus.contains(ConnectivityResult.wifi),
-        wifiIP: NetworkInfo().getWifiIP(),
+        wifiSubnet: () async {
+          final ip = await NetworkInfo().getWifiIP();
+          final mask = await NetworkInfo().getWifiSubmask();
+          if (ip == null || mask == null) return null;
+          return Subnet.fromIpAndMask(ip, mask);
+        }(),
         config: config,
       ),
     );
