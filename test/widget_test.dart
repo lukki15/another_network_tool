@@ -33,6 +33,6 @@ void main() {
 
     // Action buttons
     expect(find.text('Info'), findsOneWidget);
-    expect(find.text('List'), findsOneWidget);
+    expect(find.text('Scan'), findsOneWidget);
   });
 }

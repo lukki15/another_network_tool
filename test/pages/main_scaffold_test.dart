@@ -30,11 +30,18 @@ void main() {
     // Check if the Network Info screen is visible
     expect(find.text('Network Info'), findsOneWidget);
 
-    // Tap the List button
-    await tester.tap(find.text("List"));
+    // Tap the Scan button
+    await tester.tap(find.text("Scan"));
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // Check if the Network Scan page is visible
     expect(find.text('Network Scan'), findsOneWidget);
+
+    // Tap the Info button
+    await tester.tap(find.text("Info"));
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    // Check if the Network Info page is visible
+    expect(find.text('Network Info'), findsOneWidget);
   });
 }

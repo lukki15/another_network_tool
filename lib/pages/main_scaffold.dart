@@ -28,9 +28,9 @@ class _MainScaffoldState extends State<MainScaffold> {
       label: 'Info',
     ),
     NavigationDestination(
-      selectedIcon: Icon(Icons.network_ping),
-      icon: Icon(Icons.network_ping_outlined),
-      label: 'List',
+      selectedIcon: Icon(Icons.wifi_find),
+      icon: Icon(Icons.wifi_find_outlined),
+      label: 'Scan',
     ),
   ];
   late final contents = [NetworkInfo(), NetworkScan(config: widget.config)];
@@ -44,8 +44,8 @@ class _MainScaffoldState extends State<MainScaffold> {
             currentPageIndex = index;
           });
         },
-        indicatorColor: Colors.amber,
         selectedIndex: currentPageIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         destinations: destinations,
       ),
       appBar: headers[currentPageIndex],
