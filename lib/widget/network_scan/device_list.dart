@@ -38,17 +38,14 @@ class _DeviceListState extends State<DeviceList> {
       return;
     }
 
-    () async {
-      try {
-        final s = await widget.wifiSubnet;
-        _initStream(s);
-      } catch (e) {
-        setState(() {
-          _subnetError = e?.toString() ?? 'Unknown subnet error';
-          isDone = true;
-        });
-      }
-    }();
+    widget.wifiSubnet.then((subnet) {
+      _initStream(subnet);
+    }).catchError((e) {
+      setState(() {
+        _subnetError = e.toString();
+        isDone = true;
+      });
+    });
   }
 
   void _initStream(Subnet? subnet) {
@@ -60,14 +57,10 @@ class _DeviceListState extends State<DeviceList> {
     }
 
     _subnet = subnet;
-    try {
-      final first = subnet.firstHostInt();
-      final last = subnet.lastHostInt();
-      final total = (last - first) + 1;
-      if (total > 0) {
-        _totalHosts = total;
-      }
-    } catch (_) {}
+    final total = (subnet.lastHostInt() - subnet.firstHostInt()) + 1;
+    if (total > 0) {
+      _totalHosts = total;
+    }
 
     final Stream<AddressInfo> stream = widget.config.pingSubnet(subnet);
 
@@ -142,6 +135,7 @@ class _DeviceListState extends State<DeviceList> {
               currentIP: currentIndex,
               discoveredCount: activeHosts.length,
               totalHosts: _totalHosts,
+              subnetCidr: _subnet?.toString(),
             ),
           )
         else

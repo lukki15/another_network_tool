@@ -39,16 +39,14 @@ void main() {
               percentText: '50',
               currentIP: 42,
               discoveredCount: 0,
+              subnetCidr: "subnetCidr",
             ),
           ),
         ),
       );
 
       expect(find.text('Scanning devices'), findsOneWidget);
-      expect(
-        find.text('Checking nearby devices on your network'),
-        findsOneWidget,
-      );
+      expect(find.text('on subnetCidr'), findsOneWidget);
       expect(find.text('50%'), findsOneWidget);
       expect(
         find.text('scanning 42 / ${Config.defaultLastHostId}'),
