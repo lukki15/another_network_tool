@@ -38,14 +38,16 @@ class _DeviceListState extends State<DeviceList> {
       return;
     }
 
-    widget.wifiSubnet.then((subnet) {
-      _initStream(subnet);
-    }).catchError((e) {
-      setState(() {
-        _subnetError = e.toString();
-        isDone = true;
-      });
-    });
+    widget.wifiSubnet
+        .then((subnet) {
+          _initStream(subnet);
+        })
+        .catchError((e) {
+          setState(() {
+            _subnetError = e.toString();
+            isDone = true;
+          });
+        });
   }
 
   void _initStream(Subnet? subnet) {

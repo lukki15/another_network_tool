@@ -248,5 +248,125 @@ void main() {
       expect(find.text('Network error'), findsOneWidget);
       expect(find.textContaining('Non-contiguous subnet mask'), findsOneWidget);
     });
+
+    testWidgets('only adds reachable hosts to active hosts', (tester) async {
+      final controller = StreamController<AddressInfo>();
+
+      final unreachableHost = MockAddressInfo();
+      when(unreachableHost.address).thenReturn('192.168.0.10');
+      when(unreachableHost.isReachable).thenReturn(false);
+
+      final reachableHost = MockAddressInfo();
+      when(reachableHost.address).thenReturn('192.168.0.20');
+      when(reachableHost.isReachable).thenReturn(true);
+
+      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiSubnet: Future.value(
+                Subnet.fromIpAndMask('192.168.0.1', '255.255.255.0'),
+              ),
+              config: config,
+            ),
+          ),
+        ),
+      );
+
+      // Allow DeviceList to resolve wifiSubnet and subscribe to the scan.
+      await tester.pump();
+
+      controller.add(unreachableHost);
+      await tester.pump();
+
+      // The unreachable host must not be added to ActiveHostsGroup.
+      expect(find.text('192.168.0.10'), findsNothing);
+
+      controller.add(reachableHost);
+      await tester.pump();
+
+      // The reachable host must be added.
+      expect(find.text('192.168.0.20'), findsOneWidget);
+
+      await controller.close();
+      await tester.pump();
+    });
+
+    testWidgets('restarts scan when config changes', (tester) async {
+      final firstScanCancelled = Completer<void>();
+      final secondScanListening = Completer<void>();
+
+      final firstController = StreamController<AddressInfo>(
+        onCancel: firstScanCancelled.complete,
+      );
+
+      final secondController = StreamController<AddressInfo>(
+        onListen: secondScanListening.complete,
+      );
+
+      final firstConfig = MockConfig();
+      final secondConfig = MockConfig();
+
+      when(firstConfig.pingSubnet(any))
+          .thenAnswer((_) => firstController.stream);
+
+      when(secondConfig.pingSubnet(any))
+          .thenAnswer((_) => secondController.stream);
+
+      final subnet = Subnet.fromIpAndMask('192.168.0.1', '255.255.255.0');
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiSubnet: Future.value(subnet),
+              config: firstConfig,
+            ),
+          ),
+        ),
+      );
+
+      // Wait until the first scan has actually started.
+      await tester.pump();
+
+      verify(firstConfig.pingSubnet(any)).called(1);
+
+      // Make sure the first stream is actually being listened to.
+      expect(firstController.hasListener, isTrue);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiSubnet: Future.value(subnet),
+              config: secondConfig,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      // didUpdateWidget must cancel the old subscription.
+      await firstScanCancelled.future;
+
+      // And _init() must start a scan using the new config.
+      await secondScanListening.future;
+
+      verify(secondConfig.pingSubnet(any)).called(1);
+
+      expect(firstController.hasListener, isFalse);
+      expect(secondController.hasListener, isTrue);
+
+      await secondController.close();
+
+      // Dispose the widget so its subscription is cancelled cleanly.
+      await tester.pumpWidget(const SizedBox());
+    });
   });
 }

@@ -9,15 +9,8 @@ import 'package:another_network_tool/widget/network_info/connectivity_stats.dart
 import 'package:permission_handler/permission_handler.dart';
 
 class ConnectivityInfoTiles extends StatelessWidget {
-  const ConnectivityInfoTiles({
-    super.key,
-    required this.isAndroid,
-    required this.isLinux,
-    required this.conductivities,
-  });
+  const ConnectivityInfoTiles({super.key, required this.conductivities});
 
-  final bool Function() isAndroid;
-  final bool Function() isLinux;
   final List<ConnectivityResult> conductivities;
 
   List<Widget> _generateTiles(BuildContext context) {

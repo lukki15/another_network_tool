@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:another_network_tool/widget/network_info/connectivity_info_tiles.dart';
 import 'package:another_network_tool/widget/network_info/connectivity_stats.dart';
 import 'package:another_network_tool/widget/network_info/conductivity_card.dart';
@@ -15,8 +13,6 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: ConnectivityInfoTiles(
-              isAndroid: () => Platform.isAndroid,
-              isLinux: () => Platform.isLinux,
               conductivities: [
                 ConnectivityResult.wifi,
                 ConnectivityResult.mobile,
@@ -35,13 +31,7 @@ void main() {
     testWidgets('unknown platform', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ConnectivityInfoTiles(
-              isAndroid: () => false,
-              isLinux: () => false,
-              conductivities: [],
-            ),
-          ),
+          home: Scaffold(body: ConnectivityInfoTiles(conductivities: [])),
         ),
       );
 
@@ -66,8 +56,6 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: ConnectivityInfoTiles(
-              isAndroid: () => false,
-              isLinux: () => false,
               conductivities: [ConnectivityResult.wifi],
             ),
           ),
@@ -95,13 +83,7 @@ void main() {
     testWidgets('Android without mobile', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ConnectivityInfoTiles(
-              isAndroid: () => true,
-              isLinux: () => false,
-              conductivities: [],
-            ),
-          ),
+          home: Scaffold(body: ConnectivityInfoTiles(conductivities: [])),
         ),
       );
 
@@ -117,8 +99,6 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: ConnectivityInfoTiles(
-              isAndroid: () => true,
-              isLinux: () => false,
               conductivities: [ConnectivityResult.mobile],
             ),
           ),
@@ -144,13 +124,7 @@ void main() {
     testWidgets('Linux without ethernet', (WidgetTester t) async {
       await t.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ConnectivityInfoTiles(
-              isAndroid: () => false,
-              isLinux: () => true,
-              conductivities: [],
-            ),
-          ),
+          home: Scaffold(body: ConnectivityInfoTiles(conductivities: [])),
         ),
       );
 
@@ -175,8 +149,6 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: ConnectivityInfoTiles(
-              isAndroid: () => false,
-              isLinux: () => true,
               conductivities: [ConnectivityResult.ethernet],
             ),
           ),

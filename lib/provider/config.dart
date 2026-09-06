@@ -3,7 +3,6 @@ import 'package:another_network_tool/provider/host_scanner.dart';
 import 'package:another_network_tool/provider/port_scanner.dart';
 import 'package:another_network_tool/utils/subnet.dart';
 
-typedef ProgressCallback = void Function(double progress);
 typedef PortScanner = Stream<int> Function(
   String target, {
   int startPort,
