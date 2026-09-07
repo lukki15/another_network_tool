@@ -24,15 +24,6 @@ class Config {
     this.portScanner = scanPortsForSingleDevice,
   });
 
-  Stream<AddressInfo> pingHosts(String subnet) {
-    return pingHostsPatch(
-      subnet,
-      pingDataProvider: pingDataProvider,
-      start: defaultFirstHostId,
-      end: defaultLastHostId,
-    );
-  }
-
   Stream<AddressInfo> pingSubnet(Subnet subnet) {
     return pingSubnetPatch(subnet, pingDataProvider: pingDataProvider);
   }

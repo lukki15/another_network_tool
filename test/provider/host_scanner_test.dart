@@ -6,88 +6,86 @@ import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('pingHostsPatch', () {
+  group('pingSubnetPatch', () {
     test('emits reachable AddressInfo for PingResponse', () async {
-      final results = await pingHostsPatch(
-        '192.168.1',
-        start: 1,
-        end: 1,
+      final results = await pingSubnetPatch(
+        const Subnet('192.168.1.0', 30),
         patchSize: 1,
         pingDataProvider: (host) async => PingResponse(ip: host),
       ).toList();
 
-      expect(results, hasLength(1));
-      expect(results.single.address, '192.168.1.1');
-      expect(results.single.isReachable, isTrue);
+      expect(results, hasLength(2));
+      expect(results.first.address, '192.168.1.1');
+      expect(results.first.isReachable, isTrue);
+      expect(results.last.address, '192.168.1.2');
+      expect(results.last.isReachable, isTrue);
     });
 
     test('falls back to task IP when PingResponse has no IP', () async {
-      final results = await pingHostsPatch(
-        '192.168.1',
-        start: 42,
-        end: 42,
+      final results = await pingSubnetPatch(
+        const Subnet('10.20.30.40', 30),
         patchSize: 1,
         pingDataProvider: (host) async => PingResponse(ip: null),
       ).toList();
 
-      expect(results, hasLength(1));
-      expect(results.single.address, '192.168.1.42');
-      expect(results.single.isReachable, isFalse);
+      expect(results, hasLength(2));
+      expect(results.first.address, '10.20.30.41');
+      expect(results.first.isReachable, isFalse);
+      expect(results.last.address, '10.20.30.42');
+      expect(results.last.isReachable, isFalse);
     });
 
     test('emits unreachable AddressInfo for PingError', () async {
-      final results = await pingHostsPatch(
-        '192.168.1',
-        start: 10,
-        end: 10,
+      final results = await pingSubnetPatch(
+        const Subnet('109.172.225.204', 30),
         patchSize: 1,
         pingDataProvider: (host) async =>
             PingError(ErrorType.requestTimedOut, message: 'Host unreachable'),
       ).toList();
 
-      expect(results, hasLength(1));
-      expect(results.single.address, '192.168.1.10');
-      expect(results.single.isReachable, isFalse);
+      expect(results, hasLength(2));
+      expect(results.first.address, '109.172.225.205');
+      expect(results.first.isReachable, isFalse);
+      expect(results.last.address, '109.172.225.206');
+      expect(results.last.isReachable, isFalse);
     });
 
     test('emits unreachable AddressInfo for PingSummary', () async {
-      final results = await pingHostsPatch(
-        '192.168.1',
-        start: 10,
-        end: 10,
+      final results = await pingSubnetPatch(
+        const Subnet('11.22.33.44', 30),
         patchSize: 1,
         pingDataProvider: (host) async =>
             PingSummary(transmitted: 1, received: 0),
       ).toList();
 
-      expect(results, hasLength(1));
-      expect(results.single.address, '192.168.1.10');
-      expect(results.single.isReachable, isFalse);
+      expect(results, hasLength(2));
+      expect(results.first.address, '11.22.33.45');
+      expect(results.first.isReachable, isFalse);
+      expect(results.last.address, '11.22.33.46');
+      expect(results.last.isReachable, isFalse);
     });
 
     test('converts provider exceptions into unreachable AddressInfo', () async {
-      final results = await pingHostsPatch(
-        '192.168.1',
-        start: 7,
-        end: 7,
+      final results = await pingSubnetPatch(
+        const Subnet('1.2.3.4', 30),
         patchSize: 1,
         pingDataProvider: (host) async {
           throw StateError('ping failed');
         },
       ).toList();
 
-      expect(results, hasLength(1));
-      expect(results.single.address, '192.168.1.7');
-      expect(results.single.isReachable, isFalse);
+      expect(results, hasLength(2));
+      expect(results.first.address, '1.2.3.5');
+      expect(results.first.isReachable, isFalse);
+      expect(results.last.address, '1.2.3.6');
+      expect(results.last.isReachable, isFalse);
     });
 
     test('scans the complete requested host range', () async {
       final calls = <String>[];
 
-      final results = await pingHostsPatch(
-        '10.0.0',
-        start: 1,
-        end: 5,
+      final results = await pingSubnetPatch(
+        const Subnet('10.10.10.10', 29),
         patchSize: 2,
         pingDataProvider: (host) async {
           calls.add(host);
@@ -95,50 +93,22 @@ void main() {
         },
       ).toList();
 
-      expect(
-        calls,
-        containsAll(<String>[
-          '10.0.0.1',
-          '10.0.0.2',
-          '10.0.0.3',
-          '10.0.0.4',
-          '10.0.0.5',
-        ]),
-      );
-      expect(calls, hasLength(5));
-      expect(results, hasLength(5));
+      const expectedHosts = <String>[
+        '10.10.10.11',
+        '10.10.10.12',
+        '10.10.10.13',
+        '10.10.10.14',
+      ];
+      expect(calls, containsAll(expectedHosts));
       expect(
         results.map((result) => result.address),
-        containsAll(<String>[
-          '10.0.0.1',
-          '10.0.0.2',
-          '10.0.0.3',
-          '10.0.0.4',
-          '10.0.0.5',
-        ]),
+        containsAll(expectedHosts),
       );
-    });
-
-    test('does not call provider when start is greater than end', () async {
-      var callCount = 0;
-
-      final results = await pingHostsPatch(
-        '10.0.0',
-        start: 10,
-        end: 5,
-        patchSize: 2,
-        pingDataProvider: (host) async {
-          callCount++;
-          return PingResponse(ip: host);
-        },
-      ).toList();
-
-      expect(results, isEmpty);
-      expect(callCount, 0);
     });
 
     test('never has more than patchSize active tasks', () async {
       const patchSize = 2;
+      const hostCount = 254;
 
       var activeTasks = 0;
       var maxActiveTasks = 0;
@@ -159,10 +129,8 @@ void main() {
         return event;
       }
 
-      final stream = pingHostsPatch(
-        '10.0.0',
-        start: 1,
-        end: 5,
+      final stream = pingSubnetPatch(
+        const Subnet('10.0.0.0', 24),
         patchSize: patchSize,
         pingDataProvider: provider,
       );
@@ -172,40 +140,26 @@ void main() {
       // Allow the initial patch to start.
       await Future<void>.delayed(Duration.zero);
 
-      expect(maxActiveTasks, patchSize);
-      expect(completers.keys, containsAll(<String>['10.0.0.1', '10.0.0.2']));
       expect(completers, hasLength(patchSize));
-
-      // Complete tasks one at a time. Each completion should allow
-      // exactly one replacement task to be scheduled.
-      completers['10.0.0.1']!.complete(PingResponse(ip: '10.0.0.1'));
-
-      await Future<void>.delayed(Duration.zero);
-
-      expect(completers.keys, contains('10.0.0.3'));
       expect(maxActiveTasks, patchSize);
 
-      completers['10.0.0.2']!.complete(PingResponse(ip: '10.0.0.2'));
+      for (var i = 1; i <= hostCount; i++) {
+        final host = '10.0.0.$i';
 
-      await Future<void>.delayed(Duration.zero);
+        // The first two tasks are already active. For subsequent hosts,
+        // completing the previous task should schedule this one.
+        if (i > patchSize) {
+          await Future<void>.delayed(Duration.zero);
+          expect(completers, contains(host));
+          expect(maxActiveTasks, patchSize);
+        }
 
-      expect(completers.keys, contains('10.0.0.4'));
-
-      completers['10.0.0.3']!.complete(PingResponse(ip: '10.0.0.3'));
-
-      await Future<void>.delayed(Duration.zero);
-
-      expect(completers.keys, contains('10.0.0.5'));
-
-      completers['10.0.0.4']!.complete(PingResponse(ip: '10.0.0.4'));
-
-      await Future<void>.delayed(Duration.zero);
-
-      completers['10.0.0.5']!.complete(PingResponse(ip: '10.0.0.5'));
+        completers[host]!.complete(PingResponse(ip: host));
+      }
 
       final results = await resultsFuture;
 
-      expect(results, hasLength(5));
+      expect(results, hasLength(hostCount));
       expect(maxActiveTasks, patchSize);
     });
   });
@@ -214,7 +168,7 @@ void main() {
     test('scans all hosts returned by the subnet', () async {
       final calls = <String>[];
 
-      final subnet = Subnet('192.168.1.0', 30);
+      final subnet = const Subnet('192.168.1.0', 30);
 
       final results = await pingSubnetPatch(
         subnet,
@@ -236,7 +190,7 @@ void main() {
       final calls = <String>[];
 
       final results = await pingSubnetPatch(
-        Subnet('192.168.1.0', 31),
+        const Subnet('192.168.1.0', 31),
         patchSize: 10,
         pingDataProvider: (host) async {
           calls.add(host);
@@ -253,7 +207,7 @@ void main() {
       final calls = <String>[];
 
       final results = await pingSubnetPatch(
-        Subnet('192.168.1.42', 32),
+        const Subnet('192.168.1.42', 32),
         patchSize: 10,
         pingDataProvider: (host) async {
           calls.add(host);
@@ -270,7 +224,7 @@ void main() {
 
     test('handles PingError inside a subnet scan', () async {
       final results = await pingSubnetPatch(
-        Subnet('192.168.1.0', 30),
+        const Subnet('192.168.1.0', 30),
         patchSize: 2,
         pingDataProvider: (host) async =>
             PingError(ErrorType.requestTimedOut, message: 'Host unreachable'),
@@ -286,7 +240,7 @@ void main() {
 
     test('handles provider exceptions inside a subnet scan', () async {
       final results = await pingSubnetPatch(
-        Subnet('192.168.1.0', 30),
+        const Subnet('192.168.1.0', 30),
         patchSize: 2,
         pingDataProvider: (host) async {
           throw Exception('network failure');
@@ -298,7 +252,7 @@ void main() {
     });
 
     test('pingSubnetPatch handles PingSummary as unreachable', () async {
-      final subnet = Subnet('192.168.1.0', 30);
+      final subnet = const Subnet('192.168.1.0', 30);
 
       final results = await pingSubnetPatch(
         subnet,
@@ -321,7 +275,7 @@ void main() {
     test(
       'pingSubnetPatch starts a replacement task when an active task completes',
       () async {
-        final subnet = Subnet('192.168.1.0', 30);
+        final subnet = const Subnet('192.168.1.0', 30);
 
         final requestedHosts = <String>[];
 
@@ -373,7 +327,7 @@ void main() {
     test(
       'pingSubnetPatch closes immediately when there are no hosts to scan',
       () async {
-        final subnet = Subnet('192.168.1.0', 30);
+        final subnet = const Subnet('192.168.1.0', 30);
 
         var providerCalled = false;
 

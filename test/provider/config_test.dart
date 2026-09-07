@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/provider/host_scanner.dart';
+import 'package:another_network_tool/utils/subnet.dart';
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -30,10 +31,10 @@ void main() {
     });
   });
 
-  group('pingHosts', () {
+  group('pingSubnet', () {
     test('returns a Stream<AddressInfo>', () {
       // Act
-      final result = config.pingHosts('192.168.1');
+      final result = config.pingSubnet(Subnet('192.168.1.0', 24));
 
       // Assert
       expect(result, isA<Stream<AddressInfo>>());
@@ -49,7 +50,7 @@ void main() {
       config = Config(pingDataProvider: mockPingDataProvider);
 
       // Act
-      await config.pingHosts('192.168.1').toList();
+      await config.pingSubnet(Subnet('192.168.1.0', 24)).toList();
 
       // Assert - verify that pingDataProvider was called for multiple hosts
       expect(callsTracker.isNotEmpty, isTrue);
@@ -66,7 +67,9 @@ void main() {
         config = Config(pingDataProvider: mockPingDataProvider);
 
         // Act
-        final results = await config.pingHosts('192.168.1').toList();
+        final results = await config
+            .pingSubnet(Subnet('192.168.1.0', 24))
+            .toList();
 
         // Assert
         expect(results.isNotEmpty, isTrue);
@@ -85,7 +88,9 @@ void main() {
       config = Config(pingDataProvider: mockPingDataProvider);
 
       // Act
-      final results = await config.pingHosts('192.168.1').toList();
+      final results = await config
+          .pingSubnet(Subnet('192.168.1.0', 24))
+          .toList();
 
       // Assert
       expect(results.isNotEmpty, isTrue);
@@ -102,9 +107,9 @@ void main() {
       config = Config(pingDataProvider: mockPingDataProvider);
 
       // Act
-      // Note: pingHostsPatch doesn't support custom ranges through pingHosts,
-      // so we verify the default behavior
-      final results = await config.pingHosts('192.168.1').toList();
+      final results = await config
+          .pingSubnet(Subnet('192.168.1.0', 24))
+          .toList();
 
       // Assert - should have results from the default range
       expect(results.isNotEmpty, isTrue);
@@ -125,7 +130,9 @@ void main() {
       config = Config(pingDataProvider: mockPingDataProvider);
 
       // Act
-      final results = await config.pingHosts('192.168.1').toList();
+      final results = await config
+          .pingSubnet(Subnet('192.168.1.0', 24))
+          .toList();
 
       // Assert
       final matchingResult = results.firstWhere(
@@ -145,7 +152,9 @@ void main() {
       config = Config(pingDataProvider: mockPingDataProvider);
 
       // Act & Assert
-      final results = await config.pingHosts('192.168.1').toList();
+      final results = await config
+          .pingSubnet(Subnet('192.168.1.0', 24))
+          .toList();
       // Should emit reachable=false for exceptions
       expect(results.isNotEmpty, isTrue);
       expect(results.every((a) => a.isReachable == false), isTrue);

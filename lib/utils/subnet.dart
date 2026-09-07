@@ -3,7 +3,7 @@ class Subnet {
   networkAddress; // dotted decimal network address (e.g. 192.168.0.0)
   final int prefixLength; // CIDR prefix length (e.g. 24)
 
-  Subnet(this.networkAddress, this.prefixLength);
+  const Subnet(this.networkAddress, this.prefixLength);
 
   @override
   String toString() => '$networkAddress/$prefixLength';
