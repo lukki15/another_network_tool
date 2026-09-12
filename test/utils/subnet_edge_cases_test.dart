@@ -68,6 +68,32 @@ void main() {
       );
     });
 
+    test('rejects mask with too few octets', () {
+      expect(
+        () => Subnet.fromIpAndMask('192.168.1.1', '255.255.255'),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Invalid subnet mask',
+          ),
+        ),
+      );
+    });
+
+    test('rejects mask with a non-numeric octet', () {
+      expect(
+        () => Subnet.fromIpAndMask('192.168.1.1', '255.255.foo.0'),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Invalid subnet mask',
+          ),
+        ),
+      );
+    });
+
     test('accepts /0 mask', () {
       final subnet = Subnet.fromIpAndMask('192.168.1.42', '0.0.0.0');
 
