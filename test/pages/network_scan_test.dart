@@ -119,7 +119,8 @@ void main() {
       when(networkInfo.getWifiSubmask())
           .thenAnswer((_) async => '255.255.255.0');
 
-      when(config.pingSubnet(any)).thenAnswer((_) => scanController.stream);
+      when(config.pingSubnet(any, any))
+          .thenAnswer((_) => scanController.stream);
 
       await pumpNetworkScan(
         tester,
@@ -129,11 +130,12 @@ void main() {
       verify(networkInfo.getWifiIP()).called(1);
       verify(networkInfo.getWifiSubmask()).called(1);
 
-      final captured = verify(config.pingSubnet(captureAny)).captured;
+      final captured = verify(config.pingSubnet(captureAny, captureAny))
+          .captured;
 
-      expect(captured, hasLength(1));
+      expect(captured, hasLength(2));
 
-      final subnet = captured.single;
+      final subnet = captured.first;
 
       expect(subnet.toString(), '192.168.1.0/24');
 
@@ -152,7 +154,7 @@ void main() {
 
       verify(networkInfo.getWifiIP()).called(1);
       verify(networkInfo.getWifiSubmask()).called(1);
-      verifyNever(config.pingSubnet(any));
+      verifyNever(config.pingSubnet(any, any));
     });
 
     testWidgets('does not scan when subnet mask is unavailable', (
@@ -168,7 +170,7 @@ void main() {
 
       verify(networkInfo.getWifiIP()).called(1);
       verify(networkInfo.getWifiSubmask()).called(1);
-      verifyNever(config.pingSubnet(any));
+      verifyNever(config.pingSubnet(any, any));
     });
   });
 }

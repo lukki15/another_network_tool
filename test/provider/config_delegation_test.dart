@@ -1,4 +1,5 @@
 import 'package:another_network_tool/provider/config.dart';
+import 'package:another_network_tool/utils/stream_control.dart';
 import 'package:another_network_tool/utils/subnet.dart';
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,7 +18,7 @@ void main() {
 
       final subnet = Subnet('192.168.1.0', 30);
 
-      final results = await config.pingSubnet(subnet).toList();
+      final results = await config.pingSubnet(subnet, StreamControl()).toList();
 
       expect(calls, containsAll(<String>['192.168.1.1', '192.168.1.2']));
 
@@ -34,7 +35,7 @@ void main() {
 
       final subnet = Subnet('10.0.0.0', 30);
 
-      final results = await config.pingSubnet(subnet).toList();
+      final results = await config.pingSubnet(subnet, StreamControl()).toList();
 
       expect(results, hasLength(2));
       expect(results.every((result) => !result.isReachable), isTrue);

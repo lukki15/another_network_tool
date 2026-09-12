@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_network_tool/utils/stream_control.dart';
 import 'package:flutter/material.dart';
 
 import 'package:another_network_tool/widget/network_scan/device_list_header.dart';
@@ -7,6 +8,7 @@ import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
 import 'package:another_network_tool/utils/subnet.dart';
+import 'package:another_network_tool/pages/device_info.dart';
 
 class DeviceList extends StatefulWidget {
   final bool hasWifi;
@@ -24,7 +26,8 @@ class DeviceList extends StatefulWidget {
 }
 
 class _DeviceListState extends State<DeviceList> {
-  StreamSubscription<AddressInfo>? streamSubscription;
+  StreamControl? _streamControl;
+  StreamSubscription<AddressInfo>? _streamSubscription;
   Subnet? _subnet;
   int _totalHosts = (Config.defaultLastHostId - Config.defaultFirstHostId) + 1;
   String? _subnetError;
@@ -32,6 +35,12 @@ class _DeviceListState extends State<DeviceList> {
   int progressCount = 0;
   Set<AddressInfo> activeHosts = {};
   bool isDone = false;
+
+  void _onControlChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   void _init() {
     if (!widget.hasWifi) {
@@ -64,9 +73,15 @@ class _DeviceListState extends State<DeviceList> {
       _totalHosts = total;
     }
 
-    final Stream<AddressInfo> stream = widget.config.pingSubnet(subnet);
+    final streamControl = StreamControl();
+    streamControl.addListener(_onControlChanged);
+    _streamControl = streamControl;
+    final Stream<AddressInfo> stream = widget.config.pingSubnet(
+      subnet,
+      streamControl,
+    );
 
-    streamSubscription = stream.listen(
+    _streamSubscription = stream.listen(
       (host) {
         setState(() {
           progressCount++;
@@ -92,20 +107,46 @@ class _DeviceListState extends State<DeviceList> {
   @override
   void didUpdateWidget(DeviceList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    streamSubscription?.cancel();
+
+    // Stop the old scan first.
+    _streamControl?.cancel();
+    _streamControl = null;
+
+    _streamSubscription?.cancel();
+    _streamSubscription = null;
+
     if (widget.hasWifi) {
       setState(() {
         progressCount = 0;
         activeHosts.clear();
         isDone = false;
+        _subnetError = null;
       });
     }
+
     _init();
+  }
+
+  Future<void> _openDeviceDetails(AddressInfo device) async {
+    _streamControl?.pause();
+
+    try {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) =>
+              DeviceInfo(activeHost: device, config: widget.config),
+        ),
+      );
+    } finally {
+      _streamControl?.resume();
+    }
   }
 
   @override
   void dispose() {
-    streamSubscription?.cancel();
+    _streamControl?.removeListener(_onControlChanged);
+    _streamControl?.cancel();
+    _streamSubscription?.cancel();
     super.dispose();
   }
 
@@ -177,6 +218,7 @@ class _DeviceListState extends State<DeviceList> {
                   child: ActiveHostsGroup(
                     activeHosts: activeHosts,
                     config: widget.config,
+                    onOpenDevice: _openDeviceDetails,
                   ),
                 ),
               ),

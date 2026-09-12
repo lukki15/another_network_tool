@@ -1,4 +1,3 @@
-import 'package:another_network_tool/pages/device_info.dart';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/widget/network_scan/active_hosts_group.dart';
@@ -21,6 +20,7 @@ void main() {
           home: ActiveHostsGroup(
             activeHosts: const <AddressInfo>{},
             config: Config(),
+            onOpenDevice: (_) async {},
           ),
         ),
       );
@@ -28,8 +28,11 @@ void main() {
       expect(find.text('No devices discovered yet'), findsOneWidget);
     });
 
-    testWidgets('tapping a host opens DeviceInfo', (tester) async {
+    testWidgets('tapping a host invokes the configured callback', (
+      tester,
+    ) async {
       final host = TestAddressInfo('192.168.1.10');
+      AddressInfo? selected;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -42,6 +45,9 @@ void main() {
                 int endPort = 1024,
               }) => Stream<int>.empty(),
             ),
+            onOpenDevice: (device) async {
+              selected = device;
+            },
           ),
         ),
       );
@@ -51,12 +57,36 @@ void main() {
       expect(find.text('192.168.1.10'), findsOneWidget);
 
       await tester.tap(find.text('192.168.1.10'));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
-      expect(find.byType(DeviceInfo), findsOneWidget);
-      expect(find.text('Device Details'), findsOneWidget);
-      expect(find.text('192.168.1.10'), findsOneWidget);
+      expect(selected, same(host));
     });
+
+    testWidgets(
+      'tapping a host invokes the callback with the matching address',
+      (tester) async {
+        final host = TestAddressInfo('192.168.1.15');
+        AddressInfo? selected;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ActiveHostsGroup(
+              activeHosts: {host},
+              config: Config(),
+              onOpenDevice: (device) async {
+                selected = device;
+              },
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('192.168.1.15'));
+        await tester.pump();
+
+        expect(selected, same(host));
+      },
+    );
 
     testWidgets('long press copies host address', (tester) async {
       final host = TestAddressInfo('192.168.1.20');
@@ -81,7 +111,11 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: ActiveHostsGroup(activeHosts: {host}, config: Config()),
+          home: ActiveHostsGroup(
+            activeHosts: {host},
+            config: Config(),
+            onOpenDevice: (_) async {},
+          ),
         ),
       );
 

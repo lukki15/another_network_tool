@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
 import 'package:another_network_tool/provider/host_scanner.dart';
+import 'package:another_network_tool/utils/stream_control.dart';
 import 'package:another_network_tool/utils/subnet.dart';
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +35,10 @@ void main() {
   group('pingSubnet', () {
     test('returns a Stream<AddressInfo>', () {
       // Act
-      final result = config.pingSubnet(Subnet('192.168.1.0', 24));
+      final result = config.pingSubnet(
+        Subnet('192.168.1.0', 24),
+        StreamControl(),
+      );
 
       // Assert
       expect(result, isA<Stream<AddressInfo>>());
@@ -50,7 +54,9 @@ void main() {
       config = Config(pingDataProvider: mockPingDataProvider);
 
       // Act
-      await config.pingSubnet(Subnet('192.168.1.0', 24)).toList();
+      await config
+          .pingSubnet(Subnet('192.168.1.0', 24), StreamControl())
+          .toList();
 
       // Assert - verify that pingDataProvider was called for multiple hosts
       expect(callsTracker.isNotEmpty, isTrue);
@@ -68,7 +74,7 @@ void main() {
 
         // Act
         final results = await config
-            .pingSubnet(Subnet('192.168.1.0', 24))
+            .pingSubnet(Subnet('192.168.1.0', 24), StreamControl())
             .toList();
 
         // Assert
@@ -89,7 +95,7 @@ void main() {
 
       // Act
       final results = await config
-          .pingSubnet(Subnet('192.168.1.0', 24))
+          .pingSubnet(Subnet('192.168.1.0', 24), StreamControl())
           .toList();
 
       // Assert
@@ -108,7 +114,7 @@ void main() {
 
       // Act
       final results = await config
-          .pingSubnet(Subnet('192.168.1.0', 24))
+          .pingSubnet(Subnet('192.168.1.0', 24), StreamControl())
           .toList();
 
       // Assert - should have results from the default range
@@ -131,7 +137,7 @@ void main() {
 
       // Act
       final results = await config
-          .pingSubnet(Subnet('192.168.1.0', 24))
+          .pingSubnet(Subnet('192.168.1.0', 24), StreamControl())
           .toList();
 
       // Assert
@@ -153,7 +159,7 @@ void main() {
 
       // Act & Assert
       final results = await config
-          .pingSubnet(Subnet('192.168.1.0', 24))
+          .pingSubnet(Subnet('192.168.1.0', 30), StreamControl())
           .toList();
       // Should emit reachable=false for exceptions
       expect(results.isNotEmpty, isTrue);

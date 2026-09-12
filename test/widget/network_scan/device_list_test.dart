@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:another_network_tool/pages/device_info.dart';
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
+import 'package:another_network_tool/utils/stream_control.dart';
 import 'package:another_network_tool/widget/network_scan/device_list.dart';
 import 'package:another_network_tool/utils/subnet.dart';
 
@@ -59,7 +61,7 @@ void main() {
 
     testWidgets('wait for wifiIP', (WidgetTester t) async {
       final controller = StreamController<AddressInfo>();
-      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
+      when(config.pingSubnet(any, any)).thenAnswer((_) => controller.stream);
 
       await t.pumpWidget(
         MaterialApp(
@@ -86,7 +88,7 @@ void main() {
       WidgetTester t,
     ) async {
       final controller = StreamController<AddressInfo>();
-      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
+      when(config.pingSubnet(any, any)).thenAnswer((_) => controller.stream);
 
       await t.pumpWidget(
         MaterialApp(
@@ -112,7 +114,7 @@ void main() {
 
     testWidgets('with wifi', (WidgetTester t) async {
       var controller = StreamController<AddressInfo>();
-      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
+      when(config.pingSubnet(any, any)).thenAnswer((_) => controller.stream);
 
       await t.pumpWidget(
         MaterialApp(
@@ -194,7 +196,7 @@ void main() {
       testWidgets('subnet /$prefix', (WidgetTester t) async {
         final controller = StreamController<AddressInfo>();
 
-        when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
+        when(config.pingSubnet(any, any)).thenAnswer((_) => controller.stream);
 
         final subnet = Subnet.fromIpAndMask(ip, mask);
 
@@ -260,7 +262,7 @@ void main() {
       when(reachableHost.address).thenReturn('192.168.0.20');
       when(reachableHost.isReachable).thenReturn(true);
 
-      when(config.pingSubnet(any)).thenAnswer((_) => controller.stream);
+      when(config.pingSubnet(any, any)).thenAnswer((_) => controller.stream);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -295,6 +297,95 @@ void main() {
       await tester.pump();
     });
 
+    testWidgets(
+      'opening device details pauses the scan and resumes on return',
+      (tester) async {
+        final controller = StreamController<AddressInfo>();
+        late StreamControl streamControl;
+
+        final host = MockAddressInfo();
+        when(host.address).thenReturn('192.168.0.20');
+        when(host.isReachable).thenReturn(true);
+        when(host.getHostName()).thenAnswer((_) async => 'device-192.168.0.20');
+
+        when(config.pingSubnet(any, any)).thenAnswer((invocation) {
+          streamControl = invocation.positionalArguments[1] as StreamControl;
+          return controller.stream;
+        });
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: DeviceList(
+                hasWifi: true,
+                wifiSubnet: Future.value(
+                  Subnet.fromIpAndMask('192.168.0.1', '255.255.255.0'),
+                ),
+                config: config,
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump();
+        controller.add(host);
+        await tester.pumpAndSettle();
+
+        expect(find.text('192.168.0.20'), findsOneWidget);
+        expect(streamControl.isPaused, isFalse);
+        expect(streamControl.isCancelled, isFalse);
+
+        await tester.tap(find.byType(ListTile));
+        await tester.pumpAndSettle();
+
+        expect(streamControl.isPaused, isTrue);
+        expect(streamControl.isCancelled, isFalse);
+        expect(find.byType(DeviceInfo), findsOneWidget);
+
+        await tester.pageBack();
+        await tester.pumpAndSettle();
+
+        expect(streamControl.isPaused, isFalse);
+        expect(streamControl.isCancelled, isFalse);
+        verify(config.pingSubnet(any, any)).called(1);
+
+        await controller.close();
+      },
+    );
+
+    testWidgets('dispose cancels the active stream control', (tester) async {
+      final controller = StreamController<AddressInfo>();
+      late StreamControl streamControl;
+
+      when(config.pingSubnet(any, any)).thenAnswer((invocation) {
+        streamControl = invocation.positionalArguments[1] as StreamControl;
+        return controller.stream;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiSubnet: Future.value(
+                Subnet.fromIpAndMask('192.168.0.1', '255.255.255.0'),
+              ),
+              config: config,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      expect(streamControl.isCancelled, isFalse);
+
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+
+      expect(streamControl.isCancelled, isTrue);
+      expect(streamControl.isPaused, isFalse);
+    });
+
     testWidgets('restarts scan when config changes', (tester) async {
       final firstScanCancelled = Completer<void>();
       final secondScanListening = Completer<void>();
@@ -310,10 +401,10 @@ void main() {
       final firstConfig = MockConfig();
       final secondConfig = MockConfig();
 
-      when(firstConfig.pingSubnet(any))
+      when(firstConfig.pingSubnet(any, any))
           .thenAnswer((_) => firstController.stream);
 
-      when(secondConfig.pingSubnet(any))
+      when(secondConfig.pingSubnet(any, any))
           .thenAnswer((_) => secondController.stream);
 
       final subnet = Subnet.fromIpAndMask('192.168.0.1', '255.255.255.0');
@@ -333,7 +424,7 @@ void main() {
       // Wait until the first scan has actually started.
       await tester.pump();
 
-      verify(firstConfig.pingSubnet(any)).called(1);
+      verify(firstConfig.pingSubnet(any, any)).called(1);
 
       // Make sure the first stream is actually being listened to.
       expect(firstController.hasListener, isTrue);
@@ -358,7 +449,7 @@ void main() {
       // And _init() must start a scan using the new config.
       await secondScanListening.future;
 
-      verify(secondConfig.pingSubnet(any)).called(1);
+      verify(secondConfig.pingSubnet(any, any)).called(1);
 
       expect(firstController.hasListener, isFalse);
       expect(secondController.hasListener, isTrue);

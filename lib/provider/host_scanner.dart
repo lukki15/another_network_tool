@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:another_network_tool/provider/address_info.dart';
+import 'package:another_network_tool/utils/stream_control.dart';
 import 'package:dart_ping/dart_ping.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:another_network_tool/utils/subnet.dart';
@@ -17,83 +18,134 @@ class PingTask {
   PingTask(this.future, this.ip);
 }
 
+String _intToIp(int value) {
+  return '${(value >> 24) & 0xFF}.'
+      '${(value >> 16) & 0xFF}.'
+      '${(value >> 8) & 0xFF}.'
+      '${value & 0xFF}';
+}
+
 Stream<AddressInfo> pingSubnetPatch(
-  Subnet subnet, {
+  Subnet subnet,
+  StreamControl streamControl, {
   PingDataProvider pingDataProvider = defaultPingDataProvider,
   int patchSize = 10,
 }) async* {
   final startInt = subnet.firstHostInt();
   final endInt = subnet.lastHostInt();
 
-  StreamController<AddressInfo> resultController =
-      StreamController<AddressInfo>();
-  Lock lock = Lock();
+  final resultController = StreamController<AddressInfo>();
+  final lock = Lock();
+
   int activeTaskCount = 0;
   int nextIpInt = startInt;
 
-  String intToIp(int value) {
-    return '${(value >> 24) & 0xFF}.${(value >> 16) & 0xFF}.${(value >> 8) & 0xFF}.${value & 0xFF}';
-  }
-
-  void processPingTask(PingTask task) {
-    task.future
-        .then((PingEvent pingEvent) {
-          switch (pingEvent) {
-            case PingResponse response:
-              resultController.add(
-                AddressInfo(
-                  address: response.ip ?? task.ip,
-                  isReachable: response.ip != null,
-                ),
-              );
-            case PingError():
-              resultController.add(
-                AddressInfo(address: task.ip, isReachable: false),
-              );
-            case PingSummary():
-              resultController.add(
-                AddressInfo(address: task.ip, isReachable: false),
-              );
-          }
-        })
-        .catchError((error) {
-          resultController.add(
-            AddressInfo(address: task.ip, isReachable: false),
-          );
-        })
-        .whenComplete(() {
-          lock.synchronized(() {
-            activeTaskCount--;
-            if (nextIpInt <= endInt) {
-              String newIp = intToIp(nextIpInt);
-              nextIpInt++;
-              Future<PingEvent> newFuture = pingDataProvider(newIp);
-              PingTask newTask = PingTask(newFuture, newIp);
-              activeTaskCount++;
-              processPingTask(newTask);
-            }
-            if (activeTaskCount == 0 && nextIpInt > endInt) {
-              resultController.close();
-            }
-          });
-        });
-  }
-
-  // Fill initial tasks
-  lock.synchronized(() {
-    for (int i = 0; i < patchSize && nextIpInt <= endInt; i++) {
-      String ip = intToIp(nextIpInt);
-      nextIpInt++;
-      Future<PingEvent> future = pingDataProvider(ip);
-      PingTask task = PingTask(future, ip);
-      activeTaskCount++;
-      processPingTask(task);
+  void closeController() {
+    if (!resultController.isClosed) {
+      resultController.close();
     }
+  }
+
+  void addResult(AddressInfo result) {
+    if (streamControl.isCancelled) return;
+
+    if (!resultController.isClosed) {
+      resultController.add(result);
+    }
+  }
+
+  late Future<void> Function(PingTask) processPingTask;
+
+  Future<void> startAvailableTasks() async {
+    await streamControl.waitIfPaused();
+
+    if (streamControl.isCancelled) return;
+
+    while (activeTaskCount < patchSize && nextIpInt <= endInt) {
+      if (streamControl.isCancelled) return;
+
+      final newIp = _intToIp(nextIpInt);
+      nextIpInt++;
+
+      try {
+        final newFuture = pingDataProvider(newIp);
+        final newTask = PingTask(newFuture, newIp);
+
+        activeTaskCount++;
+        unawaited(processPingTask(newTask));
+      } catch (_) {
+        addResult(AddressInfo(address: newIp, isReachable: false));
+      }
+    }
+  }
+
+  processPingTask = (PingTask task) async {
+    if (streamControl.isCancelled) return;
+
+    try {
+      final results = await Future.wait<Object?>([
+        task.future,
+
+        // If paused, wait here before processing the result.
+        // Cancellation also wakes this wait.
+        streamControl.waitIfPaused(),
+      ]);
+
+      if (streamControl.isCancelled) return;
+
+      final pingEvent = results[0] as PingEvent;
+
+      switch (pingEvent) {
+        case PingResponse response:
+          addResult(
+            AddressInfo(
+              address: response.ip ?? task.ip,
+              isReachable: response.ip != null,
+            ),
+          );
+
+        case PingError():
+          addResult(AddressInfo(address: task.ip, isReachable: false));
+
+        case PingSummary():
+          addResult(AddressInfo(address: task.ip, isReachable: false));
+      }
+    } catch (_) {
+      addResult(AddressInfo(address: task.ip, isReachable: false));
+    } finally {
+      await lock.synchronized(() async {
+        activeTaskCount--;
+
+        // Don't schedule anything after cancellation.
+        if (streamControl.isCancelled) {
+          if (activeTaskCount == 0) {
+            closeController();
+          }
+          return;
+        }
+
+        await startAvailableTasks();
+
+        if (activeTaskCount == 0 && nextIpInt > endInt) {
+          closeController();
+        }
+      });
+    }
+  };
+
+  // Close if cancelled from the outside.
+  streamControl.cancelled.then((_) {
+    closeController();
   });
 
-  // Close immediately if no tasks were created
+  // Fill initial tasks.
+  await lock.synchronized(() async {
+    await startAvailableTasks();
+  });
+
+  // No tasks were created.
   if (activeTaskCount == 0) {
-    resultController.close();
+    closeController();
   }
 
   yield* resultController.stream;

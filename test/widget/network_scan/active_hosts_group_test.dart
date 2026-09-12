@@ -94,7 +94,7 @@ void main() {
       await t.tap(tile);
       await t.pumpAndSettle();
 
-      verify(mockObserver.didPush(any, any)).called(2);
+      verify(mockObserver.didPush(any, any)).called(1);
     });
 
     testWidgets('on long press', (WidgetTester t) async {

@@ -1,6 +1,7 @@
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/host_scanner.dart';
 import 'package:another_network_tool/provider/port_scanner.dart';
+import 'package:another_network_tool/utils/stream_control.dart';
 import 'package:another_network_tool/utils/subnet.dart';
 
 typedef PortScanner = Stream<int> Function(
@@ -24,8 +25,12 @@ class Config {
     this.portScanner = scanPortsForSingleDevice,
   });
 
-  Stream<AddressInfo> pingSubnet(Subnet subnet) {
-    return pingSubnetPatch(subnet, pingDataProvider: pingDataProvider);
+  Stream<AddressInfo> pingSubnet(Subnet subnet, StreamControl streamControl) {
+    return pingSubnetPatch(
+      subnet,
+      streamControl,
+      pingDataProvider: pingDataProvider,
+    );
   }
 
   Stream<int> scanPort(String target) {

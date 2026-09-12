@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/config.dart';
-import 'package:another_network_tool/pages/device_info.dart';
 import 'package:another_network_tool/widget/future_text.dart';
 
 class ActiveHostsGroup extends StatefulWidget {
@@ -11,10 +10,12 @@ class ActiveHostsGroup extends StatefulWidget {
     super.key,
     required this.activeHosts,
     required this.config,
+    this.onOpenDevice,
   });
 
   final Set<AddressInfo> activeHosts;
   final Config config;
+  final Future<void> Function(AddressInfo device)? onOpenDevice;
 
   @override
   State<ActiveHostsGroup> createState() => _ActiveHostsGroupState();
@@ -80,13 +81,9 @@ class _ActiveHostsGroupState extends State<ActiveHostsGroup> {
       key: ValueKey(item.address),
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  DeviceInfo(activeHost: item, config: widget.config),
-            ),
-          );
+        onTap: () async {
+          final callback = widget.onOpenDevice ?? (_) async {};
+          await callback(item);
         },
         onLongPress: () => Clipboard.setData(ClipboardData(text: item.address)),
         child: ListTile(
