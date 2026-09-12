@@ -7,10 +7,12 @@ class ConnectivityStatsStateListView extends StatelessWidget {
     super.key,
     required this.context,
     required this.details,
+    this.onTapByLabel = const {},
   });
 
   final BuildContext context;
   final List<Map<String, Future<String?>>> details;
+  final Map<String, VoidCallback> onTapByLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class ConnectivityStatsStateListView extends StatelessWidget {
           final future = entry.value;
 
           return InkWell(
+            onTap: onTapByLabel[label],
             onLongPress: () => _setClipboardData(future),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(

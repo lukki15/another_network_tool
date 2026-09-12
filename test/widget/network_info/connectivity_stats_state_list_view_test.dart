@@ -103,5 +103,40 @@ void main() {
       //final data = await Clipboard.getData('text/plain');
       //expect(data?.text, '1.2.3.4');
     });
+
+    testWidgets('invokes an optional row action on tap', (
+      WidgetTester tester,
+    ) async {
+      var tapCount = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ConnectivityStatsStateListView(
+                  context: context,
+                  details: [
+                    {
+                      'SSID': Future.value(
+                        'Enable precise location permission',
+                      ),
+                    },
+                    {'IP': Future.value('1.2.3.4')},
+                  ],
+                  onTapByLabel: {'SSID': () => tapCount++},
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Enable precise location permission'));
+      await tester.pump();
+
+      expect(tapCount, 1);
+    });
   });
 }

@@ -75,6 +75,8 @@ void main() {
 
     testWidgets('on mobile', (WidgetTester t) async {
       setupNetworkInfo();
+      var requestCount = 0;
+      var checkCount = 0;
 
       await t.pumpWidget(
         MaterialApp(
@@ -84,8 +86,14 @@ void main() {
                 networkInfo: networkInfo,
                 isMobile: true,
                 locationWhenInUse: PermissionHelper(
-                  isGranted: () => Future.value(true),
-                  request: () => Future.value(PermissionStatus.granted),
+                  isGranted: () {
+                    checkCount++;
+                    return Future.value(true);
+                  },
+                  request: () {
+                    requestCount++;
+                    return Future.value(PermissionStatus.granted);
+                  },
                 ),
               ),
             ),
@@ -95,8 +103,9 @@ void main() {
 
       await t.pumpAndSettle();
 
-      expect(find.text("WifiName"), findsOneWidget);
-      expect(find.text("WifiBSSID"), findsOneWidget);
+      expect(requestCount, 0);
+      expect(checkCount, 0);
+      expect(find.text("Enable precise location permission"), findsNWidgets(2));
       expect(find.text("WifiIP"), findsOneWidget);
       expect(find.text("WifiIPv6"), findsOneWidget);
       expect(find.text("WifiGatewayIP"), findsOneWidget);
@@ -106,6 +115,8 @@ void main() {
 
     testWidgets('on mobile deny permissions', (WidgetTester t) async {
       setupNetworkInfo();
+      var requestCount = 0;
+      var checkCount = 0;
 
       await t.pumpWidget(
         MaterialApp(
@@ -115,8 +126,14 @@ void main() {
                 networkInfo: networkInfo,
                 isMobile: true,
                 locationWhenInUse: PermissionHelper(
-                  isGranted: () => Future.value(false),
-                  request: () => Future.value(PermissionStatus.restricted),
+                  isGranted: () {
+                    checkCount++;
+                    return Future.value(false);
+                  },
+                  request: () {
+                    requestCount++;
+                    return Future.value(PermissionStatus.restricted);
+                  },
                 ),
               ),
             ),
@@ -126,13 +143,71 @@ void main() {
 
       await t.pumpAndSettle();
 
-      expect(find.text("Unauthorized to get Wifi Name"), findsOneWidget);
-      expect(find.text("Unauthorized to get Wifi BSSID"), findsOneWidget);
+      expect(requestCount, 0);
+      expect(checkCount, 0);
+      expect(find.text("Enable precise location permission"), findsNWidgets(2));
+      verifyNever(networkInfo.getWifiName());
+      verifyNever(networkInfo.getWifiBSSID());
+
+      await t.tap(find.text("Enable precise location permission").first);
+      await t.pumpAndSettle();
+
+      expect(requestCount, 1);
+      expect(checkCount, 1);
+      verifyNever(networkInfo.getWifiName());
+      verifyNever(networkInfo.getWifiBSSID());
       expect(find.text("WifiIP"), findsOneWidget);
       expect(find.text("WifiIPv6"), findsOneWidget);
       expect(find.text("WifiGatewayIP"), findsOneWidget);
       expect(find.text("WifiBroadcast"), findsOneWidget);
       expect(find.text("WifiSubmask"), findsOneWidget);
+    });
+
+    testWidgets('requests permission when enabled text is tapped', (
+      WidgetTester t,
+    ) async {
+      setupNetworkInfo();
+      var permissionGranted = false;
+      var requestCount = 0;
+      var checkCount = 0;
+
+      await t.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: ConnectivityStats(
+                networkInfo: networkInfo,
+                isMobile: true,
+                locationWhenInUse: PermissionHelper(
+                  isGranted: () {
+                    checkCount++;
+                    return Future.value(permissionGranted);
+                  },
+                  request: () {
+                    requestCount++;
+                    permissionGranted = true;
+                    return Future.value(PermissionStatus.granted);
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await t.pumpAndSettle();
+      expect(requestCount, 0);
+      expect(checkCount, 0);
+      expect(find.text("Enable precise location permission"), findsNWidgets(2));
+
+      await t.tap(find.text("Enable precise location permission").first);
+      await t.pumpAndSettle();
+
+      expect(requestCount, 1);
+      expect(checkCount, 1);
+      expect(find.text("WifiName"), findsOneWidget);
+      expect(find.text("WifiBSSID"), findsOneWidget);
+      expect(find.text("Enable precise location permission"), findsNothing);
     });
 
     testWidgets('error texts', (WidgetTester t) async {

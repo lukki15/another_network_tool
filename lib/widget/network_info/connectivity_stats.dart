@@ -11,6 +11,8 @@ class PermissionHelper {
   PermissionHelper({required this.isGranted, required this.request});
 }
 
+const _locationPermissionMessage = 'Enable precise location permission';
+
 class ConnectivityStats extends StatefulWidget {
   final NetworkInfo networkInfo;
   final bool isMobile;
@@ -35,49 +37,54 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
   Future<String?> _wifiGatewayIP = Future<String?>.value(null);
   Future<String?> _wifiBroadcast = Future<String?>.value(null);
   Future<String?> _wifiSubMask = Future<String?>.value(null);
+  bool _permissionRequestInProgress = false;
 
-  Future<String?> _initWifiName() async {
+  Future<String?> _initWifiName() {
     if (!kIsWeb && widget.isMobile) {
-      // Request permissions as recommended by the plugin documentation:
-      // https://github.com/fluttercommunity/plus_plugins/tree/main/packages/network_info_plus/network_info_plus
-      if (await widget.locationWhenInUse.isGranted()) {
-        return widget.networkInfo.getWifiName();
-      } else {
-        return 'Unauthorized to get Wifi Name';
-      }
-    } else {
-      return widget.networkInfo.getWifiName();
+      return Future<String?>.value(_locationPermissionMessage);
     }
+
+    return widget.networkInfo.getWifiName();
   }
 
-  Future<String?> _initWifiBSSID() async {
+  Future<String?> _initWifiBSSID() {
     if (!kIsWeb && widget.isMobile) {
-      // Request permissions as recommended by the plugin documentation:
-      // https://github.com/fluttercommunity/plus_plugins/tree/main/packages/network_info_plus/network_info_plus
-      if (await widget.locationWhenInUse.isGranted()) {
-        return widget.networkInfo.getWifiBSSID();
-      } else {
-        return 'Unauthorized to get Wifi BSSID';
-      }
-    } else {
-      return widget.networkInfo.getWifiBSSID();
+      return Future<String?>.value(_locationPermissionMessage);
     }
+
+    return widget.networkInfo.getWifiBSSID();
   }
 
-  void _init() async {
-    if (!kIsWeb && widget.isMobile) {
+  Future<void> _requestLocationPermission() async {
+    if (_permissionRequestInProgress) return;
+
+    setState(() => _permissionRequestInProgress = true);
+
+    try {
       await widget.locationWhenInUse.request();
-    }
+      final locationGranted = await widget.locationWhenInUse.isGranted();
 
-    setState(() {
-      _wifiName = _initWifiName();
-      _wifiBSSID = _initWifiBSSID();
-      _wifiIPv4 = widget.networkInfo.getWifiIP();
-      _wifiIPv6 = widget.networkInfo.getWifiIPv6();
-      _wifiGatewayIP = widget.networkInfo.getWifiGatewayIP();
-      _wifiBroadcast = widget.networkInfo.getWifiBroadcast();
-      _wifiSubMask = widget.networkInfo.getWifiSubmask();
-    });
+      if (!mounted || !locationGranted) return;
+
+      setState(() {
+        _wifiName = widget.networkInfo.getWifiName();
+        _wifiBSSID = widget.networkInfo.getWifiBSSID();
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _permissionRequestInProgress = false);
+      }
+    }
+  }
+
+  void _init() {
+    _wifiName = _initWifiName();
+    _wifiBSSID = _initWifiBSSID();
+    _wifiIPv4 = widget.networkInfo.getWifiIP();
+    _wifiIPv6 = widget.networkInfo.getWifiIPv6();
+    _wifiGatewayIP = widget.networkInfo.getWifiGatewayIP();
+    _wifiBroadcast = widget.networkInfo.getWifiBroadcast();
+    _wifiSubMask = widget.networkInfo.getWifiSubmask();
   }
 
   @override
@@ -117,6 +124,12 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
     return ConnectivityStatsStateListView(
       context: context,
       details: wifiDetails,
+      onTapByLabel: _permissionRequestInProgress || kIsWeb || !widget.isMobile
+          ? const {}
+          : {
+              'SSID': _requestLocationPermission,
+              'BSSID': _requestLocationPermission,
+            },
     );
   }
 
