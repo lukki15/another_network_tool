@@ -49,9 +49,11 @@ class _DeviceListState extends State<DeviceList> {
 
     widget.wifiSubnet
         .then((subnet) {
+          if (!mounted) return;
           _initStream(subnet);
         })
         .catchError((e) {
+          if (!mounted) return;
           setState(() {
             _subnetError = e.toString();
             isDone = true;
@@ -61,6 +63,7 @@ class _DeviceListState extends State<DeviceList> {
 
   void _initStream(Subnet? subnet) {
     if (subnet == null) {
+      if (!mounted) return;
       setState(() {
         isDone = true;
       });
@@ -83,6 +86,7 @@ class _DeviceListState extends State<DeviceList> {
 
     _streamSubscription = stream.listen(
       (host) {
+        if (!mounted) return;
         setState(() {
           progressCount++;
           if (host.isReachable) {
@@ -91,6 +95,7 @@ class _DeviceListState extends State<DeviceList> {
         });
       },
       onDone: () {
+        if (!mounted) return;
         setState(() {
           isDone = true;
         });
@@ -115,12 +120,12 @@ class _DeviceListState extends State<DeviceList> {
     _streamSubscription?.cancel();
     _streamSubscription = null;
 
+    _subnetError = null;
     if (widget.hasWifi) {
       setState(() {
         progressCount = 0;
         activeHosts.clear();
         isDone = false;
-        _subnetError = null;
       });
     }
 

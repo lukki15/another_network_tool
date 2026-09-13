@@ -386,6 +386,69 @@ void main() {
       expect(streamControl.isPaused, isFalse);
     });
 
+    testWidgets('ignores a subnet future completed after disposal', (
+      tester,
+    ) async {
+      final subnetCompleter = Completer<Subnet?>();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiSubnet: subnetCompleter.future,
+              config: Config(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(const SizedBox());
+      subnetCompleter.complete(
+        Subnet.fromIpAndMask('192.168.0.1', '255.255.255.0'),
+      );
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('clears subnet error when Wi-Fi becomes unavailable', (
+      tester,
+    ) async {
+      final subnetCompleter = Completer<Subnet?>();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: true,
+              wifiSubnet: subnetCompleter.future,
+              config: Config(),
+            ),
+          ),
+        ),
+      );
+
+      subnetCompleter.completeError(FormatException('Subnet unavailable'));
+      await tester.pump();
+      expect(find.text('Network error'), findsOneWidget);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: DeviceList(
+              hasWifi: false,
+              wifiSubnet: Future.value(),
+              config: Config(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Wi-Fi Unavailable'), findsOneWidget);
+      expect(find.text('Network error'), findsNothing);
+    });
+
     testWidgets('restarts scan when config changes', (tester) async {
       final firstScanCancelled = Completer<void>();
       final secondScanListening = Completer<void>();
