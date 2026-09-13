@@ -38,6 +38,8 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
   Future<String?> _wifiBroadcast = Future<String?>.value(null);
   Future<String?> _wifiSubMask = Future<String?>.value(null);
   bool _permissionRequestInProgress = false;
+  bool _locationPermissionChecked = false;
+  bool _locationPermissionGranted = false;
 
   Future<String?> _initWifiName() {
     if (!kIsWeb && widget.isMobile) {
@@ -64,11 +66,15 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
       await widget.locationWhenInUse.request();
       final locationGranted = await widget.locationWhenInUse.isGranted();
 
-      if (!mounted || !locationGranted) return;
+      if (!mounted) return;
 
       setState(() {
-        _wifiName = widget.networkInfo.getWifiName();
-        _wifiBSSID = widget.networkInfo.getWifiBSSID();
+        _locationPermissionChecked = true;
+        _locationPermissionGranted = locationGranted;
+        if (locationGranted) {
+          _wifiName = widget.networkInfo.getWifiName();
+          _wifiBSSID = widget.networkInfo.getWifiBSSID();
+        }
       });
     } finally {
       if (mounted) {
@@ -77,9 +83,29 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
     }
   }
 
-  void _init() {
-    _wifiName = _initWifiName();
-    _wifiBSSID = _initWifiBSSID();
+  Future<void> _init() async {
+    if (!kIsWeb && widget.isMobile) {
+      final locationGranted = await widget.locationWhenInUse.isGranted();
+
+      if (!mounted) return;
+
+      setState(() {
+        _locationPermissionChecked = true;
+        _locationPermissionGranted = locationGranted;
+        _wifiName = locationGranted
+            ? widget.networkInfo.getWifiName()
+            : _initWifiName();
+        _wifiBSSID = locationGranted
+            ? widget.networkInfo.getWifiBSSID()
+            : _initWifiBSSID();
+      });
+    } else {
+      _locationPermissionChecked = true;
+      _locationPermissionGranted = true;
+      _wifiName = _initWifiName();
+      _wifiBSSID = _initWifiBSSID();
+    }
+
     _wifiIPv4 = widget.networkInfo.getWifiIP();
     _wifiIPv6 = widget.networkInfo.getWifiIPv6();
     _wifiGatewayIP = widget.networkInfo.getWifiGatewayIP();
@@ -124,7 +150,12 @@ class _ConnectivityStatsState extends State<ConnectivityStats> {
     return ConnectivityStatsStateListView(
       context: context,
       details: wifiDetails,
-      onTapByLabel: _permissionRequestInProgress || kIsWeb || !widget.isMobile
+      onTapByLabel:
+          _permissionRequestInProgress ||
+              !_locationPermissionChecked ||
+              _locationPermissionGranted ||
+              kIsWeb ||
+              !widget.isMobile
           ? const {}
           : {
               'SSID': _requestLocationPermission,

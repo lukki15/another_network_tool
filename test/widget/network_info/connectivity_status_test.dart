@@ -104,8 +104,9 @@ void main() {
       await t.pumpAndSettle();
 
       expect(requestCount, 0);
-      expect(checkCount, 0);
-      expect(find.text("Enable precise location permission"), findsNWidgets(2));
+      expect(checkCount, 1);
+      expect(find.text("WifiName"), findsOneWidget);
+      expect(find.text("WifiBSSID"), findsOneWidget);
       expect(find.text("WifiIP"), findsOneWidget);
       expect(find.text("WifiIPv6"), findsOneWidget);
       expect(find.text("WifiGatewayIP"), findsOneWidget);
@@ -144,7 +145,7 @@ void main() {
       await t.pumpAndSettle();
 
       expect(requestCount, 0);
-      expect(checkCount, 0);
+      expect(checkCount, 1);
       expect(find.text("Enable precise location permission"), findsNWidgets(2));
       verifyNever(networkInfo.getWifiName());
       verifyNever(networkInfo.getWifiBSSID());
@@ -153,7 +154,7 @@ void main() {
       await t.pumpAndSettle();
 
       expect(requestCount, 1);
-      expect(checkCount, 1);
+      expect(checkCount, 2);
       verifyNever(networkInfo.getWifiName());
       verifyNever(networkInfo.getWifiBSSID());
       expect(find.text("WifiIP"), findsOneWidget);
@@ -197,14 +198,14 @@ void main() {
 
       await t.pumpAndSettle();
       expect(requestCount, 0);
-      expect(checkCount, 0);
+      expect(checkCount, 1);
       expect(find.text("Enable precise location permission"), findsNWidgets(2));
 
       await t.tap(find.text("Enable precise location permission").first);
       await t.pumpAndSettle();
 
       expect(requestCount, 1);
-      expect(checkCount, 1);
+      expect(checkCount, 2);
       expect(find.text("WifiName"), findsOneWidget);
       expect(find.text("WifiBSSID"), findsOneWidget);
       expect(find.text("Enable precise location permission"), findsNothing);
