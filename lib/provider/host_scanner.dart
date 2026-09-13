@@ -34,11 +34,15 @@ Stream<AddressInfo> pingSubnetPatch(
   final startInt = subnet.firstHostInt();
   final endInt = subnet.lastHostInt();
 
-  final resultController = StreamController<AddressInfo>();
+  final resultController = StreamController<AddressInfo>(
+    onCancel: streamControl.cancel,
+  );
   final lock = Lock();
 
   int activeTaskCount = 0;
   int nextIpInt = startInt;
+
+  bool isStopped() => streamControl.isCancelled || resultController.isClosed;
 
   void closeController() {
     if (!resultController.isClosed) {
@@ -47,7 +51,7 @@ Stream<AddressInfo> pingSubnetPatch(
   }
 
   void addResult(AddressInfo result) {
-    if (streamControl.isCancelled) return;
+    if (isStopped()) return;
 
     if (!resultController.isClosed) {
       resultController.add(result);
@@ -59,10 +63,10 @@ Stream<AddressInfo> pingSubnetPatch(
   Future<void> startAvailableTasks() async {
     await streamControl.waitIfPaused();
 
-    if (streamControl.isCancelled) return;
+    if (isStopped()) return;
 
     while (activeTaskCount < patchSize && nextIpInt <= endInt) {
-      if (streamControl.isCancelled) return;
+      if (isStopped()) return;
 
       final newIp = _intToIp(nextIpInt);
       nextIpInt++;
@@ -80,44 +84,46 @@ Stream<AddressInfo> pingSubnetPatch(
   }
 
   processPingTask = (PingTask task) async {
-    if (streamControl.isCancelled) return;
-
     try {
-      final results = await Future.wait<Object?>([
-        task.future,
+      if (!isStopped()) {
+        final results = await Future.wait<Object?>([
+          task.future,
 
-        // If paused, wait here before processing the result.
-        // Cancellation also wakes this wait.
-        streamControl.waitIfPaused(),
-      ]);
+          // If paused, wait here before processing the result.
+          // Cancellation also wakes this wait.
+          streamControl.waitIfPaused(),
+        ]);
 
-      if (streamControl.isCancelled) return;
+        if (isStopped()) return;
 
-      final pingEvent = results[0] as PingEvent;
+        final pingEvent = results[0] as PingEvent;
 
-      switch (pingEvent) {
-        case PingResponse response:
-          addResult(
-            AddressInfo(
-              address: response.ip ?? task.ip,
-              isReachable: response.ip != null,
-            ),
-          );
+        switch (pingEvent) {
+          case PingResponse response:
+            addResult(
+              AddressInfo(
+                address: response.ip ?? task.ip,
+                isReachable: response.ip != null,
+              ),
+            );
 
-        case PingError():
-          addResult(AddressInfo(address: task.ip, isReachable: false));
+          case PingError():
+            addResult(AddressInfo(address: task.ip, isReachable: false));
 
-        case PingSummary():
-          addResult(AddressInfo(address: task.ip, isReachable: false));
+          case PingSummary():
+            addResult(AddressInfo(address: task.ip, isReachable: false));
+        }
       }
     } catch (_) {
-      addResult(AddressInfo(address: task.ip, isReachable: false));
+      if (!isStopped()) {
+        addResult(AddressInfo(address: task.ip, isReachable: false));
+      }
     } finally {
       await lock.synchronized(() async {
         activeTaskCount--;
 
         // Don't schedule anything after cancellation.
-        if (streamControl.isCancelled) {
+        if (isStopped()) {
           if (activeTaskCount == 0) {
             closeController();
           }
@@ -144,7 +150,7 @@ Stream<AddressInfo> pingSubnetPatch(
   });
 
   // No tasks were created.
-  if (activeTaskCount == 0) {
+  if (activeTaskCount == 0 && !isStopped()) {
     closeController();
   }
 

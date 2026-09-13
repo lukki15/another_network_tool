@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_network_tool/provider/address_info.dart';
 import 'package:another_network_tool/provider/host_scanner.dart';
 import 'package:another_network_tool/utils/stream_control.dart';
 import 'package:another_network_tool/utils/subnet.dart';
@@ -292,6 +293,47 @@ void main() {
       expect(pingCount, 0);
       expect(results, isEmpty);
       expect(control.isCancelled, isTrue);
+    });
+
+    test('canceling the subscription stops replacement tasks', () async {
+      final control = StreamControl();
+      final requestedHosts = <String>[];
+      final firstTask = Completer<PingEvent>();
+      final secondTask = Completer<PingEvent>();
+      final results = <AddressInfo>[];
+
+      Future<PingEvent> pingProvider(String host) {
+        requestedHosts.add(host);
+
+        switch (host) {
+          case '192.168.1.1':
+            return firstTask.future;
+          case '192.168.1.2':
+            return secondTask.future;
+          default:
+            throw StateError('Unexpected host: $host');
+        }
+      }
+
+      final subscription = pingSubnetPatch(
+        const Subnet('192.168.1.0', 29),
+        control,
+        patchSize: 2,
+        pingDataProvider: pingProvider,
+      ).listen(results.add);
+
+      await Future<void>.delayed(Duration.zero);
+      expect(requestedHosts, <String>['192.168.1.1', '192.168.1.2']);
+
+      await subscription.cancel();
+      expect(control.isCancelled, isTrue);
+
+      firstTask.complete(const PingResponse(ip: '192.168.1.1'));
+      secondTask.complete(const PingResponse(ip: '192.168.1.2'));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(requestedHosts, <String>['192.168.1.1', '192.168.1.2']);
+      expect(results, isEmpty);
     });
   });
 
