@@ -5,7 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - Unreleased
+## [0.3.0] - 2026-09-26
+### Added
+- Added subnet information to the network interface details.
+- Added improved network scanner state handling and cancellation.
+- Added additional scanner and UI test coverage.
+
+### Changed
+- Improved Android location-permission handling required for Wi-Fi network information.
+- Improved scanner lifecycle handling to prevent cancelled scans from leaving stale or overlapping scan tasks.
+- Updated Android build and Gradle configuration.
+- Improved test coverage and CI validation.
+
+### Fixed
+- Fixed network scanner cancellation so the underlying scan operation is properly stopped.
+- Fixed scan tasks being scheduled after a previous scan had been cancelled.
+- Fixed Android permission handling for accessing Wi-Fi SSID and BSSID information.
 
 ## [0.2.0] - 2026-03-01
 ### Added
